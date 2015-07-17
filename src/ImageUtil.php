@@ -61,18 +61,7 @@ class ImageUtil
 				$image_file = basename($url);
 				$info = pathinfo($image_file);
 				$image_file = tempnam(sys_get_temp_dir(), "img_") . "." . $info['extension'];
-
-				$handle = fopen($image_file, "w");
-				try
-				{
-					$x = file_get_contents($url);
-					fwrite($handle, $x);
-				}
-				catch (Exception $ex)
-				{
-
-				}
-				fclose($handle);
+				file_put_contents($image_file, file_get_contents($url));
 			}
 
 			if (!file_exists($image_file) || !is_readable($image_file))
@@ -85,20 +74,20 @@ class ImageUtil
 			$image = null;
 
 			//Create the image depending on what kind of file it is.
-			switch ($img ['mime'])
+			switch ($img['mime'])
 			{
-				case 'image/png' :
+				case 'image/png':
 					$image = imagecreatefrompng($image_file);
 					break;
-				case 'image/jpeg' :
+				case 'image/jpeg':
 					$image = imagecreatefromjpeg($image_file);
 					break;
-				case 'image/gif' :
+				case 'image/gif':
 					$old_id = imagecreatefromgif($image_file);
-					$image = imagecreatetruecolor($img [0], $img [1]);
-					imagecopy($image, $old_id, 0, 0, 0, 0, $img [0], $img [1]);
+					$image = imagecreatetruecolor($img[0], $img[1]);
+					imagecopy($image, $old_id, 0, 0, 0, 0, $img[0], $img[1]);
 					break;
-				default :
+				default:
 					break;
 			}
 		}
@@ -191,21 +180,21 @@ class ImageUtil
 		switch ($type)
 		{
 			//Mirroring direction
-			case Flip::Horizontal :
+			case Flip::Horizontal:
 				for ($x = 0; $x < $width; $x ++)
 				{
 					imagecopy($imgdest, $imgsrc, $width - $x - 1, 0, $x, 0, 1, $height);
 				}
 				break;
 
-			case Flip::Vertical :
+			case Flip::Vertical:
 				for ($y = 0; $y < $height; $y ++)
 				{
 					imagecopy($imgdest, $imgsrc, 0, $height - $y - 1, 0, $y, $width, 1);
 				}
 				break;
 
-			default :
+			default:
 				for ($x = 0; $x < $width; $x ++)
 				{
 					imagecopy($imgdest, $imgsrc, $width - $x - 1, 0, $x, 0, 1, $height);
@@ -396,31 +385,31 @@ class ImageUtil
 		}
 		switch ($position)
 		{
-			case StampPosition::TopRight :
+			case StampPosition::TopRight:
 				imagecopymerge($dst_image, $watermark, ($dst_w - $src_w) - $padx, $pady, 0, 0, $src_w, $src_h, $oppacity);
 				break;
-			case StampPosition::TopLeft :
+			case StampPosition::TopLeft:
 				imagecopymerge($dst_image, $watermark, $padx, $pady, 0, 0, $src_w, $src_h, $oppacity);
 				break;
-			case StampPosition::BottomRight :
+			case StampPosition::BottomRight:
 				imagecopymerge($dst_image, $watermark, ($dst_w - $src_w) - $padx, ($dst_h - $src_h) - $pady, 0, 0, $src_w, $src_h, $oppacity);
 				break;
-			case StampPosition::BottomLeft :
+			case StampPosition::BottomLeft:
 				imagecopymerge($dst_image, $watermark, $padx, ($dst_h - $src_h) - $pady, 0, 0, $src_w, $src_h, $oppacity);
 				break;
-			case StampPosition::Center :
+			case StampPosition::Center:
 				imagecopymerge($dst_image, $watermark, (($dst_w / 2) - ($src_w / 2)), (($dst_h / 2) - ($src_h / 2)), 0, 0, $src_w, $src_h, $oppacity);
 				break;
-			case StampPosition::Top :
+			case StampPosition::Top:
 				imagecopymerge($dst_image, $watermark, (($dst_w / 2) - ($src_w / 2)), $pady, 0, 0, $src_w, $src_h, $oppacity);
 				break;
-			case StampPosition::Bottom :
+			case StampPosition::Bottom:
 				imagecopymerge($dst_image, $watermark, (($dst_w / 2) - ($src_w / 2)), ($dst_h - $src_h) - $pady, 0, 0, $src_w, $src_h, $oppacity);
 				break;
-			case StampPosition::Left :
+			case StampPosition::Left:
 				imagecopymerge($dst_image, $watermark, $padx, (($dst_h / 2) - ($src_h / 2)), 0, 0, $src_w, $src_h, $oppacity);
 				break;
-			case StampPosition::Right :
+			case StampPosition::Right:
 				imagecopymerge($dst_image, $watermark, ($dst_w - $src_w) - $padx, (($dst_h / 2) - ($src_h / 2)), 0, 0, $src_w, $src_h, $oppacity);
 				break;
 		}
@@ -490,7 +479,6 @@ class ImageUtil
 		{
 			$bbox = imagettfbbox($size, $angle, $font, $text);
 
-			//Debug::PrintValue($bbox);
 			switch ($textAlignment)
 			{
 				case TextAlignment::Right:
@@ -524,9 +512,6 @@ class ImageUtil
 		if (!$this->image)
 			return false;
 
-		$height = $this->height;
-		$width = $this->width;
-
 		$new_width = $to_x - $from_x;
 		$new_height = $to_y - $from_y;
 		//Create the image
@@ -556,17 +541,17 @@ class ImageUtil
 
 		switch ($extension)
 		{
-			case 'png' :
+			case 'png':
 				return imagepng($this->image, $file_name);
 				break;
-			case 'jpeg' :
-			case 'jpg' :
+			case 'jpeg':
+			case 'jpg':
 				return imagejpeg($this->image, $file_name);
 				break;
-			case 'gif' :
+			case 'gif':
 				return imagegif($this->image, $file_name);
 				break;
-			default :
+			default:
 				break;
 		}
 		if ($destroy)
@@ -579,7 +564,7 @@ class ImageUtil
 	 * Display the image and then destroy it.
 	 * Example: $img->show();
 	 */
-	public function show($destroy = true, $die = true)
+	public function show($destroy = true)
 	{
 		if (!$this->image)
 		{
@@ -593,26 +578,21 @@ class ImageUtil
 		header("Content-type: " . $this->info ['mime']);
 		switch ($this->info ['mime'])
 		{
-			case 'image/png' :
+			case 'image/png':
 				imagepng($this->image);
 				break;
-			case 'image/jpeg' :
+			case 'image/jpeg':
 				imagejpeg($this->image);
 				break;
-			case 'image/gif' :
+			case 'image/gif':
 				imagegif($this->image);
 				break;
-			default :
+			default:
 				break;
 		}
 		if ($destroy)
 		{
 			$this->destroy();
-		}
-
-		if ($die)
-		{
-			exit;
 		}
 
 		return $this;
