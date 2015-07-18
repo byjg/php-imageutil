@@ -21,7 +21,7 @@ $img2 = new ImageUtil('http://somesite/someimage.jpg');
 
 // From an existing resource image
 $resourceImg = imagecreatetruecolor(200, 300);
-$img3 = new ImagemUtil($resourceImg);
+$img3 = new ImageUtil($resourceImg);
 ```
 
 ### Flip an image

@@ -2,12 +2,12 @@
 
 namespace ByJG\ImageUtil;
 
-use Exception;
 use ByJG\ImageUtil\Enum\Flip;
 use ByJG\ImageUtil\Enum\StampPosition;
 use ByJG\ImageUtil\Enum\TextAlignment;
 use ByJG\ImageUtil\Exception\ImageUtilException;
 use ByJG\ImageUtil\Exception\NotFoundException;
+use RuntimeException;
 
 /**
  * A Wrapper for GD library in PHP. GD must be installed in your system for this to work.
@@ -35,80 +35,90 @@ class ImageUtil
 
 		if (!function_exists('imagecreatefrompng'))
 		{
-			throw new \RuntimeException("GD module is not installed");
+			throw new RuntimeException("GD module is not installed");
 		}
 
 		if (!is_string($image_file))
 		{
-			if (get_resource_type($image_file) == 'gd')
-			{
-				$image = $image_file;
-				$this->file_name = null;
-				$img = array('mime' => 'image/png');
-			}
-			else
-			{
-				$image = null;
-			}
+			$info = $this->createFromResource($image_file);
 		}
 		else
 		{
-
-			if (strpos($image_file, "http://") !== false)
-			{
-				$extern = true;
-				$url = $image_file;
-				$image_file = basename($url);
-				$info = pathinfo($image_file);
-				$image_file = tempnam(sys_get_temp_dir(), "img_") . "." . $info['extension'];
-				file_put_contents($image_file, file_get_contents($url));
-			}
-
-			if (!file_exists($image_file) || !is_readable($image_file))
-			{
-				throw new NotFoundException("File is not found or not is readable. Cannot continue.");
-			}
-
-			$this->file_name = $image_file;
-			$img = getimagesize($image_file);
-			$image = null;
-
-			//Create the image depending on what kind of file it is.
-			switch ($img['mime'])
-			{
-				case 'image/png':
-					$image = imagecreatefrompng($image_file);
-					break;
-				case 'image/jpeg':
-					$image = imagecreatefromjpeg($image_file);
-					break;
-				case 'image/gif':
-					$old_id = imagecreatefromgif($image_file);
-					$image = imagecreatetruecolor($img[0], $img[1]);
-					imagecopy($image, $old_id, 0, 0, 0, 0, $img[0], $img[1]);
-					break;
-				default:
-					break;
-			}
+			$info = $this->createFromFilename($image_file);
 		}
 
-		if ($image == null)
+		if ($this->image == null)
 		{
 			throw new ImageUtilException("'$image_file' is not a valid image file");
 		}
 
-		$this->info = $img;
-		$this->width = imagesx($image);
-		$this->height = imagesy($image);
-		$this->image = $image;
+		$this->info = $info;
+		$this->width = imagesx($this->image);
+		$this->height = imagesy($this->image);
 
 		$this->org_image = imagecreatetruecolor($this->width, $this->height);
 		imagecopy($this->org_image, $this->image, 0, 0, 0, 0, $this->width, $this->height);
+	}
 
-		if ($extern)
+	protected function createFromResource($resource)
+	{
+		if (get_resource_type($resource) == 'gd')
+		{
+			$this->image = $resource;
+			$this->file_name = tempnam(sys_get_temp_dir(), 'img_') . '.png';
+			return array('mime' => 'image/png');
+		}
+		throw new ImageUtilException('Is not valid resource');
+	}
+
+	protected function createFromFilename($image_file)
+	{
+		$http = false;
+		if (preg_match('/^(https?:|file:)/', $image_file))
+		{
+			$http = true;
+			$url = $image_file;
+			$image_file = basename($url);
+			$info = pathinfo($image_file);
+			$image_file = tempnam(sys_get_temp_dir(), "img_") . "." . $info['extension'];
+			file_put_contents($image_file, file_get_contents($url));
+		}
+
+		if (!file_exists($image_file) || !is_readable($image_file))
+		{
+			throw new NotFoundException("File is not found or not is readable. Cannot continue.");
+		}
+
+		$this->file_name = $image_file;
+		$img = getimagesize($image_file);
+		$image = null;
+
+		//Create the image depending on what kind of file it is.
+		switch ($img['mime'])
+		{
+			case 'image/png':
+				$image = imagecreatefrompng($image_file);
+				break;
+			case 'image/jpeg':
+				$image = imagecreatefromjpeg($image_file);
+				break;
+			case 'image/gif':
+				$old_id = imagecreatefromgif($image_file);
+				$image = imagecreatetruecolor($img[0], $img[1]);
+				imagecopy($image, $old_id, 0, 0, 0, 0, $img[0], $img[1]);
+				break;
+			default:
+				break;
+		}
+
+		if ($http)
 		{
 			unlink($image_file);
 		}
+
+		$this->image = $image;
+
+		return $img;
 	}
 
 	public function getWidth()
@@ -158,7 +168,7 @@ class ImageUtil
 	 * Example: $img = new Image("file.png"); $img->flip(2); $img->show();
 	 *
 	 * @param int $type Direction of mirroring. This can be 1(Horizondal Flip), 2(Vertical Flip) or 3(Both Horizondal and Vertical Flip)
-	 * @return boolean|\ByJG\ImageUtil\ImageUtil
+	 * @return boolean|ImageUtil
 	 */
 	public function flip($type)
 	{
@@ -220,18 +230,18 @@ class ImageUtil
 	 * Resize the image to an new size. Size can be specified in the arugments.
 	 * @param int $new_width The width of the desired image. If 0, the function will automatically calculate the width using the height ratio.
 	 * @param int $new_height The width of the desired image. If 0, the function will automatically calculate the value using the width ratio.
-	 * @return boolean|\ByJG\ImageUtil\ImageUtil
+	 * @return ImageUtil
 	 */
 	public function resize($new_width = null, $new_height = null)
 	{
 		if (!$this->image)
 		{
-			return false;
+			throw new ImageUtilException('Object does not exists');
 		}
 
 		if (!$new_height && !$new_width)
 		{
-			return false; //Both width and height is 0
+			throw new ImageUtilException('There are no valid values');
 		}
 
 
@@ -268,7 +278,7 @@ class ImageUtil
 	 * @param int $fillRed
 	 * @param int $fillGreen
 	 * @param int $fillBlue
-	 * @return \ByJG\ImageUtil\ImageUtil
+	 * @return ImageUtil
 	 */
 	public function resizeSquare($new_size, $fillRed = 255, $fillGreen = 255, $fillBlue = 255)
 	{
@@ -282,18 +292,18 @@ class ImageUtil
 	 * @param int $fillRed
 	 * @param int $fillGreen
 	 * @param int $fillBlue
-	 * @return boolean|\ByJG\ImageUtil\ImageUtil
+	 * @return ImageUtil
 	 */
 	public function resizeAspectRatio($newX, $newY, $fillRed = 255, $fillGreen = 255, $fillBlue = 255)
 	{
 		if (!$this->image)
 		{
-			return false;
+			throw new ImageUtilException('Object does not exists');
 		}
 
 		if (!$newX || !$newY)
 		{
-			return false;
+			throw new ImageUtilException('There are no valid values');
 		}
 
 		$im = $this->image;
@@ -340,11 +350,11 @@ class ImageUtil
 	/**
 	 * Stamp an image in the current image.
 	 *
-	 * @param \ByJG\ImageUtil\ImageUtil|string $src_image The image path or the image gd resource.
+	 * @param ImageUtil|string $src_image The image path or the image gd resource.
 	 * @param int $position
 	 * @param int $padding
 	 * @param int $oppacity
-	 * @return \ByJG\ImageUtil\ImageUtil
+	 * @return ImageUtil
 	 */
 	public function stampImage($src_image, $position = StampPosition::BottomRight, $padding = 5, $oppacity = 100)
 	{
@@ -453,7 +463,8 @@ class ImageUtil
 			$lines = array($words[0]);
 			$currentLine = 0;
 
-			for ($i = 1; $i < count($words); $i++)
+			$numberOfWords = count($words);
+			for ($i = 1; $i < $numberOfWords; $i++)
 			{
 				$lineSize = imagettfbbox($size, 0, $font, $lines[$currentLine] . ' ' . $words[$i]);
 				if ($lineSize[2] - $lineSize[0] < $maxwidth)
@@ -505,7 +516,7 @@ class ImageUtil
 	 * @param type $from_y Y coordinate from where the crop should start
 	 * @param type $to_x X coordinate from where the crop should end
 	 * @param type $to_y Y coordinate from where the crop should end
-	 * @return boolean|\ByJG\ImageUtil\ImageUtil
+	 * @return boolean|ImageUtil
 	 */
 	public function crop($from_x, $from_y, $to_x, $to_y)
 	{
@@ -543,14 +554,14 @@ class ImageUtil
 		{
 			case 'png':
 				return imagepng($this->image, $file_name);
-				break;
+
 			case 'jpeg':
 			case 'jpg':
 				return imagejpeg($this->image, $file_name);
-				break;
+
 			case 'gif':
 				return imagegif($this->image, $file_name);
-				break;
+
 			default:
 				break;
 		}
@@ -575,8 +586,8 @@ class ImageUtil
 		{
 			ob_clean();
 		}
-		header("Content-type: " . $this->info ['mime']);
-		switch ($this->info ['mime'])
+		header("Content-type: " . $this->info['mime']);
+		switch ($this->info['mime'])
 		{
 			case 'image/png':
 				imagepng($this->image);
