@@ -19,8 +19,6 @@ class ImageUtil
 
 	private $file_name;
 	private $info;
-	private $width;
-	private $height;
 	private $image;
 	private $org_image;
 
@@ -170,7 +168,7 @@ class ImageUtil
 	 */
 	public function flip($type)
 	{
-		if ($type !== Flip::Horizontal && $type !== Flip::Vertical && $type !== Flip::Both)
+		if ($type !== Flip::HORIZONTAL && $type !== Flip::VERTICAL && $type !== Flip::BOTH)
 		{
 			throw new \InvalidArgumentException('You need to pass the flip type');;
 		}
@@ -183,14 +181,14 @@ class ImageUtil
 		switch ($type)
 		{
 			//Mirroring direction
-			case Flip::Horizontal:
+			case Flip::HORIZONTAL:
 				for ($x = 0; $x < $width; $x ++)
 				{
 					imagecopy($imgdest, $imgsrc, $width - $x - 1, 0, $x, 0, 1, $height);
 				}
 				break;
 
-			case Flip::Vertical:
+			case Flip::VERTICAL:
 				for ($y = 0; $y < $height; $y ++)
 				{
 					imagecopy($imgdest, $imgsrc, 0, $height - $y - 1, 0, $y, $width, 1);
@@ -335,7 +333,7 @@ class ImageUtil
 	 * @param int $oppacity
 	 * @return ImageUtil
 	 */
-	public function stampImage($src_image, $position = StampPosition::BottomRight, $padding = 5, $oppacity = 100)
+	public function stampImage($src_image, $position = StampPosition::BOTTOMRIGHT, $padding = 5, $oppacity = 100)
 	{
 		$dst_image = $this->image;
 
@@ -368,37 +366,37 @@ class ImageUtil
 			$padx = $pady = $padding;
 		}
 
-		if ($position == StampPosition::Random)
+		if ($position == StampPosition::RANDOM)
 		{
 			$position = rand(1, 9);
 		}
 		switch ($position)
 		{
-			case StampPosition::TopRight:
+			case StampPosition::TOPRIGHT:
 				imagecopymerge($dst_image, $watermark, ($dst_w - $src_w) - $padx, $pady, 0, 0, $src_w, $src_h, $oppacity);
 				break;
-			case StampPosition::TopLeft:
+			case StampPosition::TOPLEFT:
 				imagecopymerge($dst_image, $watermark, $padx, $pady, 0, 0, $src_w, $src_h, $oppacity);
 				break;
-			case StampPosition::BottomRight:
+			case StampPosition::BOTTOMRIGHT:
 				imagecopymerge($dst_image, $watermark, ($dst_w - $src_w) - $padx, ($dst_h - $src_h) - $pady, 0, 0, $src_w, $src_h, $oppacity);
 				break;
-			case StampPosition::BottomLeft:
+			case StampPosition::BOTTOMLEFT:
 				imagecopymerge($dst_image, $watermark, $padx, ($dst_h - $src_h) - $pady, 0, 0, $src_w, $src_h, $oppacity);
 				break;
-			case StampPosition::Center:
+			case StampPosition::CENTER:
 				imagecopymerge($dst_image, $watermark, (($dst_w / 2) - ($src_w / 2)), (($dst_h / 2) - ($src_h / 2)), 0, 0, $src_w, $src_h, $oppacity);
 				break;
-			case StampPosition::Top:
+			case StampPosition::TOP:
 				imagecopymerge($dst_image, $watermark, (($dst_w / 2) - ($src_w / 2)), $pady, 0, 0, $src_w, $src_h, $oppacity);
 				break;
-			case StampPosition::Bottom:
+			case StampPosition::BOTTOM:
 				imagecopymerge($dst_image, $watermark, (($dst_w / 2) - ($src_w / 2)), ($dst_h - $src_h) - $pady, 0, 0, $src_w, $src_h, $oppacity);
 				break;
-			case StampPosition::Left:
+			case StampPosition::LEFT:
 				imagecopymerge($dst_image, $watermark, $padx, (($dst_h / 2) - ($src_h / 2)), 0, 0, $src_w, $src_h, $oppacity);
 				break;
-			case StampPosition::Right:
+			case StampPosition::RIGHT:
 				imagecopymerge($dst_image, $watermark, ($dst_w - $src_w) - $padx, (($dst_h / 2) - ($src_h / 2)), 0, 0, $src_w, $src_h, $oppacity);
 				break;
 		}
@@ -471,11 +469,11 @@ class ImageUtil
 
 			switch ($textAlignment)
 			{
-				case TextAlignment::Right:
+				case TextAlignment::RIGHT:
 					$x = $point[0] - abs($bbox[2] - $bbox[0]);
 					break;
 
-				case TextAlignment::Center:
+				case TextAlignment::CENTER:
 					$x = $point[0] - (abs($bbox[2] - $bbox[0]) / 2);
 					break;
 			}

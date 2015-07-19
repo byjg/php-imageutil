@@ -7,7 +7,7 @@ namespace ByJG\ImageUtil\Enum;
  */
 class Flip
 {
-	const Horizontal = 1;
-	const Vertical = 2;
-	const Both = 3;
+	const HORIZONTAL = 1;
+	const VERTICAL = 2;
+	const BOTH = 3;
 }

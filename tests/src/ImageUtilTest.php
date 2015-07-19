@@ -93,7 +93,7 @@ class ImageUtilTest extends \PHPUnit_Framework_TestCase
 		$image = new ImageUtil(__DIR__.'/flip-vertical.png');
 
 		$this->object->rotate(10, 230);
-		$this->object->flip(Enum\Flip::Vertical);
+		$this->object->flip(Enum\Flip::VERTICAL);
 
 		$this->assertEquals($this->getResourceString($image->getImage()), $this->getResourceString($this->object->getImage()));
 	}
@@ -106,7 +106,7 @@ class ImageUtilTest extends \PHPUnit_Framework_TestCase
 		$image = new ImageUtil(__DIR__.'/flip-both.png');
 
 		$this->object->rotate(80, 230);
-		$this->object->flip(Enum\Flip::Both);
+		$this->object->flip(Enum\Flip::BOTH);
 
 		$this->assertEquals($this->getResourceString($image->getImage()), $this->getResourceString($this->object->getImage()));
 	}
@@ -119,7 +119,7 @@ class ImageUtilTest extends \PHPUnit_Framework_TestCase
 		$image = new ImageUtil(__DIR__.'/flip-horizontal.png');
 
 		$this->object->rotate(80, 230);
-		$this->object->flip(Enum\Flip::Horizontal);
+		$this->object->flip(Enum\Flip::HORIZONTAL);
 
 		$this->assertEquals($this->getResourceString($image->getImage()), $this->getResourceString($this->object->getImage()));
 	}
@@ -256,7 +256,7 @@ class ImageUtilTest extends \PHPUnit_Framework_TestCase
 		
 		// Do some operactions
 		$this->object->rotate(30);
-		$this->object->flip(Enum\Flip::Both);
+		$this->object->flip(Enum\Flip::BOTH);
 		$this->object->resizeSquare(40);
 
 		$this->assertNotEquals($expected, $this->getResourceString($this->object->getImage()));

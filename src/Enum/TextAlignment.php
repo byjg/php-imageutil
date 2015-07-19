@@ -4,8 +4,8 @@ namespace ByJG\ImageUtil\Enum;
 
 class TextAlignment
 {
-	const Left = 1;
-	const Right = 2;
-	const Center = 3;
+	const LEFT = 1;
+	const RIGHT = 2;
+	const CENTER = 3;
 }
 
