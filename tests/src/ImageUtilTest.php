@@ -212,7 +212,7 @@ class ImageUtilTest extends \PHPUnit_Framework_TestCase
 		$this->assertFileExists($fileName);
 
 		$image = new ImageUtil($fileName);
-		$this->assertEquals($this->getResourceString($this->object->getImage()), $this->getResourceString($image));
+		$this->assertEquals($this->getResourceString($this->object->getImage()), $this->getResourceString($image->getImage()));
 
 		unlink($fileName);
 	}
@@ -229,7 +229,7 @@ class ImageUtilTest extends \PHPUnit_Framework_TestCase
 		$this->assertFileExists($fileName);
 
 		$image = new ImageUtil($fileName);
-		$this->assertEquals($this->getResourceString($this->object->getImage()), $this->getResourceString($image));
+		$this->assertEquals($this->getResourceString($this->object->getImage()), $this->getResourceString($image->getImage()));
 
 		unlink($fileName);
 	}
