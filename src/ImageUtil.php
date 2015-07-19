@@ -31,8 +31,6 @@ class ImageUtil
 	 */
 	public function __construct($image_file)
 	{
-		$extern = false;
-
 		if (!function_exists('imagecreatefrompng'))
 		{
 			throw new RuntimeException("GD module is not installed");
@@ -47,7 +45,7 @@ class ImageUtil
 			$info = $this->createFromFilename($image_file);
 		}
 
-		if ($this->image == null)
+		if (is_null($this->image))
 		{
 			throw new ImageUtilException("'$image_file' is not a valid image file");
 		}
@@ -56,8 +54,8 @@ class ImageUtil
 		$this->width = imagesx($this->image);
 		$this->height = imagesy($this->image);
 
-		$this->org_image = imagecreatetruecolor($this->width, $this->height);
-		imagecopy($this->org_image, $this->image, 0, 0, 0, 0, $this->width, $this->height);
+		$this->org_image = imagecreatetruecolor($this->getWidth(), $this->getHeight());
+		imagecopy($this->org_image, $this->image, 0, 0, 0, 0, $this->getWidth(), $this->getHeight());
 	}
 
 	protected function createFromResource($resource)
@@ -65,7 +63,7 @@ class ImageUtil
 		if (get_resource_type($resource) == 'gd')
 		{
 			$this->image = $resource;
-			$this->file_name = tempnam(sys_get_temp_dir(), 'img_') . '.png';
+			$this->file_name = sys_get_temp_dir() . '/img_' . uniqid() .  '.png';
 			return array('mime' => 'image/png');
 		}
 		throw new ImageUtilException('Is not valid resource');
@@ -80,7 +78,7 @@ class ImageUtil
 			$url = $image_file;
 			$image_file = basename($url);
 			$info = pathinfo($image_file);
-			$image_file = tempnam(sys_get_temp_dir(), "img_") . "." . $info['extension'];
+			$image_file = sys_get_temp_dir() . '/img_' . uniqid() .  '.' . $info['extension'];
 			file_put_contents($image_file, file_get_contents($url));
 		}
 
@@ -131,6 +129,11 @@ class ImageUtil
 		return imagesy($this->image);
 	}
 
+	public function getFilename()
+	{
+		return $this->file_name;
+	}
+
 	/**
 	 * Enter description here...
 	 *
@@ -148,14 +151,9 @@ class ImageUtil
 	 */
 	public function rotate($angle, $background = 0)
 	{
-		if (!$this->image)
+		if (!is_numeric($angle))
 		{
-			return false;
-		}
-
-		if (!$angle)
-		{
-			return $this;
+			throw new \InvalidArgumentException('You need to pass the angle');
 		}
 
 		$this->image = imagerotate($this->image, $angle, $background);
@@ -168,24 +166,19 @@ class ImageUtil
 	 * Example: $img = new Image("file.png"); $img->flip(2); $img->show();
 	 *
 	 * @param int $type Direction of mirroring. This can be 1(Horizondal Flip), 2(Vertical Flip) or 3(Both Horizondal and Vertical Flip)
-	 * @return boolean|ImageUtil
+	 * @return ImageUtil
 	 */
 	public function flip($type)
 	{
-		if (!$this->image)
+		if ($type !== Flip::Horizontal && $type !== Flip::Vertical && $type !== Flip::Both)
 		{
-			return false;
+			throw new \InvalidArgumentException('You need to pass the flip type');;
 		}
 
-		if (!$type)
-		{
-			return false;
-		}
-
-		$imgdest = imagecreatetruecolor($this->width, $this->height);
+		$width = $this->getWidth();
+		$height = $this->getHeight();
+		$imgdest = imagecreatetruecolor($width, $height);
 		$imgsrc = $this->image;
-		$height = $this->height;
-		$width = $this->width;
 
 		switch ($type)
 		{
@@ -234,19 +227,13 @@ class ImageUtil
 	 */
 	public function resize($new_width = null, $new_height = null)
 	{
-		if (!$this->image)
+		if (!is_numeric($new_height) && !is_numeric($new_width))
 		{
-			throw new ImageUtilException('Object does not exists');
+			throw new \InvalidArgumentException('There are no valid values');
 		}
 
-		if (!$new_height && !$new_width)
-		{
-			throw new ImageUtilException('There are no valid values');
-		}
-
-
-		$height = $this->height;
-		$width = $this->width;
+		$height = $this->getHeight();
+		$width = $this->getWidth();
 
 		//If the width or height is give as 0, find the correct ratio using the other value
 		if (!$new_height && $new_width)
@@ -266,8 +253,7 @@ class ImageUtil
 		imagecopyresampled($new_image, $this->image, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
 
 		$this->image = $new_image;
-		$this->width = $new_width;
-		$this->height = $new_height;
+
 		return $this;
 	}
 
@@ -296,12 +282,7 @@ class ImageUtil
 	 */
 	public function resizeAspectRatio($newX, $newY, $fillRed = 255, $fillGreen = 255, $fillBlue = 255)
 	{
-		if (!$this->image)
-		{
-			throw new ImageUtilException('Object does not exists');
-		}
-
-		if (!$newX || !$newY)
+		if (!is_numeric($newX) || !is_numeric($newY))
 		{
 			throw new ImageUtilException('There are no valid values');
 		}
@@ -341,8 +322,6 @@ class ImageUtil
 		imagecopyresampled($imw, $im, $xxx, $yyy, 0, 0, $x, $y, imagesx($im), imagesy($im));
 
 		$this->image = $imw;
-		$this->width = $x;
-		$this->height = $y;
 
 		return $this;
 	}
@@ -516,13 +495,10 @@ class ImageUtil
 	 * @param type $from_y Y coordinate from where the crop should start
 	 * @param type $to_x X coordinate from where the crop should end
 	 * @param type $to_y Y coordinate from where the crop should end
-	 * @return boolean|ImageUtil
+	 * @return ImageUtil
 	 */
 	public function crop($from_x, $from_y, $to_x, $to_y)
 	{
-		if (!$this->image)
-			return false;
-
 		$new_width = $to_x - $from_x;
 		$new_height = $to_y - $from_y;
 		//Create the image
@@ -540,14 +516,15 @@ class ImageUtil
 	 * Returns: false if save operation fails.
 	 * Example: $img->save("image.png");
 	 * 			$image->save('file.jpg');
+	 * @return ImageUtil The object if not destroyed
 	 */
-	public function save($file_name, $destroy = true)
+	public function save($file_name = null)
 	{
-		if (!$this->image)
+		if (is_null($file_name))
 		{
-			return false;
+			$file_name = $this->file_name;
 		}
-
+		
 		$extension = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
 
 		switch ($extension)
@@ -565,23 +542,16 @@ class ImageUtil
 			default:
 				break;
 		}
-		if ($destroy)
-			$this->destroy();
-
-		return false;
+		
+		return $this;
 	}
 
 	/**
-	 * Display the image and then destroy it.
+	 * Display the image.
 	 * Example: $img->show();
 	 */
-	public function show($destroy = true)
+	public function show()
 	{
-		if (!$this->image)
-		{
-			return false;
-		}
-
 		if (ob_get_level())
 		{
 			ob_clean();
@@ -601,10 +571,6 @@ class ImageUtil
 			default:
 				break;
 		}
-		if ($destroy)
-		{
-			$this->destroy();
-		}
 
 		return $this;
 	}
@@ -622,9 +588,10 @@ class ImageUtil
 
 	/**
 	 * Make transparent the image. The transparent color must be provided
-	 * @param type $transpRed
-	 * @param type $transpGreen
-	 * @param type $transpBlue
+	 * @param int $transpRed
+	 * @param int $transpGreen
+	 * @param int $transpBlue
+	 * @return ImageUtil The image util object
 	 */
 	public function makeTransparent($transpRed=255, $transpGreen=255, $transpBlue=255)
 	{
@@ -640,17 +607,23 @@ class ImageUtil
 		imagecopyresampled($imw, $this->image, 0, 0, 0, 0, $x, $y, $x, $y);
 
 		$this->image = $imw;
-		$this->width = $x;
-		$this->height = $y;
+
+		return $this;
 	}
 
 	/**
 	 * Destroy the image to save the memory. Do this after all operations are complete.
 	 */
-	public function destroy()
+	public function __destruct()
 	{
-		imagedestroy($this->image);
-		imagedestroy($this->org_image);
+		if (!is_null($this->image))
+		{
+			imagedestroy($this->image);
+			imagedestroy($this->org_image);
+
+			unset($this->image);
+			unset($this->org_image);
+		}
 	}
 
 }
