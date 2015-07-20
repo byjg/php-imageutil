@@ -29,7 +29,7 @@ class ImageUtilTest extends \PHPUnit_Framework_TestCase
 	 */
 	protected function tearDown()
 	{
-		
+
 	}
 
 	/**
@@ -51,7 +51,7 @@ class ImageUtilTest extends \PHPUnit_Framework_TestCase
 	protected function getResourceString($resourceImg)
 	{
 		ob_start();
-		imagejpeg($resourceImg, null, 100);
+		ThirdParty\BMP::imagebmp($resourceImg, null);
 		$resourceStr = ob_get_contents();
 		ob_end_clean();
 
@@ -78,10 +78,10 @@ class ImageUtilTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testRotate()
 	{
-		$image = new ImageUtil(__DIR__ . '/rotate.png');
+		$image = new ImageUtil(__DIR__ . '/rotate.bmp');
 
 		$this->object->rotate(45, 230);
-		
+
 		$this->assertEquals($this->getResourceString($image->getImage()), $this->getResourceString($this->object->getImage()));
 	}
 
@@ -90,7 +90,7 @@ class ImageUtilTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testFlip_Vertical()
 	{
-		$image = new ImageUtil(__DIR__.'/flip-vertical.png');
+		$image = new ImageUtil(__DIR__.'/flip-vertical.bmp');
 
 		$this->object->rotate(10, 230);
 		$this->object->flip(Enum\Flip::VERTICAL);
@@ -103,7 +103,7 @@ class ImageUtilTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testFlip_Both()
 	{
-		$image = new ImageUtil(__DIR__.'/flip-both.png');
+		$image = new ImageUtil(__DIR__.'/flip-both.bmp');
 
 		$this->object->rotate(80, 230);
 		$this->object->flip(Enum\Flip::BOTH);
@@ -116,7 +116,7 @@ class ImageUtilTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testFlip_Horizontal()
 	{
-		$image = new ImageUtil(__DIR__.'/flip-horizontal.png');
+		$image = new ImageUtil(__DIR__.'/flip-horizontal.bmp');
 
 		$this->object->rotate(80, 230);
 		$this->object->flip(Enum\Flip::HORIZONTAL);
@@ -145,7 +145,7 @@ class ImageUtilTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testResizeSquare()
 	{
-		$image = new ImageUtil(__DIR__.'/resize_square.png');
+		$image = new ImageUtil(__DIR__.'/resize_square.bmp');
 
 		$this->object->resizeSquare(400, 255, 0, 0);
 
@@ -157,7 +157,7 @@ class ImageUtilTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testResizeAspectRatio()
 	{
-		$image = new ImageUtil(__DIR__.'/resize_aspectratio.png');
+		$image = new ImageUtil(__DIR__.'/resize_aspectratio.bmp');
 
 		$this->object->resizeAspectRatio(400, 200, 255, 0, 0);
 
@@ -253,7 +253,7 @@ class ImageUtilTest extends \PHPUnit_Framework_TestCase
 	public function testRestore()
 	{
 		$expected = $this->getResourceString($this->object->getImage());
-		
+
 		// Do some operactions
 		$this->object->rotate(30);
 		$this->object->flip(Enum\Flip::BOTH);
