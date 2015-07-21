@@ -95,15 +95,25 @@ class ImageUtil
 			case 'image/png':
 				$image = imagecreatefrompng($image_file);
 				break;
+
+			case 'image/bmp':
+            case 'image/x-windows-bmp':
+            case 'image/x-ms-bmp':
+				$image = ThirdParty\BMP::imagecreatefrombmp($image_file);
+				break;
+
 			case 'image/jpeg':
 				$image = imagecreatefromjpeg($image_file);
 				break;
+
 			case 'image/gif':
 				$old_id = imagecreatefromgif($image_file);
 				$image = imagecreatetruecolor($img[0], $img[1]);
 				imagecopy($image, $old_id, 0, 0, 0, 0, $img[0], $img[1]);
 				break;
+
 			default:
+                throw new ImageUtilException("Mime type ${img['mime']} is not supported");
 				break;
 		}
 
@@ -522,7 +532,7 @@ class ImageUtil
 		{
 			$file_name = $this->file_name;
 		}
-		
+
 		$extension = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
 
 		switch ($extension)
@@ -538,10 +548,13 @@ class ImageUtil
 			case 'gif':
 				return imagegif($this->image, $file_name);
 
+			case 'bmp':
+				return ThirdParty\BMP::imagebmp($this->image, $file_name);
+
 			default:
 				break;
 		}
-		
+
 		return $this;
 	}
 
@@ -561,12 +574,21 @@ class ImageUtil
 			case 'image/png':
 				imagepng($this->image);
 				break;
+
 			case 'image/jpeg':
 				imagejpeg($this->image);
 				break;
-			case 'image/gif':
+
+			case 'image/bmp':
+            case 'image/x-windows-bmp':
+            case 'image/x-ms-bmp':
+				ThirdParty\BMP::imagebmp($this->image);
+				break;
+
+            case 'image/gif':
 				imagegif($this->image);
 				break;
+
 			default:
 				break;
 		}
