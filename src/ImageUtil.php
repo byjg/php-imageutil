@@ -516,7 +516,7 @@ class ImageUtil
 	 * 			$image->save('file.jpg');
 	 * @return ImageUtil The object if not destroyed
 	 */
-	public function save($file_name = null)
+	public function save($file_name = null, $quality = 90)
 	{
 		if (is_null($file_name))
 		{
@@ -528,11 +528,12 @@ class ImageUtil
 		switch ($extension)
 		{
 			case 'png':
-				return imagepng($this->image, $file_name);
+				$pngQuality = round((9 * $quality)/100);
+				return imagepng($this->image, $file_name, $pngQuality);
 
 			case 'jpeg':
 			case 'jpg':
-				return imagejpeg($this->image, $file_name);
+				return imagejpeg($this->image, $file_name, $quality);
 
 			case 'gif':
 				return imagegif($this->image, $file_name);
