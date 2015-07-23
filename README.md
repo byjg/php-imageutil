@@ -41,14 +41,14 @@ $img->rotate(45);
 ```
 
 ### Resize
-Resize the image to an new size. Size can be specified in the arugments.
+Resize the image to an new size. Size can be specified in the arguments.
 ```php
 $img = new ImageUtil('wheel.png');
 $img->resize(45);
 ```
 
 ### Resize Square
-Resize the image in a square format and maintain the aspect ratio. The spaces left are filled the RGB color provided.
+Resize the image into a square format and maintain the aspect ratio. The spaces left are filled with the RGB color provided.
 
 ```php
 $img = new ImageUtil('wheel.png');
@@ -84,7 +84,7 @@ $img->crop(250,200,400,250);
 ```
 
 ### Make Transparent
-Make transparent the image. The transparent color must be provided
+Make the image transparent. The transparent color must be provided.
 ```php
 $img = new ImageUtil('wheel.png');
 $img->makeTransparent();
