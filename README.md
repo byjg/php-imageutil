@@ -1,5 +1,6 @@
 # ImageUtil by JG
-[![SensioLabsInsight](https://insight.sensiolabs.com/projects/dbb67d29-e4c2-44c1-bcef-7b8ed0371332/big.png)](https://insight.sensiolabs.com/projects/dbb67d29-e4c2-44c1-bcef-7b8ed0371332)
+[![Build Status](https://travis-ci.org/byjg/imageutil.svg?branch=master)](https://travis-ci.org/byjg/imageutil)
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/dbb67d29-e4c2-44c1-bcef-7b8ed0371332/mini.png)](https://insight.sensiolabs.com/projects/dbb67d29-e4c2-44c1-bcef-7b8ed0371332)
 
 
 A wrapper collection for GD library in PHP. Defines a set of methods for flip, crop, resize, stamp and others easily.
