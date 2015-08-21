@@ -7,6 +7,8 @@ use ByJG\ImageUtil\Enum\StampPosition;
 use ByJG\ImageUtil\Enum\TextAlignment;
 use ByJG\ImageUtil\Exception\ImageUtilException;
 use ByJG\ImageUtil\Exception\NotFoundException;
+use ByJG\ImageUtil\ThirdParty\BMP;
+use InvalidArgumentException;
 use RuntimeException;
 
 /**
@@ -99,7 +101,7 @@ class ImageUtil
 			case 'image/bmp':
             case 'image/x-windows-bmp':
             case 'image/x-ms-bmp':
-				$image = ThirdParty\BMP::imagecreatefrombmp($image_file);
+				$image = BMP::imageCreateFromBmp($image_file);
 				break;
 
 			case 'image/jpeg':
@@ -161,7 +163,7 @@ class ImageUtil
 	{
 		if (!is_numeric($angle))
 		{
-			throw new \InvalidArgumentException('You need to pass the angle');
+			throw new InvalidArgumentException('You need to pass the angle');
 		}
 
 		$this->image = imagerotate($this->image, $angle, $background);
@@ -180,7 +182,7 @@ class ImageUtil
 	{
 		if ($type !== Flip::HORIZONTAL && $type !== Flip::VERTICAL && $type !== Flip::BOTH)
 		{
-			throw new \InvalidArgumentException('You need to pass the flip type');;
+			throw new InvalidArgumentException('You need to pass the flip type');;
 		}
 
 		$width = $this->getWidth();
@@ -237,7 +239,7 @@ class ImageUtil
 	{
 		if (!is_numeric($new_height) && !is_numeric($new_width))
 		{
-			throw new \InvalidArgumentException('There are no valid values');
+			throw new InvalidArgumentException('There are no valid values');
 		}
 
 		$height = $this->getHeight();
@@ -549,7 +551,7 @@ class ImageUtil
 				return imagegif($this->image, $file_name);
 
 			case 'bmp':
-				return ThirdParty\BMP::imagebmp($this->image, $file_name);
+				return BMP::image($this->image, $file_name);
 
 			default:
 				break;
@@ -582,7 +584,7 @@ class ImageUtil
 			case 'image/bmp':
             case 'image/x-windows-bmp':
             case 'image/x-ms-bmp':
-				ThirdParty\BMP::imagebmp($this->image);
+				BMP::image($this->image);
 				break;
 
             case 'image/gif':

@@ -3,7 +3,6 @@
 namespace ByJG\ImageUtil\ThirdParty;
 
 use ByJG\ImageUtil\Exception\ImageUtilException;
-use ByJG\ImageUtil\Exception\NotFoundException;
 
 /**
  * Read 1,4,8,24,32bit BMP files and Save 24bit BMP files
@@ -16,7 +15,7 @@ use ByJG\ImageUtil\Exception\NotFoundException;
  */
 class BMP
 {
-	public static function imagebmp($img, $filename = null)
+	public static function image($img, $filename = null)
 	{
 		$wid = imagesx($img);
 		$hei = imagesy($img);
@@ -81,7 +80,7 @@ class BMP
 		}
 	}
 
-	public static function imagecreatefrombmp($filename)
+	public static function imageCreateFromBmp($filename)
 	{
 		$f = fopen($filename, "rb");
 
@@ -91,7 +90,7 @@ class BMP
 		                 'Vwidth/Vheight/vplanes/vbits_per_pixel/Vcompression/Vdata_size/'.
 		                 'Vh_resolution/Vv_resolution/Vcolors/Vimportant_colors', $header);
 
-	    if ($header['identifier1'] != 66 or $header['identifier2'] != 77)
+	    if ($header['identifier1'] != 66 || $header['identifier2'] != 77)
 	    {
 	    	throw new ImageUtilException('Not a valid bmp file');
 	    }
@@ -132,10 +131,10 @@ class BMP
 	    for ($y=$hei-1; $y>=0; $y--)
 	    {
 			$row = fread($f, $wid2);
-			$pixels = self::str_split2($row, $bps, $palette);
+			$pixels = self::strSplit($row, $bps, $palette);
 	    	for ($x=0; $x<$wid; $x++)
 	    	{
-	    		self::makepixel($img, $x, $y, $pixels[$x], $bps);
+	    		self::makePixel($img, $x, $y, $pixels[$x], $bps);
 	    	}
 	    }
 		fclose($f);
@@ -143,7 +142,7 @@ class BMP
 		return $img;
 	}
 
-	private static function str_split2($row, $bps, $palette)
+	private static function strSplit($row, $bps, $palette)
 	{
 		switch ($bps)
 		{
@@ -183,7 +182,7 @@ class BMP
 		}
 	}
 
-	private static function makepixel($img, $x, $y, $str, $bps)
+	private static function makePixel($img, $x, $y, $str, $bps)
 	{
 		switch ($bps)
 		{
@@ -191,7 +190,7 @@ class BMP
                 $a = ord($str[0]);
 				$b = ord($str[1]);
 				$c = ord($str[2]);
-				$d = 256 - ord($str[3]); //TODO: gives imperfect results
+				$d = 256 - ord($str[3]); 
                 $pixel = $d*256*256*256 + $c*256*256 + $b*256 + $a;
                 imagesetpixel($img, $x, $y, $pixel);
                 break;
