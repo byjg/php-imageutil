@@ -312,31 +312,31 @@ class ImageUtil
     /**
      * Stamp an image in the current image.
      *
-     * @param ImageUtil|string $src_image The image path or the image gd resource.
+     * @param ImageUtil|string $srcImage The image path or the image gd resource.
      * @param int $position
      * @param int $padding
      * @param int $oppacity
      * @return ImageUtil
      */
-    public function stampImage($src_image, $position = StampPosition::BOTTOMRIGHT, $padding = 5, $oppacity = 100)
+    public function stampImage($srcImage, $position = StampPosition::BOTTOMRIGHT, $padding = 5, $oppacity = 100)
     {
-        $dst_image = $this->image;
+        $dstImage = $this->image;
 
-        if ($src_image instanceof ImageUtil) {
-            $imageUtil = $src_image;
+        if ($srcImage instanceof ImageUtil) {
+            $imageUtil = $srcImage;
         } else {
-            $imageUtil = new ImageUtil($src_image);
+            $imageUtil = new ImageUtil($srcImage);
         }
 
         $watermark = $imageUtil->getImage();
 
-        imagealphablending($dst_image, true);
+        imagealphablending($dstImage, true);
         imagealphablending($watermark, true);
 
-        $dst_w = imagesx($dst_image);
-        $dst_h = imagesy($dst_image);
-        $src_w = imagesx($watermark);
-        $src_h = imagesy($watermark);
+        $dstWidth = imagesx($dstImage);
+        $dstHeight = imagesy($dstImage);
+        $srcWIdth = imagesx($watermark);
+        $srcHeight = imagesy($watermark);
 
         if (is_array($padding)) {
             $padx = $padding[0];
@@ -350,41 +350,44 @@ class ImageUtil
         }
         switch ($position) {
             case StampPosition::TOPRIGHT:
-                imagecopymerge($dst_image, $watermark, ($dst_w - $src_w) - $padx, $pady, 0, 0, $src_w, $src_h, $oppacity);
+                $dstX = ($dstWidth - $srcWIdth) - $padx;
+                $dstY = $pady;
                 break;
             case StampPosition::TOPLEFT:
-                imagecopymerge($dst_image, $watermark, $padx, $pady, 0, 0, $src_w, $src_h, $oppacity);
+                $dstX = $padx;
+                $dstY = $pady;
                 break;
             case StampPosition::BOTTOMRIGHT:
-                imagecopymerge($dst_image, $watermark, ($dst_w - $src_w) - $padx, ($dst_h - $src_h) - $pady, 0, 0,
-                    $src_w, $src_h, $oppacity);
+                $dstX = ($dstWidth - $srcWIdth) - $padx;
+                $dstY = ($dstHeight - $srcHeight) - $pady;
                 break;
             case StampPosition::BOTTOMLEFT:
-                imagecopymerge($dst_image, $watermark, $padx, ($dst_h - $src_h) - $pady, 0, 0, $src_w, $src_h, $oppacity);
-                break;
+                $dstX = $padx;
+                $dstY = ($dstHeight - $srcHeight) - $pady;
             case StampPosition::CENTER:
-                imagecopymerge($dst_image, $watermark, (($dst_w / 2) - ($src_w / 2)), (($dst_h / 2) - ($src_h / 2)), 0,
-                    0, $src_w, $src_h, $oppacity);
+                $dstX = (($dstWidth / 2) - ($srcWIdth / 2));
+                $dstY = (($dstHeight / 2) - ($srcHeight / 2));
                 break;
             case StampPosition::TOP:
-                imagecopymerge($dst_image, $watermark, (($dst_w / 2) - ($src_w / 2)), $pady, 0, 0, $src_w, $src_h,
-                    $oppacity);
+                $dstX = (($dstWidth / 2) - ($srcWIdth / 2));
+                $dstY = $pady;
                 break;
             case StampPosition::BOTTOM:
-                imagecopymerge($dst_image, $watermark, (($dst_w / 2) - ($src_w / 2)), ($dst_h - $src_h) - $pady, 0, 0,
-                    $src_w, $src_h, $oppacity);
+                $dstX = (($dstWidth / 2) - ($srcWIdth / 2));
+                $dstY = ($dstHeight - $srcHeight) - $pady;
                 break;
             case StampPosition::LEFT:
-                imagecopymerge($dst_image, $watermark, $padx, (($dst_h / 2) - ($src_h / 2)), 0, 0, $src_w, $src_h,
-                    $oppacity);
+                $dstX = $padx;
+                $dstY = (($dstHeight / 2) - ($srcHeight / 2));
                 break;
             case StampPosition::RIGHT:
-                imagecopymerge($dst_image, $watermark, ($dst_w - $src_w) - $padx, (($dst_h / 2) - ($src_h / 2)), 0, 0,
-                    $src_w, $src_h, $oppacity);
+                $dstX = ($dstWidth - $srcWIdth) - $padx;
+                $dstY = (($dstHeight / 2) - ($srcHeight / 2));
                 break;
         }
 
-        $this->image = $dst_image;
+        imagecopymerge($dstImage, $watermark, $dstX, $dstY, 0, 0, $srcWIdth, $srcHeight, $oppacity);
+        $this->image = $dstImage;
 
         return $this;
     }
