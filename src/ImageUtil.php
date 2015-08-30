@@ -106,7 +106,6 @@ class ImageUtil
 
             default:
                 throw new ImageUtilException("Mime type ${img['mime']} is not supported");
-                break;
         }
 
         if ($http) {
@@ -170,7 +169,6 @@ class ImageUtil
     {
         if ($type !== Flip::HORIZONTAL && $type !== Flip::VERTICAL && $type !== Flip::BOTH) {
             throw new InvalidArgumentException('You need to pass the flip type');
-            ;
         }
 
         $width = $this->getWidth();
