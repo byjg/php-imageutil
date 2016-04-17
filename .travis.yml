@@ -7,6 +7,5 @@ install:
   - composer install
 
 script: 
-  - cd tests
-  - phpunit -v --bootstrap bootstrap.php src/ImageUtilTest.php 
+  - phpunit
 

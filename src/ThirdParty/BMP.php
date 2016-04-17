@@ -99,6 +99,7 @@ class BMP
         $img = imagecreatetruecolor($header['width'], $header['height']);
 
         //read palette
+        $palette = array();
         if ($bps < 9) {
             for ($i = 0; $i < $colors; $i++) {
                 $palette[] = self::undword(fread($f, 4));
@@ -108,7 +109,6 @@ class BMP
                 imagealphablending($img, false);
                 imagesavealpha($img, true);
             }
-            $palette = array();
         }
 
         //read pixels
@@ -158,6 +158,8 @@ class BMP
                 }
                 return $out;
         }
+
+        return [];
     }
 
     private static function makePixel($img, $x, $y, $str, $bps)

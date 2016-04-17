@@ -27,6 +27,8 @@ class ImageUtil
      * Construct an Image Handler based on an image resource or file name
      *
      * @param string|resource $image_file The path or URL to image or the image resource.
+     * @throws ImageUtilException
+     * @throws NotFoundException
      */
     public function __construct($image_file)
     {
@@ -135,7 +137,7 @@ class ImageUtil
     /**
      * Enter description here...
      *
-     * @return image
+     * @return resource
      */
     public function getImage()
     {
@@ -146,6 +148,9 @@ class ImageUtil
      * Rotates the image to any direction using the given angle.
      * Arguments: $angle - The rotation angle, in degrees.
      * Example: $img = new Image("file.png"); $img->rotate(180); $img->show(); // Turn the image upside down.
+     * @param float $angle
+     * @param int $background
+     * @return $this
      */
     public function rotate($angle, $background = 0)
     {
@@ -267,6 +272,7 @@ class ImageUtil
      * @param int $fillGreen
      * @param int $fillBlue
      * @return ImageUtil
+     * @throws ImageUtilException
      */
     public function resizeAspectRatio($newX, $newY, $fillRed = 255, $fillGreen = 255, $fillBlue = 255)
     {
@@ -315,6 +321,7 @@ class ImageUtil
      * @param int $padding
      * @param int $oppacity
      * @return ImageUtil
+     * @throws ImageUtilException
      */
     public function stampImage($srcImage, $position = StampPosition::BOTTOMRIGHT, $padding = 5, $oppacity = 100)
     {
@@ -362,6 +369,7 @@ class ImageUtil
             case StampPosition::BOTTOMLEFT:
                 $dstX = $padx;
                 $dstY = ($dstHeight - $srcHeight) - $pady;
+                break;
             case StampPosition::CENTER:
                 $dstX = (($dstWidth / 2) - ($srcWIdth / 2));
                 $dstY = (($dstHeight / 2) - ($srcHeight / 2));
@@ -382,6 +390,8 @@ class ImageUtil
                 $dstX = ($dstWidth - $srcWIdth) - $padx;
                 $dstY = (($dstHeight / 2) - ($srcHeight / 2));
                 break;
+            default:
+                throw new ImageUtilException('Invalid Stamp Position');
         }
 
         imagecopymerge($dstImage, $watermark, $dstX, $dstY, 0, 0, $srcWIdth, $srcHeight, $oppacity);
@@ -393,14 +403,14 @@ class ImageUtil
     /**
      * Writes a text on the image.
      *
-     * @param type $text
-     * @param type $point
-     * @param type $size
-     * @param type $angle
-     * @param type $font
-     * @param type $maxwidth
-     * @param int $rgbAr
-     * @param type $textAlignment
+     * @param string $text
+     * @param float[] $point
+     * @param float $size
+     * @param float $angle
+     * @param string $font
+     * @param int $maxwidth
+     * @param float[] $rgbAr
+     * @param int $textAlignment
      * @throws ImageUtilException
      */
     public function writeText($text, $point, $size, $angle, $font, $maxwidth = 0, $rgbAr = null, $textAlignment = 1)
@@ -462,10 +472,10 @@ class ImageUtil
      *
      * Example: $img -> crop(250,200,400,250);
      *
-     * @param type $from_x X coordinate from where the crop should start
-     * @param type $from_y Y coordinate from where the crop should start
-     * @param type $to_x X coordinate from where the crop should end
-     * @param type $to_y Y coordinate from where the crop should end
+     * @param float $from_x X coordinate from where the crop should start
+     * @param float $from_y Y coordinate from where the crop should start
+     * @param float $to_x X coordinate from where the crop should end
+     * @param float $to_y Y coordinate from where the crop should end
      * @return ImageUtil
      */
     public function crop($from_x, $from_y, $to_x, $to_y)
@@ -486,7 +496,9 @@ class ImageUtil
      * Argument:$file_name - the file name to which the image should be saved to
      * Returns: false if save operation fails.
      * Example: $img->save("image.png");
-     * 			$image->save('file.jpg');
+     *            $image->save('file.jpg');
+     * @param null $file_name
+     * @param int $quality
      * @return ImageUtil The object if not destroyed
      */
     public function save($file_name = null, $quality = 90)
