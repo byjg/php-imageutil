@@ -1,3 +1,4 @@
 vendor
 nbproject/private
 composer.lock
+.idea

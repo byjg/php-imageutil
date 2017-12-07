@@ -11,7 +11,7 @@ and open the template in the editor.
          convertErrorsToExceptions="true"
          convertNoticesToExceptions="true"
          convertWarningsToExceptions="true"
-         stopOnFailure="true">
+         stopOnFailure="false">
 
     <filter>
         <whitelist>
