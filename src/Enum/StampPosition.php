@@ -14,5 +14,4 @@ class StampPosition
     const LEFT = 8;
     const RIGHT = 9;
     const RANDOM = 999;
-
 }
