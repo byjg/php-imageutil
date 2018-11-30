@@ -10,5 +10,4 @@ class Flip
     const HORIZONTAL = 1;
     const VERTICAL = 2;
     const BOTH = 3;
-
 }
