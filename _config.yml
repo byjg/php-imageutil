@@ -52,7 +52,7 @@ twitter:
   card: summary
   username: byjg
 
-logo: /images/logo_byjg.png
+logo: https://opensource.byjg.com/images/logo_byjg.png
 
 analytics:
   google: UA-130014324-1
