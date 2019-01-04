@@ -47,7 +47,10 @@ social:
 analytics:
   google: UA-130014324-1
 
+plugins:
+  - jekyll-seo-tag
+
 # Build settings
 markdown: kramdown
-remote_theme: allejo/jekyll-docs-theme
+remote_theme: byjg/jekyll-docs-theme
 
