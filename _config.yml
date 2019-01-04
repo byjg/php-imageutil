@@ -45,8 +45,12 @@ social:
     url: https://opensource.byjg.com/
     profileUrl:
 
+author:
+  twitter: byjg
+
 twitter:
-  site: byjg
+  card: summary
+  username: byjg
 
 analytics:
   google: UA-130014324-1
