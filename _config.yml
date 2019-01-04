@@ -41,8 +41,12 @@ social:
     hash: opensourcebyjg
     account: 
   facebook:
-    enabled: false
+    enabled: true
+    url: https://opensource.byjg.com/
     profileUrl:
+
+twitter:
+  account: byjg
 
 analytics:
   google: UA-130014324-1
