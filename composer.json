@@ -1,19 +1,22 @@
 {
-    "name": "byjg/imageutil",
-    "description": "A wrapper collection for GD library in PHP.",
-    "authors": [
-        {
-            "name": "João Gilberto Magalhães",
-            "email": "joao@byjg.com.br"
-        }
-    ],
-	"autoload": {
-		"psr-4": {
-			"ByJG\\ImageUtil\\": "src/"
-		}
-	},
-	"license": "MIT",
-    "require": {
-		"ext-gd": "*"
-	}
+  "name": "byjg/imageutil",
+  "description": "A wrapper collection for GD library in PHP.",
+  "authors": [
+    {
+      "name": "João Gilberto Magalhães",
+      "email": "joao@byjg.com.br"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "ByJG\\ImageUtil\\": "src/"
+    }
+  },
+  "license": "MIT",
+  "require": {
+    "ext-gd": "*"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "5.7.*|7.4.*"
+  }
 }
