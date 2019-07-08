@@ -22,7 +22,7 @@ class BMP
         $hei = imagesy($img);
         $widPad = str_pad('', $wid % 4, "\0");
 
-        $size = 54 + ($wid + $widPad) * $hei * 3; //fixed
+        $size = 54 + ($wid + strlen($widPad)) * $hei * 3; //fixed
         //prepare & save header
         $header['identifier'] = 'BM';
         $header['file_size'] = self::dword($size);
