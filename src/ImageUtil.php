@@ -7,7 +7,6 @@ use ByJG\ImageUtil\Enum\StampPosition;
 use ByJG\ImageUtil\Enum\TextAlignment;
 use ByJG\ImageUtil\Exception\ImageUtilException;
 use ByJG\ImageUtil\Exception\NotFoundException;
-use ByJG\ImageUtil\ThirdParty\BMP;
 use InvalidArgumentException;
 use RuntimeException;
 
@@ -76,8 +75,7 @@ class ImageUtil
     /**
      * @param $imageFile
      * @return array|bool
-     * @throws \ByJG\ImageUtil\Exception\ImageUtilException
-     * @throws \ByJG\ImageUtil\Exception\NotFoundException
+     * @throws NotFoundException
      */
     protected function createFromFilename($imageFile)
     {
@@ -105,12 +103,6 @@ class ImageUtil
                 $image = imagecreatefrompng($imageFile);
                 break;
 
-            case 'image/bmp':
-            case 'image/x-windows-bmp':
-            case 'image/x-ms-bmp':
-                $image = BMP::imageCreateFromBmp($imageFile);
-                break;
-
             case 'image/jpeg':
                 $image = imagecreatefromjpeg($imageFile);
                 break;
@@ -122,7 +114,9 @@ class ImageUtil
                 break;
 
             default:
-                throw new ImageUtilException("Mime type ${img['mime']} is not supported");
+                // Try GD
+                $image = imagecreatefromgd($imageFile);
+                break;
         }
 
         if ($http) {
@@ -345,6 +339,7 @@ class ImageUtil
      * @param int $oppacity
      * @return ImageUtil
      * @throws ImageUtilException
+     * @throws NotFoundException
      */
     public function stampImage($srcImage, $position = StampPosition::BOTTOMRIGHT, $padding = 5, $oppacity = 100)
     {
@@ -544,9 +539,6 @@ class ImageUtil
             case 'gif':
                 return imagegif($this->image, $filename);
 
-            case 'bmp':
-                return BMP::image($this->image, $filename);
-
             default:
                 break;
         }
@@ -571,12 +563,6 @@ class ImageUtil
 
             case 'image/jpeg':
                 imagejpeg($this->image);
-                break;
-
-            case 'image/bmp':
-            case 'image/x-windows-bmp':
-            case 'image/x-ms-bmp':
-                BMP::image($this->image);
                 break;
 
             case 'image/gif':
