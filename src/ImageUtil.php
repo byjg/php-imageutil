@@ -59,7 +59,7 @@ class ImageUtil
     /**
      * @param $resource
      * @return array
-     * @throws \ByJG\ImageUtil\Exception\ImageUtilException
+     * @throws ImageUtilException
      */
     protected function createFromResource($resource)
     {
@@ -76,6 +76,7 @@ class ImageUtil
      * @param $imageFile
      * @return array|bool
      * @throws NotFoundException
+     * @throws ImageUtilException
      */
     protected function createFromFilename($imageFile)
     {
@@ -95,6 +96,9 @@ class ImageUtil
 
         $this->fileName = $imageFile;
         $img = getimagesize($imageFile);
+        if (empty($img)) {
+            throw new ImageUtilException("Invalid file: " . $imageFile);
+        }
         $image = null;
 
         //Create the image depending on what kind of file it is.
@@ -113,10 +117,13 @@ class ImageUtil
                 imagecopy($image, $oldId, 0, 0, 0, 0, $img[0], $img[1]);
                 break;
 
-            default:
-                // Try GD
-                $image = imagecreatefromgd($imageFile);
+            case 'image/bmp':
+            case 'image/x-ms-bmp':
+                $image = imagecreatefrombmp($imageFile);
                 break;
+
+            default:
+                throw new ImageUtilException("Invalid Mime Type '" . $img["mime"] . "'");
         }
 
         if ($http) {
@@ -273,7 +280,7 @@ class ImageUtil
      * @param int $fillGreen
      * @param int $fillBlue
      * @return ImageUtil
-     * @throws \ByJG\ImageUtil\Exception\ImageUtilException
+     * @throws ImageUtilException
      */
     public function resizeSquare($newSize, $fillRed = 255, $fillGreen = 255, $fillBlue = 255)
     {
@@ -539,6 +546,9 @@ class ImageUtil
             case 'gif':
                 return imagegif($this->image, $filename);
 
+            case 'bmp':
+                return imagebmp($this->image, $filename);
+
             default:
                 break;
         }
@@ -567,6 +577,11 @@ class ImageUtil
 
             case 'image/gif':
                 imagegif($this->image);
+                break;
+
+            case 'image/bmp':
+            case 'image/x-ms-bmp':
+                imagebmp($this->image);
                 break;
 
             default:
