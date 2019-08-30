@@ -119,6 +119,9 @@ class ImageUtil
 
             case 'image/bmp':
             case 'image/x-ms-bmp':
+                if (!function_exists('imagecreatefrombmp')) {
+                    require_once __DIR__ . "/ThirdParty/BMP.php";
+                }
                 $image = imagecreatefrombmp($imageFile);
                 break;
 
@@ -547,6 +550,9 @@ class ImageUtil
                 return imagegif($this->image, $filename);
 
             case 'bmp':
+                if (!function_exists('imagebmp')) {
+                    require_once __DIR__ . "/ThirdParty/BMP.php";
+                }
                 return imagebmp($this->image, $filename);
 
             default:
