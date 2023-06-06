@@ -1,20 +1,21 @@
-# ImageUtil byJG
+# ImageUtil
 
-[![Opensource ByJG](https://img.shields.io/badge/opensource-byjg.com-brightgreen.svg)](http://opensource.byjg.com)
-[![Build Status](https://travis-ci.org/byjg/imageutil.svg?branch=master)](https://travis-ci.org/byjg/imageutil)
-[![SensioLabsInsight](https://insight.sensiolabs.com/projects/dbb67d29-e4c2-44c1-bcef-7b8ed0371332/mini.png)](https://insight.sensiolabs.com/projects/dbb67d29-e4c2-44c1-bcef-7b8ed0371332)
-
+[![Opensource ByJG](https://img.shields.io/badge/opensource-byjg-success.svg)](http://opensource.byjg.com)
+[![GitHub source](https://img.shields.io/badge/Github-source-informational?logo=github)](https://github.com/byjg/imageutil/)
+[![GitHub license](https://img.shields.io/github/license/byjg/imageutil.svg)](https://opensource.byjg.com/opensource/licensing.html)
+[![GitHub release](https://img.shields.io/github/release/byjg/imageutil.svg)](https://github.com/byjg/imageutil/releases/)
+[![Build Status](https://travis-ci.com/byjg/imageutil.svg?branch=master)](https://travis-ci.com/byjg/imageutil)
 
 A wrapper collection for GD library in PHP. Defines a set of methods for flip, crop, resize, stamp and others easily.
 
-# Installation
+## Installation
 
 ```
-composer require "byjg/imageutil=1.*"
+composer require "byjg/imageutil=^4.9"
 ```
 
 
-# Creating the Image
+## Creating the Image
 
 ```php
 <?php
@@ -29,7 +30,7 @@ $resourceImg = imagecreatetruecolor(200, 300);
 $img3 = new ImageUtil($resourceImg);
 ```
 
-# Flip an image
+## Flip an image
 
 Mirrors the given image in the desired way.i
 
@@ -39,7 +40,7 @@ $img = new ImageUtil('wheel.png');
 $img->flip(Flip::Vertical)->resize(120, null)->save('wheel.jpg');
 ```
 
-# Rotate
+## Rotate
 
 Rotates the image to any direction using the given angle.
 
@@ -49,17 +50,17 @@ $img = new ImageUtil('wheel.png');
 $img->rotate(45);
 ```
 
-# Resize
+## Resize
 
 Resize the image to an new size. Size can be specified in the arguments.
 
 ```php
 <?php
 $img = new ImageUtil('wheel.png');
-$img->resize(45);
+$img->resize(640, 480);
 ```
 
-# Resize Square
+## Resize Square
 
 Resize the image into a square format and maintain the aspect ratio. The spaces left are filled with the RGB color provided.
 
@@ -69,7 +70,7 @@ $img = new ImageUtil('wheel.png');
 $img->resizeSquare(200);
 ```
 
-# Resize and maintain the AspectRatio
+## Resize and maintain the AspectRatio
 
 Resize the image but the aspect ratio is respected. The spaces left are filled with the RGB color provided.
 
@@ -79,7 +80,7 @@ $img = new ImageUtil('wheel.png');
 $img->resizeAspectRatio(200, 150)
 ```
 
-# Stamp Image
+## Stamp Image
 
 Stamp an image in the current image.
 
@@ -90,7 +91,7 @@ $stamp = new ImageUtil('http://www.mysite.com/logo.png');
 $img->stampImage($stamp, StampPosition::BottomRight);
 ```
 
-# Write Text
+## Write Text
 
 Writes a text on the image.
 
@@ -100,7 +101,7 @@ $img = new ImageUtil('wheel.png');
 $img->writeText('Sample', 0, 70, 45, 'Arial');
 ```
 
-# Crop Image
+## Crop Image
 
 Crops the given image from the ($from_x,$from_y) point to the ($to_x,$to_y) point.
 
@@ -110,7 +111,7 @@ $img = new ImageUtil('wheel.png');
 $img->crop(250,200,400,250);
 ```
 
-# Make Transparent
+## Make Transparent
 
 Make the image transparent. The transparent color must be provided.
 
@@ -120,28 +121,28 @@ $img = new ImageUtil('wheel.png');
 $img->makeTransparent();
 ```
 
-# Restoring the changes
+## Restoring the changes
 
 ```php
 <?php
 $img->restore();
 ```
 
-# Destroy the resouce
+## Destroy the resouce
 
 ```php
 <?php
 $img->destroy();
 ```
 
-# Saving the Image
+## Saving the Image
 
 ```php
 <?php
 $img->save('filename.gif')
 ```
 
-# Other functions
+## Other functions
 
 ```php
 <?php
@@ -153,3 +154,5 @@ $height = $img->getHeight();
 $resource = $img->getImage();
 ````
 
+----
+[Open source ByJG](http://opensource.byjg.com)

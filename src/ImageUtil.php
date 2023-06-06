@@ -63,7 +63,7 @@ class ImageUtil
      */
     protected function createFromResource($resource)
     {
-        if (get_resource_type($resource) == 'gd') {
+        if (is_resource($resource) || $resource instanceof \GdImage) {
             $this->image = $resource;
             $this->fileName = sys_get_temp_dir() . '/img_' . uniqid() . '.png';
 
@@ -268,7 +268,7 @@ class ImageUtil
         //Create the image
         $newImage = imagecreatetruecolor($newWidth, $newHeight);
         imagealphablending($newImage, false);
-        imagecopyresampled($newImage, $this->image, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
+        imagecopyresampled($newImage, $this->image, 0, 0, 0, 0, intval($newWidth), intval($newHeight), $width, $height);
 
         $this->image = $newImage;
 
@@ -333,7 +333,7 @@ class ImageUtil
         imagefill($imw, 0, 0, $color);
         imagealphablending($imw, false);
 
-        imagecopyresampled($imw, $image, $xxx, $yyy, 0, 0, $curX, $curY, imagesx($image), imagesy($image));
+        imagecopyresampled($imw, $image, intval($xxx), intval($yyy), 0, 0, intval($curX), intval($curY), imagesx($image), imagesy($image));
 
         $this->image = $imw;
 

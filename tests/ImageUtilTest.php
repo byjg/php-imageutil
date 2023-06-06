@@ -22,19 +22,10 @@ class ImageUtilTest extends TestCase
      * @throws ImageUtilException
      * @throws NotFoundException
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $resourceImg = imagecreatetruecolor(500, 100);
         $this->object = new ImageUtil($resourceImg);
-    }
-
-    /**
-     * Tears down the fixture, for example, closes a network connection.
-     * This method is called after a test is executed.
-     */
-    protected function tearDown()
-    {
-
     }
 
     public function testGetWidth()
@@ -240,7 +231,7 @@ class ImageUtilTest extends TestCase
     {
         $fileName = sys_get_temp_dir() . '/testing.png';
 
-        $this->assertFileNotExists($fileName);
+        $this->assertFileDoesNotExist($fileName);
         try {
             $this->object->save($fileName);
             $this->assertFileExists($fileName);
