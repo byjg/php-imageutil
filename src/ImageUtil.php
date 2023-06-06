@@ -7,6 +7,8 @@ use ByJG\ImageUtil\Enum\StampPosition;
 use ByJG\ImageUtil\Enum\TextAlignment;
 use ByJG\ImageUtil\Exception\ImageUtilException;
 use ByJG\ImageUtil\Exception\NotFoundException;
+use ByJG\ImageUtil\Handler\ImageHandlerFactory;
+use GdImage;
 use InvalidArgumentException;
 use RuntimeException;
 
@@ -63,7 +65,7 @@ class ImageUtil
      */
     protected function createFromResource($resource)
     {
-        if (is_resource($resource) || $resource instanceof \GdImage) {
+        if (is_resource($resource) || $resource instanceof GdImage) {
             $this->image = $resource;
             $this->fileName = sys_get_temp_dir() . '/img_' . uniqid() . '.png';
 
@@ -74,7 +76,7 @@ class ImageUtil
 
     /**
      * @param $imageFile
-     * @return array|bool
+     * @return array
      * @throws NotFoundException
      * @throws ImageUtilException
      */
@@ -99,41 +101,11 @@ class ImageUtil
         if (empty($img)) {
             throw new ImageUtilException("Invalid file: " . $imageFile);
         }
-        $image = null;
-
-        //Create the image depending on what kind of file it is.
-        switch ($img['mime']) {
-            case 'image/png':
-                $image = imagecreatefrompng($imageFile);
-                break;
-
-            case 'image/jpeg':
-                $image = imagecreatefromjpeg($imageFile);
-                break;
-
-            case 'image/gif':
-                $oldId = imagecreatefromgif($imageFile);
-                $image = imagecreatetruecolor($img[0], $img[1]);
-                imagecopy($image, $oldId, 0, 0, 0, 0, $img[0], $img[1]);
-                break;
-
-            case 'image/bmp':
-            case 'image/x-ms-bmp':
-                if (!function_exists('imagecreatefrombmp')) {
-                    require_once __DIR__ . "/ThirdParty/BMP.php";
-                }
-                $image = imagecreatefrombmp($imageFile);
-                break;
-
-            default:
-                throw new ImageUtilException("Invalid Mime Type '" . $img["mime"] . "'");
-        }
+        $this->image = ImageHandlerFactory::instanceFromMime($img['mime'])->load($imageFile);
 
         if ($http) {
             unlink($imageFile);
         }
-
-        $this->image = $image;
 
         return $img;
     }
@@ -536,28 +508,7 @@ class ImageUtil
 
         $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
 
-        switch ($extension) {
-            case 'png':
-                $pngQuality = round((9 * $quality) / 100);
-
-                return imagepng($this->image, $filename, $pngQuality);
-
-            case 'jpeg':
-            case 'jpg':
-                return imagejpeg($this->image, $filename, $quality);
-
-            case 'gif':
-                return imagegif($this->image, $filename);
-
-            case 'bmp':
-                if (!function_exists('imagebmp')) {
-                    require_once __DIR__ . "/ThirdParty/BMP.php";
-                }
-                return imagebmp($this->image, $filename);
-
-            default:
-                break;
-        }
+        ImageHandlerFactory::instanceFromExtension($extension)->save($this->image, $filename, ['quality' => $quality]);
 
         return $this;
     }
@@ -572,28 +523,7 @@ class ImageUtil
             ob_clean();
         }
         header("Content-type: " . $this->info['mime']);
-        switch ($this->info['mime']) {
-            case 'image/png':
-                imagepng($this->image);
-                break;
-
-            case 'image/jpeg':
-                imagejpeg($this->image);
-                break;
-
-            case 'image/gif':
-                imagegif($this->image);
-                break;
-
-            case 'image/bmp':
-            case 'image/x-ms-bmp':
-                imagebmp($this->image);
-                break;
-
-            default:
-                break;
-        }
-
+        ImageHandlerFactory::instanceFromMime($this->info['mime'])->output($this->image);
         return $this;
     }
 

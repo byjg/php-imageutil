@@ -87,7 +87,7 @@ Stamp an image in the current image.
 ```php
 <?php
 $img = new ImageUtil('wheel.png');
-$stamp = new ImageUtil('http://www.mysite.com/logo.png');
+$stamp = new ImageUtil('https://www.mysite.com/logo.png');
 $img->stampImage($stamp, StampPosition::BottomRight);
 ```
 

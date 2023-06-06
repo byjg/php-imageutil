@@ -287,4 +287,31 @@ class ImageUtilTest extends TestCase
             'This test has not been implemented yet.'
         );
     }
+
+    public function testSaveAllFormats()
+    {
+        $image = new ImageUtil(__DIR__ . '/assets/flip-both.bmp');
+
+        $fileList = [
+            sys_get_temp_dir() . '/test.png',
+            sys_get_temp_dir() . '/test.gif',
+            sys_get_temp_dir() . '/test.jpg',
+            sys_get_temp_dir() . '/test.bmp'
+        ];
+
+        // Delete file if exists
+        foreach ($fileList as $item) {
+            if (file_exists($item)) {
+                unlink($item);
+            }
+        }
+
+        // Save to different formats
+        foreach ($fileList as $filename) {
+            $this->assertFileDoesNotExist($filename);
+            $image->save($filename);
+            $this->assertFileExists($filename);
+            new ImageUtil($filename);
+        }
+    }
 }
