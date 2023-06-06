@@ -9,7 +9,6 @@ use PHPUnit\Framework\TestCase;
 
 class ImageUtilTest extends TestCase
 {
-
     /**
      * @var ImageUtil
      */
@@ -60,6 +59,38 @@ class ImageUtilTest extends TestCase
     }
 
     /**
+     * @param ImageUtil $expected
+     * @param ImageUtil $actual
+     * @param float $threshold
+     * @param bool $lessThan
+     * @return void
+     */
+    protected function assertImages($expected, $actual, $threshold, $lessThan)
+    {
+        if (!class_exists('\imagick')) {
+            $this->markTestIncomplete('PECL Imagick not installed');
+        }
+        $expected->save(sys_get_temp_dir() . '/expected.bmp');
+        $actual->save(sys_get_temp_dir() . '/actual.bmp');
+
+        $image1 = new \imagick(sys_get_temp_dir() . '/expected.bmp');
+        $image2 = new \imagick(sys_get_temp_dir() . '/actual.bmp');
+
+        $result = $image1->compareImages($image2, \Imagick::METRIC_MEANSQUAREERROR);
+        $lessThan ? $this->assertLessThan($threshold, $result[1]) : $this->assertGreaterThanOrEqual($threshold, $result[1]);
+    }
+
+    protected function assertImageSimilar($expected, $actual)
+    {
+        $this->assertImages($expected, $actual, 0.1, true);
+    }
+
+    protected function assertImageNotSimilar($expected, $actual)
+    {
+        $this->assertImages($expected, $actual, 0.1, false);
+    }
+
+    /**
      * @throws ImageUtilException
      * @throws NotFoundException
      */
@@ -69,10 +100,7 @@ class ImageUtilTest extends TestCase
 
         $this->object->rotate(45, 230);
 
-        $this->assertEquals(
-            $this->getResourceString($image->getImage()),
-            $this->getResourceString($this->object->getImage())
-        );
+        $this->assertImageSimilar($image, $this->object);
     }
 
     /**
@@ -86,10 +114,7 @@ class ImageUtilTest extends TestCase
         $this->object->rotate(10, 230);
         $this->object->flip(Flip::VERTICAL);
 
-        $this->assertEquals(
-            $this->getResourceString($image->getImage()),
-            $this->getResourceString($this->object->getImage())
-        );
+        $this->assertImageSimilar($image, $this->object);
     }
 
     /**
@@ -103,10 +128,7 @@ class ImageUtilTest extends TestCase
         $this->object->rotate(80, 230);
         $this->object->flip(Flip::BOTH);
 
-        $this->assertEquals(
-            $this->getResourceString($image->getImage()),
-            $this->getResourceString($this->object->getImage())
-        );
+        $this->assertImageSimilar($image, $this->object);
     }
 
     /**
@@ -120,22 +142,17 @@ class ImageUtilTest extends TestCase
         $this->object->rotate(80, 230);
         $this->object->flip(Flip::HORIZONTAL);
 
-        $this->assertEquals(
-            $this->getResourceString($image->getImage()),
-            $this->getResourceString($this->object->getImage())
-        );
+        $this->assertImageSimilar($image, $this->object);
     }
 
     public function testResize()
     {
         // Create the object
-        $resourceImg = imagecreatetruecolor(800, 30);
-        $expected = $this->getResourceString($resourceImg);
+        $resourceImg = new ImageUtil(imagecreatetruecolor(800, 30));
 
         $this->object->resize(800, 30);
-        $result = $this->getResourceString($this->object->getImage());
 
-        $this->assertEquals($expected, $result);
+        $this->assertImageSimilar($resourceImg, $this->object);
     }
 
     /**
@@ -148,10 +165,7 @@ class ImageUtilTest extends TestCase
 
         $this->object->resizeSquare(400, 255, 0, 0);
 
-        $this->assertEquals(
-            $this->getResourceString($image->getImage()),
-            $this->getResourceString($this->object->getImage())
-        );
+        $this->assertImageSimilar($image, $this->object);
     }
 
     /**
@@ -164,10 +178,7 @@ class ImageUtilTest extends TestCase
 
         $this->object->resizeAspectRatio(400, 200, 255, 0, 0);
 
-        $this->assertEquals(
-            $this->getResourceString($image->getImage()),
-            $this->getResourceString($this->object->getImage())
-        );
+        $this->assertImageSimilar($image, $this->object);
     }
 
     /**
@@ -215,10 +226,7 @@ class ImageUtilTest extends TestCase
         $this->assertFileExists($fileName);
 
         $image = new ImageUtil($fileName);
-        $this->assertEquals(
-            $this->getResourceString($this->object->getImage()),
-            $this->getResourceString($image->getImage())
-        );
+        $this->assertImageSimilar($image, $this->object);
 
         unlink($fileName);
     }
@@ -237,10 +245,7 @@ class ImageUtilTest extends TestCase
             $this->assertFileExists($fileName);
 
             $image = new ImageUtil($fileName);
-            $this->assertEquals(
-                $this->getResourceString($this->object->getImage()),
-                $this->getResourceString($image->getImage())
-            );
+            $this->assertImageSimilar($image, $this->object);
         } finally {
             unlink($fileName);
         }
@@ -262,18 +267,18 @@ class ImageUtilTest extends TestCase
      */
     public function testRestore()
     {
-        $expected = $this->getResourceString($this->object->getImage());
+        $expected = clone $this->object;
 
         // Do some operations
         $this->object->rotate(30);
         $this->object->flip(Flip::BOTH);
         $this->object->resizeSquare(40);
 
-        $this->assertNotEquals($expected, $this->getResourceString($this->object->getImage()));
+        $this->assertImageNotSimilar($expected, $this->object);
 
         $this->object->restore();
 
-        $this->assertEquals($expected, $this->getResourceString($this->object->getImage()));
+        $this->assertImageSimilar($expected, $this->object);
 
     }
 
