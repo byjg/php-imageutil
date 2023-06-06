@@ -18,14 +18,28 @@ jobs:
         php-version:
           - "8.1"
           - "8.0"
+          - "7.4"
           - "7.3"
 
     steps:
       - name: Install dependencies for test
         run: |
           VERSION=${{ matrix.php-version }}
-          VERSION=${VERSION//./}
-          apk add --no-cache php$VERSION-pecl-imagick
+          case $VERSION in
+            "8.1")
+              apk add --no-cache php81-pecl-imagick
+              ;;
+            "8.0")
+              apk add --no-cache php8-pecl-imagick
+              ;;
+            "7.4")
+              apk add --no-cache php7-pecl-imagick
+              ;;
+            "7.3")
+              apk add --no-cache php7-pecl-imagick
+              ;;
+          esac
+
       - uses: actions/checkout@v3
       - run: composer install
       - run: ./vendor/bin/phpunit
