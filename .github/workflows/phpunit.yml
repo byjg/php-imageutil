@@ -19,7 +19,6 @@ jobs:
           - "8.1"
           - "8.0"
           - "7.4"
-          - "7.3"
 
     steps:
       - name: Install dependencies for test
@@ -33,9 +32,6 @@ jobs:
               apk add --no-cache php8-pecl-imagick
               ;;
             "7.4")
-              apk add --no-cache php7-pecl-imagick
-              ;;
-            "7.3")
               apk add --no-cache php7-pecl-imagick
               ;;
           esac
