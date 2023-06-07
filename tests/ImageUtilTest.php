@@ -70,11 +70,11 @@ class ImageUtilTest extends TestCase
         if (!class_exists('\imagick')) {
             $this->markTestIncomplete('PECL Imagick not installed');
         }
-        $expected->save(sys_get_temp_dir() . '/expected.bmp');
-        $actual->save(sys_get_temp_dir() . '/actual.bmp');
+        $expected->save(sys_get_temp_dir() . '/expected.png');
+        $actual->save(sys_get_temp_dir() . '/actual.png');
 
-        $image1 = new \imagick(sys_get_temp_dir() . '/expected.bmp');
-        $image2 = new \imagick(sys_get_temp_dir() . '/actual.bmp');
+        $image1 = new \imagick(sys_get_temp_dir() . '/expected.png');
+        $image2 = new \imagick(sys_get_temp_dir() . '/actual.png');
 
         $result = $image1->compareImages($image2, \Imagick::METRIC_MEANSQUAREERROR);
         $lessThan ? $this->assertLessThan($threshold, $result[1]) : $this->assertGreaterThanOrEqual($threshold, $result[1]);
@@ -96,7 +96,7 @@ class ImageUtilTest extends TestCase
      */
     public function testRotate()
     {
-        $image = new ImageUtil(__DIR__ . '/assets/rotate.bmp');
+        $image = new ImageUtil(__DIR__ . '/assets/rotate.png');
 
         $this->object->rotate(45, 230);
 
@@ -109,7 +109,7 @@ class ImageUtilTest extends TestCase
      */
     public function testFlipVertical()
     {
-        $image = new ImageUtil(__DIR__ . '/assets/flip-vertical.bmp');
+        $image = new ImageUtil(__DIR__ . '/assets/flip-vertical.png');
 
         $this->object->rotate(10, 230);
         $this->object->flip(Flip::VERTICAL);
@@ -123,7 +123,7 @@ class ImageUtilTest extends TestCase
      */
     public function testFlipBoth()
     {
-        $image = new ImageUtil(__DIR__ . '/assets/flip-both.bmp');
+        $image = new ImageUtil(__DIR__ . '/assets/flip-both.png');
 
         $this->object->rotate(80, 230);
         $this->object->flip(Flip::BOTH);
@@ -137,7 +137,7 @@ class ImageUtilTest extends TestCase
      */
     public function testFlipHorizontal()
     {
-        $image = new ImageUtil(__DIR__ . '/assets/flip-horizontal.bmp');
+        $image = new ImageUtil(__DIR__ . '/assets/flip-horizontal.png');
 
         $this->object->rotate(80, 230);
         $this->object->flip(Flip::HORIZONTAL);
@@ -161,7 +161,7 @@ class ImageUtilTest extends TestCase
      */
     public function testResizeSquare()
     {
-        $image = new ImageUtil(__DIR__ . '/assets/resize_square.bmp');
+        $image = new ImageUtil(__DIR__ . '/assets/resize-square.png');
 
         $this->object->resizeSquare(400, 255, 0, 0);
 
@@ -174,7 +174,7 @@ class ImageUtilTest extends TestCase
      */
     public function testResizeAspectRatio()
     {
-        $image = new ImageUtil(__DIR__ . '/assets/resize_aspectratio.bmp');
+        $image = new ImageUtil(__DIR__ . '/assets/resize-aspectratio.png');
 
         $this->object->resizeAspectRatio(400, 200, 255, 0, 0);
 
@@ -295,7 +295,7 @@ class ImageUtilTest extends TestCase
 
     public function testSaveAllFormats()
     {
-        $image = new ImageUtil(__DIR__ . '/assets/flip-both.bmp');
+        $image = new ImageUtil(__DIR__ . '/assets/flip-both.png');
 
         $fileList = [
             sys_get_temp_dir() . '/test.png',
