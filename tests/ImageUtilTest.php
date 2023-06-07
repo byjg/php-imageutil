@@ -12,7 +12,7 @@ class ImageUtilTest extends TestCase
     /**
      * @var ImageUtil
      */
-    protected $object;
+    protected $actual;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
@@ -24,17 +24,17 @@ class ImageUtilTest extends TestCase
     protected function setUp(): void
     {
         $resourceImg = imagecreatetruecolor(500, 100);
-        $this->object = new ImageUtil($resourceImg);
+        $this->actual = new ImageUtil($resourceImg);
     }
 
     public function testGetWidth()
     {
-        $this->assertSame(500, $this->object->getWidth());
+        $this->assertSame(500, $this->actual->getWidth());
     }
 
     public function testGetHeight()
     {
-        $this->assertSame(100, $this->object->getHeight());
+        $this->assertSame(100, $this->actual->getHeight());
     }
 
     protected function getResourceString($resourceImg)
@@ -53,7 +53,7 @@ class ImageUtilTest extends TestCase
         $resourceImg = imagecreatetruecolor(500, 100);
         $expected = $this->getResourceString($resourceImg);
 
-        $result = $this->getResourceString($this->object->getImage());
+        $result = $this->getResourceString($this->actual->getImage());
 
         $this->assertEquals($expected, $result);
     }
@@ -96,11 +96,11 @@ class ImageUtilTest extends TestCase
      */
     public function testRotate()
     {
-        $image = new ImageUtil(__DIR__ . '/assets/rotate.png');
+        $expected = new ImageUtil(__DIR__ . '/assets/rotate.png');
 
-        $this->object->rotate(45, 230);
+        $this->actual->rotate(45, 230);
 
-        $this->assertImageSimilar($image, $this->object);
+        $this->assertImageSimilar($expected, $this->actual);
     }
 
     /**
@@ -109,12 +109,12 @@ class ImageUtilTest extends TestCase
      */
     public function testFlipVertical()
     {
-        $image = new ImageUtil(__DIR__ . '/assets/flip-vertical.png');
+        $expected = new ImageUtil(__DIR__ . '/assets/flip-vertical.png');
 
-        $this->object->rotate(10, 230);
-        $this->object->flip(Flip::VERTICAL);
+        $this->actual->rotate(10, 230);
+        $this->actual->flip(Flip::VERTICAL);
 
-        $this->assertImageSimilar($image, $this->object);
+        $this->assertImageSimilar($expected, $this->actual);
     }
 
     /**
@@ -123,12 +123,12 @@ class ImageUtilTest extends TestCase
      */
     public function testFlipBoth()
     {
-        $image = new ImageUtil(__DIR__ . '/assets/flip-both.png');
+        $expected = new ImageUtil(__DIR__ . '/assets/flip-both.png');
 
-        $this->object->rotate(80, 230);
-        $this->object->flip(Flip::BOTH);
+        $this->actual->rotate(80, 230);
+        $this->actual->flip(Flip::BOTH);
 
-        $this->assertImageSimilar($image, $this->object);
+        $this->assertImageSimilar($expected, $this->actual);
     }
 
     /**
@@ -137,12 +137,12 @@ class ImageUtilTest extends TestCase
      */
     public function testFlipHorizontal()
     {
-        $image = new ImageUtil(__DIR__ . '/assets/flip-horizontal.png');
+        $expected = new ImageUtil(__DIR__ . '/assets/flip-horizontal.png');
 
-        $this->object->rotate(80, 230);
-        $this->object->flip(Flip::HORIZONTAL);
+        $this->actual->rotate(80, 230);
+        $this->actual->flip(Flip::HORIZONTAL);
 
-        $this->assertImageSimilar($image, $this->object);
+        $this->assertImageSimilar($expected, $this->actual);
     }
 
     public function testResize()
@@ -150,9 +150,9 @@ class ImageUtilTest extends TestCase
         // Create the object
         $resourceImg = new ImageUtil(imagecreatetruecolor(800, 30));
 
-        $this->object->resize(800, 30);
+        $this->actual->resize(800, 30);
 
-        $this->assertImageSimilar($resourceImg, $this->object);
+        $this->assertImageSimilar($resourceImg, $this->actual);
     }
 
     /**
@@ -161,11 +161,11 @@ class ImageUtilTest extends TestCase
      */
     public function testResizeSquare()
     {
-        $image = new ImageUtil(__DIR__ . '/assets/resize-square.png');
+        $expected = new ImageUtil(__DIR__ . '/assets/resize-square.png');
 
-        $this->object->resizeSquare(400, 255, 0, 0);
+        $this->actual->resizeSquare(400, 255, 0, 0);
 
-        $this->assertImageSimilar($image, $this->object);
+        $this->assertImageSimilar($expected, $this->actual);
     }
 
     /**
@@ -174,11 +174,11 @@ class ImageUtilTest extends TestCase
      */
     public function testResizeAspectRatio()
     {
-        $image = new ImageUtil(__DIR__ . '/assets/resize-aspectratio.png');
+        $expected = new ImageUtil(__DIR__ . '/assets/resize-aspectratio.png');
 
-        $this->object->resizeAspectRatio(400, 200, 255, 0, 0);
+        $this->actual->resizeAspectRatio(400, 200, 255, 0, 0);
 
-        $this->assertImageSimilar($image, $this->object);
+        $this->assertImageSimilar($expected, $this->actual);
     }
 
     /**
@@ -220,13 +220,13 @@ class ImageUtilTest extends TestCase
      */
     public function testSaveDefault()
     {
-        $fileName = $this->object->getFilename();
+        $fileName = $this->actual->getFilename();
 
-        $this->object->save();
+        $this->actual->save();
         $this->assertFileExists($fileName);
 
         $image = new ImageUtil($fileName);
-        $this->assertImageSimilar($image, $this->object);
+        $this->assertImageSimilar($image, $this->actual);
 
         unlink($fileName);
     }
@@ -241,11 +241,11 @@ class ImageUtilTest extends TestCase
 
         $this->assertFileDoesNotExist($fileName);
         try {
-            $this->object->save($fileName);
+            $this->actual->save($fileName);
             $this->assertFileExists($fileName);
 
             $image = new ImageUtil($fileName);
-            $this->assertImageSimilar($image, $this->object);
+            $this->assertImageSimilar($image, $this->actual);
         } finally {
             unlink($fileName);
         }
@@ -267,18 +267,18 @@ class ImageUtilTest extends TestCase
      */
     public function testRestore()
     {
-        $expected = clone $this->object;
+        $expected = clone $this->actual;
 
         // Do some operations
-        $this->object->rotate(30);
-        $this->object->flip(Flip::BOTH);
-        $this->object->resizeSquare(40);
+        $this->actual->rotate(30);
+        $this->actual->flip(Flip::BOTH);
+        $this->actual->resizeSquare(40);
 
-        $this->assertImageNotSimilar($expected, $this->object);
+        $this->assertImageNotSimilar($expected, $this->actual);
 
-        $this->object->restore();
+        $this->actual->restore();
 
-        $this->assertImageSimilar($expected, $this->object);
+        $this->assertImageSimilar($expected, $this->actual);
 
     }
 
