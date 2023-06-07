@@ -301,7 +301,8 @@ class ImageUtilTest extends TestCase
             sys_get_temp_dir() . '/test.png',
             sys_get_temp_dir() . '/test.gif',
             sys_get_temp_dir() . '/test.jpg',
-            sys_get_temp_dir() . '/test.bmp'
+            sys_get_temp_dir() . '/test.bmp',
+            sys_get_temp_dir() . '/test.webp',
         ];
 
         // Delete file if exists

@@ -44,6 +44,7 @@ class ImageHandlerFactory
         self::registerHandler(GIFHandler::class);
         self::registerHandler(JPGHandler::class);
         self::registerHandler(BMPHandler::class);
+        self::registerHandler(WEBPHandler::class);
     }
 
     /**
