@@ -1,10 +1,9 @@
 <?php
 
-namespace ByJG\ImageUtil;
-
 use ByJG\ImageUtil\Enum\Flip;
 use ByJG\ImageUtil\Exception\ImageUtilException;
 use ByJG\ImageUtil\Exception\NotFoundException;
+use ByJG\ImageUtil\ImageUtil;
 use PHPUnit\Framework\TestCase;
 
 class ImageUtilTest extends TestCase
@@ -64,6 +63,7 @@ class ImageUtilTest extends TestCase
      * @param float $threshold
      * @param bool $lessThan
      * @return void
+     * @throws ImagickException
      */
     protected function assertImages($expected, $actual, $threshold, $lessThan)
     {
@@ -73,10 +73,10 @@ class ImageUtilTest extends TestCase
         $expected->save(sys_get_temp_dir() . '/expected.png');
         $actual->save(sys_get_temp_dir() . '/actual.png');
 
-        $image1 = new \imagick(sys_get_temp_dir() . '/expected.png');
-        $image2 = new \imagick(sys_get_temp_dir() . '/actual.png');
+        $image1 = new Imagick(sys_get_temp_dir() . '/expected.png');
+        $image2 = new Imagick(sys_get_temp_dir() . '/actual.png');
 
-        $result = $image1->compareImages($image2, \Imagick::METRIC_MEANSQUAREERROR);
+        $result = $image1->compareImages($image2, Imagick::METRIC_MEANSQUAREERROR);
         $lessThan ? $this->assertLessThan($threshold, $result[1]) : $this->assertGreaterThanOrEqual($threshold, $result[1]);
     }
 
