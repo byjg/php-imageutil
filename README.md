@@ -1,10 +1,10 @@
 # ImageUtil
 
+[![Build Status](https://github.com/byjg/imageutil/actions/workflows/phpunit.yml/badge.svg?branch=master)](https://github.com/byjg/imageutil/actions/workflows/phpunit.yml)
 [![Opensource ByJG](https://img.shields.io/badge/opensource-byjg-success.svg)](http://opensource.byjg.com)
 [![GitHub source](https://img.shields.io/badge/Github-source-informational?logo=github)](https://github.com/byjg/imageutil/)
 [![GitHub license](https://img.shields.io/github/license/byjg/imageutil.svg)](https://opensource.byjg.com/opensource/licensing.html)
 [![GitHub release](https://img.shields.io/github/release/byjg/imageutil.svg)](https://github.com/byjg/imageutil/releases/)
-[![Build Status](https://travis-ci.com/byjg/imageutil.svg?branch=master)](https://travis-ci.com/byjg/imageutil)
 
 A wrapper collection for GD library in PHP. Defines a set of methods for flip, crop, resize, stamp and others easily.
 
