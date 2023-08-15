@@ -67,6 +67,7 @@ class ImageUtil
     {
         if (is_resource($resource) || $resource instanceof GdImage) {
             $this->image = $resource;
+            $this->retainTransparency();
             $this->fileName = sys_get_temp_dir() . '/img_' . uniqid() . '.png';
 
             return ['mime' => 'image/png'];
@@ -102,6 +103,7 @@ class ImageUtil
             throw new ImageUtilException("Invalid file: " . $imageFile);
         }
         $this->image = ImageHandlerFactory::instanceFromMime($img['mime'])->load($imageFile);
+        $this->retainTransparency();
 
         if ($http) {
             unlink($imageFile);
@@ -123,6 +125,15 @@ class ImageUtil
     public function getFilename()
     {
         return $this->fileName;
+    }
+
+    protected function retainTransparency($image = null)
+    {
+        if (empty($image)) {
+            $image = $this->image;
+        }
+        imagealphablending($image, false);
+        imagesavealpha($image, true);
     }
 
     /**
@@ -150,6 +161,7 @@ class ImageUtil
             throw new InvalidArgumentException('You need to pass the angle');
         }
 
+        $this->retainTransparency();
         $this->image = imagerotate($this->image, $angle, $background);
 
         return $this;
@@ -172,6 +184,7 @@ class ImageUtil
         $width = $this->getWidth();
         $height = $this->getHeight();
         $imgdest = imagecreatetruecolor($width, $height);
+        $this->retainTransparency($imgdest);
         $imgsrc = $this->image;
 
         switch ($type) {
@@ -239,7 +252,7 @@ class ImageUtil
 
         //Create the image
         $newImage = imagecreatetruecolor($newWidth, $newHeight);
-        imagealphablending($newImage, false);
+        $this->retainTransparency($newImage);
         imagecopyresampled($newImage, $this->image, 0, 0, 0, 0, intval($newWidth), intval($newHeight), $width, $height);
 
         $this->image = $newImage;
@@ -335,8 +348,8 @@ class ImageUtil
 
         $watermark = $imageUtil->getImage();
 
-        imagealphablending($dstImage, true);
-        imagealphablending($watermark, true);
+        $this->retainTransparency($dstImage);
+        $this->retainTransparency($watermark);
 
         $dstWidth = imagesx($dstImage);
         $dstHeight = imagesy($dstImage);
@@ -483,7 +496,7 @@ class ImageUtil
         $newHeight = $toY - $fromY;
         //Create the image
         $newImage = imagecreatetruecolor($newWidth, $newHeight);
-        imagealphablending($newImage, false);
+        $this->retainTransparency($newImage);
         imagecopy($newImage, $this->image, 0, 0, $fromX, $fromY, $newWidth, $newHeight);
         $this->image = $newImage;
 
@@ -534,6 +547,7 @@ class ImageUtil
     {
         $this->image = imagecreatetruecolor(imagesx($this->orgImage), imagesy($this->orgImage));
         imagecopy($this->image, $this->orgImage, 0, 0, 0, 0, imagesx($this->orgImage), imagesy($this->orgImage));
+        $this->retainTransparency();
 
         return $this;
     }
@@ -560,6 +574,7 @@ class ImageUtil
         imagecopyresampled($imw, $this->image, 0, 0, 0, 0, $curX, $curY, $curX, $curY);
 
         $this->image = $imw;
+        $this->retainTransparency();
 
         return $this;
     }
