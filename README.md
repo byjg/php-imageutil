@@ -28,6 +28,9 @@ $img2 = new ImageUtil('http://somesite/someimage.jpg');
 // From an existing resource image
 $resourceImg = imagecreatetruecolor(200, 300);
 $img3 = new ImageUtil($resourceImg);
+
+// Or empty image
+$img4 = ImageUtil::empty(200, 300, new Color(255, 255, 255));
 ```
 
 ## Flip an image
@@ -118,7 +121,7 @@ Make the image transparent. The transparent color must be provided.
 ```php
 <?php
 $img = new ImageUtil('wheel.png');
-$img->makeTransparent();
+$img->makeTransparent(new Color(255, 255, 255));
 ```
 
 ## Restoring the changes

@@ -27,6 +27,17 @@ class ImageUtil
     protected $width;
     protected $height;
 
+    public static function empty($width, $height, Color $color = null)
+    {
+        $image = imagecreatetruecolor($width, $height);
+        if (!empty($color)) {
+            $fill = $color->allocate($image);
+            imagefill($image, 0, 0, $fill);
+        }
+
+        return new ImageUtil($image);
+    }
+
     /**
      * Construct an Image Handler based on an image resource or file name
      *
@@ -270,9 +281,9 @@ class ImageUtil
      * @return ImageUtil
      * @throws ImageUtilException
      */
-    public function resizeSquare($newSize, $fillRed = 255, $fillGreen = 255, $fillBlue = 255)
+    public function resizeSquare($newSize, Color $color = null)
     {
-        return $this->resizeAspectRatio($newSize, $newSize, $fillRed, $fillGreen, $fillBlue);
+        return $this->resizeAspectRatio($newSize, $newSize, $color);
     }
 
     /**
@@ -286,8 +297,12 @@ class ImageUtil
      * @return ImageUtil
      * @throws ImageUtilException
      */
-    public function resizeAspectRatio($newX, $newY, $fillRed = 255, $fillGreen = 255, $fillBlue = 255)
+    public function resizeAspectRatio($newX, $newY, Color $color = null)
     {
+        if (empty($color)) {
+            $color = new AlphaColor(255, 255, 255, 127);
+        }
+
         if (!is_numeric($newX) || !is_numeric($newY)) {
             throw new ImageUtilException('There are no valid values');
         }
@@ -310,18 +325,17 @@ class ImageUtil
 
         $newImage = imagecreatetruecolor($newX, $newY);
         $this->retainTransparency($newImage);
-        $color = imagecolorallocatealpha($newImage, $fillRed, $fillGreen, $fillBlue, 127);
-        imagefill($newImage, 0, 0, $color);
+        imagefill($newImage, 0, 0, $color->allocate($newImage));
 
         imagecopyresampled(
             $newImage,
             $image,
-            ($newX - $newWidth) / 2,
-            ($newY - $newHeight) / 2,
+            intval(($newX - $newWidth) / 2),
+            intval(($newY - $newHeight) / 2),
             0,
             0,
-            $newWidth,
-            $newHeight,
+            intval($newWidth),
+            intval($newHeight),
             $width,
             $height
         );
@@ -566,8 +580,12 @@ class ImageUtil
      * @param int $transpBlue
      * @return ImageUtil|GdImage|resource The image util object
      */
-    public function makeTransparent($transpRed = 255, $transpGreen = 255, $transpBlue = 255, $image = null)
+    public function makeTransparent(Color $color = null, $image = null)
     {
+        if (empty($color)) {
+            $color = new Color(255, 255, 255);
+        }
+
         $customImage = true;
         if (empty($image) && !is_resource($image) && !($image instanceof GdImage)) {
             $image = $this->image;
@@ -579,15 +597,15 @@ class ImageUtil
         $height = imagesy($image);
 
         // Define the black color
-        $transparentColor = imagecolorallocate($image, $transpRed, $transpGreen, $transpBlue);
+        $transparentColor = imagecolorallocate($image, $color->getRed(), $color->getGreen(), $color->getBlue());
 
         // Loop through each pixel and make black background transparent
         for ($y = 0; $y < $height; $y++) {
             for ($x = 0; $x < $width; $x++) {
-                $color = imagecolorat($image, $x, $y);
+                $colorAt = imagecolorat($image, $x, $y);
 
-                if ($color === $transparentColor) {
-                    imagesetpixel($image, $x, $y, imagecolorallocatealpha($image, $transpRed, $transpGreen, $transpBlue, 127));
+                if ($colorAt === $transparentColor) {
+                    imagesetpixel($image, $x, $y, imagecolorallocatealpha($image, $color->getRed(), $color->getGreen(), $color->getBlue(), 127));
                 }
             }
         }

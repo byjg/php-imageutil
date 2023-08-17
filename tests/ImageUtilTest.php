@@ -1,5 +1,7 @@
 <?php
 
+use ByJG\ImageUtil\AlphaColor;
+use ByJG\ImageUtil\Color;
 use ByJG\ImageUtil\Enum\Flip;
 use ByJG\ImageUtil\Exception\ImageUtilException;
 use ByJG\ImageUtil\Exception\NotFoundException;
@@ -22,8 +24,7 @@ class ImageUtilTest extends TestCase
      */
     protected function setUp(): void
     {
-        $resourceImg = imagecreatetruecolor(500, 100);
-        $this->actual = new ImageUtil($resourceImg);
+        $this->actual = ImageUtil::empty(500, 100);
     }
 
     public function testGetWidth()
@@ -148,7 +149,7 @@ class ImageUtilTest extends TestCase
     public function testResize()
     {
         // Create the object
-        $resourceImg = new ImageUtil(imagecreatetruecolor(800, 30));
+        $resourceImg = ImageUtil::empty(800, 30);
 
         $this->actual->resize(800, 30);
 
@@ -163,7 +164,16 @@ class ImageUtilTest extends TestCase
     {
         $expected = new ImageUtil(__DIR__ . '/assets/resize-square.png');
 
-        $this->actual->resizeSquare(400, 255, 0, 0);
+        $this->actual->resizeSquare(400, new Color(255, 0, 0));
+
+        $this->assertImageSimilar($expected, $this->actual);
+    }
+
+    public function testResizeSquareTransparent()
+    {
+        $expected = new ImageUtil(__DIR__ . '/assets/resize-square2.png');
+
+        $this->actual->resizeSquare(400, new AlphaColor(255, 0, 0));
 
         $this->assertImageSimilar($expected, $this->actual);
     }
@@ -176,7 +186,7 @@ class ImageUtilTest extends TestCase
     {
         $expected = new ImageUtil(__DIR__ . '/assets/resize-aspectratio.png');
 
-        $this->actual->resizeAspectRatio(400, 200, 255, 0, 0);
+        $this->actual->resizeAspectRatio(400, 200, new Color(255, 0, 0));
 
         $this->assertImageSimilar($expected, $this->actual);
     }
