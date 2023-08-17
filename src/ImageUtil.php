@@ -564,23 +564,43 @@ class ImageUtil
      * @param int $transpRed
      * @param int $transpGreen
      * @param int $transpBlue
-     * @return ImageUtil The image util object
+     * @return ImageUtil|GdImage|resource The image util object
      */
-    public function makeTransparent($transpRed = 255, $transpGreen = 255, $transpBlue = 255)
+    public function makeTransparent($transpRed = 255, $transpGreen = 255, $transpBlue = 255, $image = null)
     {
-        $curX = imagesx($this->image);
-        $curY = imagesy($this->image);
+        $customImage = true;
+        if (empty($image) && !is_resource($image) && !($image instanceof GdImage)) {
+            $image = $this->image;
+            $customImage = false;
+        }
 
-        $imw = imagecreatetruecolor($curX, $curY);
+        // Get image dimensions
+        $width = imagesx($image);
+        $height = imagesy($image);
 
-        $color = imagecolorallocate($imw, $transpRed, $transpGreen, $transpBlue);
-        imagefill($imw, 0, 0, $color);
-        imagecolortransparent($imw, $color);
+        // Define the black color
+        $transparentColor = imagecolorallocate($image, $transpRed, $transpGreen, $transpBlue);
 
-        imagecopyresampled($imw, $this->image, 0, 0, 0, 0, $curX, $curY, $curX, $curY);
+        // Loop through each pixel and make black background transparent
+        for ($y = 0; $y < $height; $y++) {
+            for ($x = 0; $x < $width; $x++) {
+                $color = imagecolorat($image, $x, $y);
 
-        $this->image = $imw;
-        $this->retainTransparency();
+                if ($color === $transparentColor) {
+                    imagesetpixel($image, $x, $y, imagecolorallocatealpha($image, $transpRed, $transpGreen, $transpBlue, 127));
+                }
+            }
+        }
+
+        // Enable alpha blending and save the modified image
+        imagealphablending($image, true);
+        imagesavealpha($image, true);
+
+        if ($customImage) {
+            return $image;
+        } else {
+            $this->image = $image;
+        }
 
         return $this;
     }
