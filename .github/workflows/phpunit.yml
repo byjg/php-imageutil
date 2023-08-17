@@ -29,7 +29,7 @@ jobs:
               apk add --no-cache php81-pecl-imagick
               ;;
             "8.0")
-              apk add --no-cache php8-pecl-imagick
+              apk add --no-cache php8-pecl-imagick --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing/
               ;;
             "7.4")
               apk add --no-cache php7-pecl-imagick
