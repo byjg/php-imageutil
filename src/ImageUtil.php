@@ -294,33 +294,39 @@ class ImageUtil
 
         $image = $this->image;
 
-        if (imagesy($image) >= $newY || imagesx($image) >= $newX) {
-            if (imagesx($image) >= imagesy($image)) {
-                $curX = $newX;
-                $curY = ($curX * imagesy($image)) / imagesx($image);
-                $yyy = -($curY - $newY) / 2;
-                $xxx = 0;
-            } else {
-                $curY = $newY;
-                $curX = ($curY * imagesx($image)) / imagesy($image);
-                $xxx = -($curX - $newX) / 2;
-                $yyy = 0;
-            }
+        $width = $this->getWidth();
+        $height = $this->getHeight();
+
+        $ratio = $width / $height;
+        $newRatio = $newX / $newY;
+
+        if ($newRatio > $ratio) {
+            $newWidth = $newY * $ratio;
+            $newHeight = $newY;
         } else {
-            $curX = imagesx($image);
-            $curY = imagesy($image);
-            $yyy = 0;
-            $xxx = 0;
+            $newHeight = $newX / $ratio;
+            $newWidth = $newX;
         }
 
-        $imw = imagecreatetruecolor($newX, $newY);
-        $color = imagecolorallocate($imw, $fillRed, $fillGreen, $fillBlue);
-        imagefill($imw, 0, 0, $color);
-        imagealphablending($imw, false);
+        $newImage = imagecreatetruecolor($newX, $newY);
+        $this->retainTransparency($newImage);
+        $color = imagecolorallocatealpha($newImage, $fillRed, $fillGreen, $fillBlue, 127);
+        imagefill($newImage, 0, 0, $color);
 
-        imagecopyresampled($imw, $image, intval($xxx), intval($yyy), 0, 0, intval($curX), intval($curY), imagesx($image), imagesy($image));
+        imagecopyresampled(
+            $newImage,
+            $image,
+            ($newX - $newWidth) / 2,
+            ($newY - $newHeight) / 2,
+            0,
+            0,
+            $newWidth,
+            $newHeight,
+            $width,
+            $height
+        );
 
-        $this->image = $imw;
+        $this->image = $newImage;
 
         return $this;
     }
