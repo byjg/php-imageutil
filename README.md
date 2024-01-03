@@ -157,5 +157,12 @@ $height = $img->getHeight();
 $resource = $img->getImage();
 ````
 
+## Dependencies
+
+```mermaid  
+flowchart TD  
+    byjg/imageutil --> ext-gd  
+```
+
 ----
 [Open source ByJG](http://opensource.byjg.com)
