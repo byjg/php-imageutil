@@ -7,6 +7,8 @@ use ByJG\ImageUtil\Enum\StampPosition;
 use ByJG\ImageUtil\Enum\TextAlignment;
 use ByJG\ImageUtil\Exception\ImageUtilException;
 use ByJG\ImageUtil\Exception\NotFoundException;
+use ByJG\ImageUtil\Handler\ImageHandlerFactory;
+use GdImage;
 use InvalidArgumentException;
 use RuntimeException;
 
@@ -24,6 +26,17 @@ class ImageUtil
 
     protected $width;
     protected $height;
+
+    public static function empty($width, $height, Color $color = null)
+    {
+        $image = imagecreatetruecolor($width, $height);
+        if (!empty($color)) {
+            $fill = $color->allocate($image);
+            imagefill($image, 0, 0, $fill);
+        }
+
+        return new ImageUtil($image);
+    }
 
     /**
      * Construct an Image Handler based on an image resource or file name
@@ -63,8 +76,9 @@ class ImageUtil
      */
     protected function createFromResource($resource)
     {
-        if (get_resource_type($resource) == 'gd') {
+        if (is_resource($resource) || $resource instanceof GdImage) {
             $this->image = $resource;
+            $this->retainTransparency();
             $this->fileName = sys_get_temp_dir() . '/img_' . uniqid() . '.png';
 
             return ['mime' => 'image/png'];
@@ -74,7 +88,7 @@ class ImageUtil
 
     /**
      * @param $imageFile
-     * @return array|bool
+     * @return array
      * @throws NotFoundException
      * @throws ImageUtilException
      */
@@ -99,41 +113,12 @@ class ImageUtil
         if (empty($img)) {
             throw new ImageUtilException("Invalid file: " . $imageFile);
         }
-        $image = null;
-
-        //Create the image depending on what kind of file it is.
-        switch ($img['mime']) {
-            case 'image/png':
-                $image = imagecreatefrompng($imageFile);
-                break;
-
-            case 'image/jpeg':
-                $image = imagecreatefromjpeg($imageFile);
-                break;
-
-            case 'image/gif':
-                $oldId = imagecreatefromgif($imageFile);
-                $image = imagecreatetruecolor($img[0], $img[1]);
-                imagecopy($image, $oldId, 0, 0, 0, 0, $img[0], $img[1]);
-                break;
-
-            case 'image/bmp':
-            case 'image/x-ms-bmp':
-                if (!function_exists('imagecreatefrombmp')) {
-                    require_once __DIR__ . "/ThirdParty/BMP.php";
-                }
-                $image = imagecreatefrombmp($imageFile);
-                break;
-
-            default:
-                throw new ImageUtilException("Invalid Mime Type '" . $img["mime"] . "'");
-        }
+        $this->image = ImageHandlerFactory::instanceFromMime($img['mime'])->load($imageFile);
+        $this->retainTransparency();
 
         if ($http) {
             unlink($imageFile);
         }
-
-        $this->image = $image;
 
         return $img;
     }
@@ -151,6 +136,15 @@ class ImageUtil
     public function getFilename()
     {
         return $this->fileName;
+    }
+
+    protected function retainTransparency($image = null)
+    {
+        if (empty($image)) {
+            $image = $this->image;
+        }
+        imagealphablending($image, false);
+        imagesavealpha($image, true);
     }
 
     /**
@@ -178,6 +172,7 @@ class ImageUtil
             throw new InvalidArgumentException('You need to pass the angle');
         }
 
+        $this->retainTransparency();
         $this->image = imagerotate($this->image, $angle, $background);
 
         return $this;
@@ -200,6 +195,7 @@ class ImageUtil
         $width = $this->getWidth();
         $height = $this->getHeight();
         $imgdest = imagecreatetruecolor($width, $height);
+        $this->retainTransparency($imgdest);
         $imgsrc = $this->image;
 
         switch ($type) {
@@ -267,8 +263,8 @@ class ImageUtil
 
         //Create the image
         $newImage = imagecreatetruecolor($newWidth, $newHeight);
-        imagealphablending($newImage, false);
-        imagecopyresampled($newImage, $this->image, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
+        $this->retainTransparency($newImage);
+        imagecopyresampled($newImage, $this->image, 0, 0, 0, 0, intval($newWidth), intval($newHeight), $width, $height);
 
         $this->image = $newImage;
 
@@ -285,9 +281,9 @@ class ImageUtil
      * @return ImageUtil
      * @throws ImageUtilException
      */
-    public function resizeSquare($newSize, $fillRed = 255, $fillGreen = 255, $fillBlue = 255)
+    public function resizeSquare($newSize, Color $color = null)
     {
-        return $this->resizeAspectRatio($newSize, $newSize, $fillRed, $fillGreen, $fillBlue);
+        return $this->resizeAspectRatio($newSize, $newSize, $color);
     }
 
     /**
@@ -301,41 +297,50 @@ class ImageUtil
      * @return ImageUtil
      * @throws ImageUtilException
      */
-    public function resizeAspectRatio($newX, $newY, $fillRed = 255, $fillGreen = 255, $fillBlue = 255)
+    public function resizeAspectRatio($newX, $newY, Color $color = null)
     {
+        if (empty($color)) {
+            $color = new AlphaColor(255, 255, 255, 127);
+        }
+
         if (!is_numeric($newX) || !is_numeric($newY)) {
             throw new ImageUtilException('There are no valid values');
         }
 
         $image = $this->image;
 
-        if (imagesy($image) >= $newY || imagesx($image) >= $newX) {
-            if (imagesx($image) >= imagesy($image)) {
-                $curX = $newX;
-                $curY = ($curX * imagesy($image)) / imagesx($image);
-                $yyy = -($curY - $newY) / 2;
-                $xxx = 0;
-            } else {
-                $curY = $newY;
-                $curX = ($curY * imagesx($image)) / imagesy($image);
-                $xxx = -($curX - $newX) / 2;
-                $yyy = 0;
-            }
+        $width = $this->getWidth();
+        $height = $this->getHeight();
+
+        $ratio = $width / $height;
+        $newRatio = $newX / $newY;
+
+        if ($newRatio > $ratio) {
+            $newWidth = $newY * $ratio;
+            $newHeight = $newY;
         } else {
-            $curX = imagesx($image);
-            $curY = imagesy($image);
-            $yyy = 0;
-            $xxx = 0;
+            $newHeight = $newX / $ratio;
+            $newWidth = $newX;
         }
 
-        $imw = imagecreatetruecolor($newX, $newY);
-        $color = imagecolorallocate($imw, $fillRed, $fillGreen, $fillBlue);
-        imagefill($imw, 0, 0, $color);
-        imagealphablending($imw, false);
+        $newImage = imagecreatetruecolor($newX, $newY);
+        $this->retainTransparency($newImage);
+        imagefill($newImage, 0, 0, $color->allocate($newImage));
 
-        imagecopyresampled($imw, $image, $xxx, $yyy, 0, 0, $curX, $curY, imagesx($image), imagesy($image));
+        imagecopyresampled(
+            $newImage,
+            $image,
+            intval(($newX - $newWidth) / 2),
+            intval(($newY - $newHeight) / 2),
+            0,
+            0,
+            intval($newWidth),
+            intval($newHeight),
+            $width,
+            $height
+        );
 
-        $this->image = $imw;
+        $this->image = $newImage;
 
         return $this;
     }
@@ -363,8 +368,8 @@ class ImageUtil
 
         $watermark = $imageUtil->getImage();
 
-        imagealphablending($dstImage, true);
-        imagealphablending($watermark, true);
+        $this->retainTransparency($dstImage);
+        $this->retainTransparency($watermark);
 
         $dstWidth = imagesx($dstImage);
         $dstHeight = imagesy($dstImage);
@@ -511,7 +516,7 @@ class ImageUtil
         $newHeight = $toY - $fromY;
         //Create the image
         $newImage = imagecreatetruecolor($newWidth, $newHeight);
-        imagealphablending($newImage, false);
+        $this->retainTransparency($newImage);
         imagecopy($newImage, $this->image, 0, 0, $fromX, $fromY, $newWidth, $newHeight);
         $this->image = $newImage;
 
@@ -536,28 +541,7 @@ class ImageUtil
 
         $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
 
-        switch ($extension) {
-            case 'png':
-                $pngQuality = round((9 * $quality) / 100);
-
-                return imagepng($this->image, $filename, $pngQuality);
-
-            case 'jpeg':
-            case 'jpg':
-                return imagejpeg($this->image, $filename, $quality);
-
-            case 'gif':
-                return imagegif($this->image, $filename);
-
-            case 'bmp':
-                if (!function_exists('imagebmp')) {
-                    require_once __DIR__ . "/ThirdParty/BMP.php";
-                }
-                return imagebmp($this->image, $filename);
-
-            default:
-                break;
-        }
+        ImageHandlerFactory::instanceFromExtension($extension)->save($this->image, $filename, ['quality' => $quality]);
 
         return $this;
     }
@@ -572,28 +556,7 @@ class ImageUtil
             ob_clean();
         }
         header("Content-type: " . $this->info['mime']);
-        switch ($this->info['mime']) {
-            case 'image/png':
-                imagepng($this->image);
-                break;
-
-            case 'image/jpeg':
-                imagejpeg($this->image);
-                break;
-
-            case 'image/gif':
-                imagegif($this->image);
-                break;
-
-            case 'image/bmp':
-            case 'image/x-ms-bmp':
-                imagebmp($this->image);
-                break;
-
-            default:
-                break;
-        }
-
+        ImageHandlerFactory::instanceFromMime($this->info['mime'])->output($this->image);
         return $this;
     }
 
@@ -604,6 +567,7 @@ class ImageUtil
     {
         $this->image = imagecreatetruecolor(imagesx($this->orgImage), imagesy($this->orgImage));
         imagecopy($this->image, $this->orgImage, 0, 0, 0, 0, imagesx($this->orgImage), imagesy($this->orgImage));
+        $this->retainTransparency();
 
         return $this;
     }
@@ -614,22 +578,47 @@ class ImageUtil
      * @param int $transpRed
      * @param int $transpGreen
      * @param int $transpBlue
-     * @return ImageUtil The image util object
+     * @return ImageUtil|GdImage|resource The image util object
      */
-    public function makeTransparent($transpRed = 255, $transpGreen = 255, $transpBlue = 255)
+    public function makeTransparent(Color $color = null, $image = null)
     {
-        $curX = imagesx($this->image);
-        $curY = imagesy($this->image);
+        if (empty($color)) {
+            $color = new Color(255, 255, 255);
+        }
 
-        $imw = imagecreatetruecolor($curX, $curY);
+        $customImage = true;
+        if (empty($image) && !is_resource($image) && !($image instanceof GdImage)) {
+            $image = $this->image;
+            $customImage = false;
+        }
 
-        $color = imagecolorallocate($imw, $transpRed, $transpGreen, $transpBlue);
-        imagefill($imw, 0, 0, $color);
-        imagecolortransparent($imw, $color);
+        // Get image dimensions
+        $width = imagesx($image);
+        $height = imagesy($image);
 
-        imagecopyresampled($imw, $this->image, 0, 0, 0, 0, $curX, $curY, $curX, $curY);
+        // Define the black color
+        $transparentColor = imagecolorallocate($image, $color->getRed(), $color->getGreen(), $color->getBlue());
 
-        $this->image = $imw;
+        // Loop through each pixel and make black background transparent
+        for ($y = 0; $y < $height; $y++) {
+            for ($x = 0; $x < $width; $x++) {
+                $colorAt = imagecolorat($image, $x, $y);
+
+                if ($colorAt === $transparentColor) {
+                    imagesetpixel($image, $x, $y, imagecolorallocatealpha($image, $color->getRed(), $color->getGreen(), $color->getBlue(), 127));
+                }
+            }
+        }
+
+        // Enable alpha blending and save the modified image
+        imagealphablending($image, true);
+        imagesavealpha($image, true);
+
+        if ($customImage) {
+            return $image;
+        } else {
+            $this->image = $image;
+        }
 
         return $this;
     }
