@@ -15,29 +15,20 @@ jobs:
     container: 'byjg/php:${{ matrix.php-version }}-cli'
     strategy:
       matrix:
-        php-version:
-          - "8.2"
-          - "8.1"
-          - "8.0"
-          - "7.4"
+        include:
+          - php-version: "8.2"
+            imagick: "php82-pecl-imagick"
+          - php-version: "8.1"
+            imagick: "php81-pecl-imagick"
+          - php-version: "8.0"
+            imagick: "php8-pecl-imagick --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing/"
+          - php-version: "7.4"
+            imagick: "php7-pecl-imagick"
 
     steps:
       - name: Install dependencies for test
         run: |
-          VERSION=${{ matrix.php-version }}
-          case $VERSION in
-            "8.1")
-              apk add --no-cache php82-pecl-imagick
-            "8.1")
-              apk add --no-cache php81-pecl-imagick
-              ;;
-            "8.0")
-              apk add --no-cache php8-pecl-imagick --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing/
-              ;;
-            "7.4")
-              apk add --no-cache php7-pecl-imagick
-              ;;
-          esac
+          apk add --no-cache ${{ matrix.imagick }}
 
       - uses: actions/checkout@v4
       - run: composer install
