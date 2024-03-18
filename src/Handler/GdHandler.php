@@ -16,11 +16,11 @@ use SVG\SVG;
 
 class GdHandler implements ImageHandlerInterface
 {
-    protected $orgImage;
+    protected GdImage $originalImage;
 
-    protected $image;
+    protected GdImage $image;
 
-    protected $fileName;
+    protected ?string $fileName;
 
     public function getWidth(): int
     {
@@ -37,11 +37,11 @@ class GdHandler implements ImageHandlerInterface
         return $this->image;
     }
 
-    protected function setImage($resource, $filename = null)
+    protected function setImage($resource, $filename = null): void
     {
         $this->image = $resource;
-        $this->orgImage = imagecreatetruecolor($this->getWidth(), $this->getHeight());
-        imagecopy($this->orgImage, $this->image, 0, 0, 0, 0, $this->getWidth(), $this->getHeight());
+        $this->originalImage = imagecreatetruecolor($this->getWidth(), $this->getHeight());
+        imagecopy($this->originalImage, $this->image, 0, 0, 0, 0, $this->getWidth(), $this->getHeight());
 
         if (!empty($filename)) {
             $this->fileName = $filename;
@@ -72,13 +72,16 @@ class GdHandler implements ImageHandlerInterface
      */
     public function fromResource(GdImage|SVG $resource): static
     {
-        if (is_resource($resource) || $resource instanceof GdImage) {
+        if ($resource instanceof SVG) {
+            $image = new GdHandler();
+            $resource = $image->fromResource($resource->toRasterImage($resource->getDocument()->getWidth(), $resource->getDocument()->getHeight()))->getResource();
+        }
+
+        if ($resource instanceof GdImage) {
             $this->setImage($resource, sys_get_temp_dir() . '/img_' . uniqid() . '.png');
             $this->retainTransparency();
-
-            return $this;
         }
-        throw new ImageUtilException('Is not valid resource');
+        return $this;
     }
 
     /**
@@ -116,7 +119,7 @@ class GdHandler implements ImageHandlerInterface
         return $this;
     }
 
-    protected function retainTransparency($image = null)
+    protected function retainTransparency($image = null): void
     {
         if (empty($image)) {
             $image = $this->image;
@@ -151,41 +154,41 @@ class GdHandler implements ImageHandlerInterface
 
         $width = $this->getWidth();
         $height = $this->getHeight();
-        $imgdest = imagecreatetruecolor($width, $height);
-        $this->retainTransparency($imgdest);
-        $imgsrc = $this->image;
+        $imgDest = imagecreatetruecolor($width, $height);
+        $this->retainTransparency($imgDest);
+        $imgSrc = $this->image;
 
         switch ($type) {
             //Mirroring direction
             case Flip::HORIZONTAL:
                 for ($x = 0; $x < $width; $x++) {
-                    imagecopy($imgdest, $imgsrc, $width - $x - 1, 0, $x, 0, 1, $height);
+                    imagecopy($imgDest, $imgSrc, $width - $x - 1, 0, $x, 0, 1, $height);
                 }
                 break;
 
             case Flip::VERTICAL:
                 for ($y = 0; $y < $height; $y++) {
-                    imagecopy($imgdest, $imgsrc, 0, $height - $y - 1, 0, $y, $width, 1);
+                    imagecopy($imgDest, $imgSrc, 0, $height - $y - 1, 0, $y, $width, 1);
                 }
                 break;
 
             default:
                 for ($x = 0; $x < $width; $x++) {
-                    imagecopy($imgdest, $imgsrc, $width - $x - 1, 0, $x, 0, 1, $height);
+                    imagecopy($imgDest, $imgSrc, $width - $x - 1, 0, $x, 0, 1, $height);
                 }
 
                 $rowBuffer = imagecreatetruecolor($width, 1);
                 for ($y = 0; $y < ($height / 2); $y++) {
-                    imagecopy($rowBuffer, $imgdest, 0, 0, 0, $height - $y - 1, $width, 1);
-                    imagecopy($imgdest, $imgdest, 0, $height - $y - 1, 0, $y, $width, 1);
-                    imagecopy($imgdest, $rowBuffer, 0, $y, 0, 0, $width, 1);
+                    imagecopy($rowBuffer, $imgDest, 0, 0, 0, $height - $y - 1, $width, 1);
+                    imagecopy($imgDest, $imgDest, 0, $height - $y - 1, 0, $y, $width, 1);
+                    imagecopy($imgDest, $rowBuffer, 0, $y, 0, 0, $width, 1);
                 }
 
                 imagedestroy($rowBuffer);
                 break;
         }
 
-        $this->image = $imgdest;
+        $this->image = $imgDest;
 
         return $this;
     }
@@ -288,21 +291,21 @@ class GdHandler implements ImageHandlerInterface
     {
         $dstImage = $this->image;
 
-        $watermark = $srcImage->getImage();
+        $watermark = $srcImage->getResource();
 
         $this->retainTransparency($dstImage);
         $this->retainTransparency($watermark);
 
         $dstWidth = imagesx($dstImage);
         $dstHeight = imagesy($dstImage);
-        $srcWIdth = imagesx($watermark);
+        $srcWidth = imagesx($watermark);
         $srcHeight = imagesy($watermark);
 
         if (is_array($padding)) {
-            $padx = $padding[0];
-            $pady = $padding[1];
+            $padX = $padding[0];
+            $padY = $padding[1];
         } else {
-            $padx = $pady = $padding;
+            $padX = $padY = $padding;
         }
 
         if ($position == StampPosition::RANDOM) {
@@ -310,46 +313,46 @@ class GdHandler implements ImageHandlerInterface
         }
         switch ($position) {
             case StampPosition::TOP_RIGHT:
-                $dstX = ($dstWidth - $srcWIdth) - $padx;
-                $dstY = $pady;
+                $dstX = ($dstWidth - $srcWidth) - $padX;
+                $dstY = $padY;
                 break;
             case StampPosition::TOP_LEFT:
-                $dstX = $padx;
-                $dstY = $pady;
+                $dstX = $padX;
+                $dstY = $padY;
                 break;
             case StampPosition::BOTTOM_RIGHT:
-                $dstX = ($dstWidth - $srcWIdth) - $padx;
-                $dstY = ($dstHeight - $srcHeight) - $pady;
+                $dstX = ($dstWidth - $srcWidth) - $padX;
+                $dstY = ($dstHeight - $srcHeight) - $padY;
                 break;
             case StampPosition::BOTTOM_LEFT:
-                $dstX = $padx;
-                $dstY = ($dstHeight - $srcHeight) - $pady;
+                $dstX = $padX;
+                $dstY = ($dstHeight - $srcHeight) - $padY;
                 break;
             case StampPosition::CENTER:
-                $dstX = (($dstWidth / 2) - ($srcWIdth / 2));
+                $dstX = (($dstWidth / 2) - ($srcWidth / 2));
                 $dstY = (($dstHeight / 2) - ($srcHeight / 2));
                 break;
             case StampPosition::TOP:
-                $dstX = (($dstWidth / 2) - ($srcWIdth / 2));
-                $dstY = $pady;
+                $dstX = (($dstWidth / 2) - ($srcWidth / 2));
+                $dstY = $padY;
                 break;
             case StampPosition::BOTTOM:
-                $dstX = (($dstWidth / 2) - ($srcWIdth / 2));
-                $dstY = ($dstHeight - $srcHeight) - $pady;
+                $dstX = (($dstWidth / 2) - ($srcWidth / 2));
+                $dstY = ($dstHeight - $srcHeight) - $padY;
                 break;
             case StampPosition::LEFT:
-                $dstX = $padx;
+                $dstX = $padX;
                 $dstY = (($dstHeight / 2) - ($srcHeight / 2));
                 break;
             case StampPosition::RIGHT:
-                $dstX = ($dstWidth - $srcWIdth) - $padx;
+                $dstX = ($dstWidth - $srcWidth) - $padX;
                 $dstY = (($dstHeight / 2) - ($srcHeight / 2));
                 break;
             default:
                 throw new ImageUtilException('Invalid Stamp Position');
         }
 
-        imagecopymerge($dstImage, $watermark, $dstX, $dstY, 0, 0, $srcWIdth, $srcHeight, $opacity);
+        imagecopymerge($dstImage, $watermark, $dstX, $dstY, 0, 0, $srcWidth, $srcHeight, $opacity);
         $this->image = $dstImage;
 
         return $this;
@@ -358,7 +361,7 @@ class GdHandler implements ImageHandlerInterface
     /**
      * @inheritDoc
      */
-    public function writeText(string $text, array $point, float $size, int $angle, string $font, int $maxwidth = 0, array $rgbAr = null, TextAlignment $textAlignment = TextAlignment::LEFT): static
+    public function writeText(string $text, array $point, float $size, int $angle, string $font, int $maxWidth = 0, array $rgbAr = null, TextAlignment $textAlignment = TextAlignment::LEFT): static
     {
         if (!is_readable($font)) {
             throw new ImageUtilException('Error: The specified font not found');
@@ -371,7 +374,7 @@ class GdHandler implements ImageHandlerInterface
         $color = imagecolorallocate($this->image, $rgbAr[0], $rgbAr[1], $rgbAr[2]);
 
         // Determine the line break if required.
-        if (($maxwidth > 0) && ($angle == 0)) {
+        if (($maxWidth > 0) && ($angle == 0)) {
             $words = explode(' ', $text);
             $lines = [$words[0]];
             $currentLine = 0;
@@ -379,7 +382,7 @@ class GdHandler implements ImageHandlerInterface
             $numberOfWords = count($words);
             for ($i = 1; $i < $numberOfWords; $i++) {
                 $lineSize = imagettfbbox($size, 0, $font, $lines[$currentLine] . ' ' . $words[$i]);
-                if ($lineSize[2] - $lineSize[0] < $maxwidth) {
+                if ($lineSize[2] - $lineSize[0] < $maxWidth) {
                     $lines[$currentLine] .= ' ' . $words[$i];
                 } else {
                     $currentLine++;
@@ -404,6 +407,9 @@ class GdHandler implements ImageHandlerInterface
                 case TextAlignment::CENTER:
                     $curX = $point[0] - (abs($bbox[2] - $bbox[0]) / 2);
                     break;
+
+                case TextAlignment::LEFT:
+                    // Don't change anything
             }
 
             imagettftext($this->image, $size, $angle, $curX, $curY, $color, $font, $text);
@@ -513,14 +519,14 @@ class GdHandler implements ImageHandlerInterface
      */
     public function restore(): static
     {
-        $this->image = imagecreatetruecolor(imagesx($this->orgImage), imagesy($this->orgImage));
-        imagecopy($this->image, $this->orgImage, 0, 0, 0, 0, imagesx($this->orgImage), imagesy($this->orgImage));
+        $this->image = imagecreatetruecolor(imagesx($this->originalImage), imagesy($this->originalImage));
+        imagecopy($this->image, $this->originalImage, 0, 0, 0, 0, imagesx($this->originalImage), imagesy($this->originalImage));
         $this->retainTransparency();
 
         return $this;
     }
 
-    protected function allocateColor(Color $color, GdImage $image = null)
+    protected function allocateColor(Color $color, GdImage $image = null): bool|int
     {
         if (is_null($image)) {
             $image = $this->image;
@@ -541,12 +547,12 @@ class GdHandler implements ImageHandlerInterface
      */
     public function __destruct()
     {
-        if (!is_null($this->image)) {
+        if (isset($this->image)) {
             imagedestroy($this->image);
-            imagedestroy($this->orgImage);
+            imagedestroy($this->originalImage);
 
             unset($this->image);
-            unset($this->orgImage);
+            unset($this->originalImage);
         }
     }
 }

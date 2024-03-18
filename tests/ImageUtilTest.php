@@ -5,22 +5,21 @@ use ByJG\ImageUtil\Color;
 use ByJG\ImageUtil\Enum\Flip;
 use ByJG\ImageUtil\Exception\ImageUtilException;
 use ByJG\ImageUtil\Exception\NotFoundException;
+use ByJG\ImageUtil\Handler\ImageHandlerInterface;
 use ByJG\ImageUtil\ImageUtil;
 use PHPUnit\Framework\TestCase;
 
 class ImageUtilTest extends TestCase
 {
     /**
-     * @var ImageUtil
+     * @var ImageHandlerInterface
      */
-    protected $actual;
+    protected ImageHandlerInterface $actual;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      *
-     * @throws ImageUtilException
-     * @throws NotFoundException
      */
     protected function setUp(): void
     {
@@ -59,14 +58,14 @@ class ImageUtilTest extends TestCase
     }
 
     /**
-     * @param ImageUtil $expected
-     * @param ImageUtil $actual
+     * @param ImageHandlerInterface $expected
+     * @param ImageHandlerInterface $actual
      * @param float $threshold
      * @param bool $lessThan
      * @return void
      * @throws ImagickException
      */
-    protected function assertImages($expected, $actual, $threshold, $lessThan)
+    protected function assertImages(ImageHandlerInterface $expected, ImageHandlerInterface $actual, float $threshold, bool $lessThan)
     {
         if (!class_exists('\imagick')) {
             $this->markTestIncomplete('PECL Imagick not installed');

@@ -55,7 +55,7 @@ interface ImageHandlerInterface
      * Mirrors the given image in the desired way.
      * Example: $img = new Image("file.png"); $img->flip(2); $img->show();
      *
-     * @param Flip $type Direction of mirroring. This can be 1(Horizondal Flip), 2(Vertical Flip) or 3(Both Horizondal
+     * @param Flip $type Direction of mirroring. This can be 1(Horizontal Flip), 2(Vertical Flip) or 3(Both Horizontal)
      *     and Vertical Flip)
      * @return ImageHandlerInterface
      */
@@ -63,7 +63,7 @@ interface ImageHandlerInterface
 
 
     /**
-     * Resize the image to an new size. Size can be specified in the arugments.
+     * Resize the image to a new size. Size can be specified in the arguments.
      *
      * @param int|null $newWidth The width of the desired image. If 0, the function will automatically calculate the width
      *     using the height ratio.
@@ -117,12 +117,12 @@ interface ImageHandlerInterface
      * @param float $size
      * @param int $angle
      * @param string $font
-     * @param int $maxwidth
+     * @param int $maxWidth
      * @param float[]|null $rgbAr
      * @param TextAlignment $textAlignment
      * @throws ImageUtilException
      */
-    public function writeText(string $text, array $point, float $size, int $angle, string $font, int $maxwidth = 0, array $rgbAr = null, TextAlignment $textAlignment = TextAlignment::LEFT): static;
+    public function writeText(string $text, array $point, float $size, int $angle, string $font, int $maxWidth = 0, array $rgbAr = null, TextAlignment $textAlignment = TextAlignment::LEFT): static;
 
     /**
      * Crops the given image from the ($from_x,$from_y) point to the ($to_x,$to_y) point.

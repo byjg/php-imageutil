@@ -3,6 +3,7 @@
 namespace ByJG\ImageUtil\Image;
 
 use GdImage;
+use InvalidArgumentException;
 use SVG\SVG;
 
 class WebpImage implements ImageInterface
@@ -39,7 +40,7 @@ class WebpImage implements ImageInterface
     {
         if ($resource instanceof SVG) {
             if (!isset($params['width']) || !isset($params['height'])) {
-                throw new \InvalidArgumentException("The width and height are required to convert SVG to WEBP");
+                throw new InvalidArgumentException("The width and height are required to convert SVG to WEBP");
             }
             $resource = $resource->toRasterImage($params['width'], $params['height']);
         }

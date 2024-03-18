@@ -32,7 +32,9 @@ class ImageUtil
 
 
     /**
-     * @inheritDoc
+     * @param $resource
+     * @return ImageHandlerInterface
+     * @throws ImageUtilException
      */
     public static function fromResource($resource): ImageHandlerInterface
     {
@@ -47,7 +49,10 @@ class ImageUtil
     }
 
     /**
-     * @inheritDoc
+     * @param $imageFile
+     * @return ImageHandlerInterface
+     * @throws ImageUtilException
+     * @throws NotFoundException
      */
     public static function fromFile($imageFile): ImageHandlerInterface
     {
@@ -68,7 +73,7 @@ class ImageUtil
         $info = pathinfo($imageFile);
         if ($info['extension'] == 'svg') {
             $image = new SvgHandler();
-            $resource = $image->load($imageFile);
+            $resource = $image->fromFile($imageFile);
         } else {
             $img = getimagesize($imageFile);
             if (empty($img)) {
@@ -82,6 +87,6 @@ class ImageUtil
             unlink($imageFile);
         }
 
-        return self::fromResource($resource);;
+        return self::fromResource($resource);
     }
 }

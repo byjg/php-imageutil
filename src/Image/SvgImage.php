@@ -3,6 +3,7 @@
 namespace ByJG\ImageUtil\Image;
 
 use GdImage;
+use InvalidArgumentException;
 use SVG\SVG;
 
 class SvgImage implements ImageInterface
@@ -39,7 +40,7 @@ class SvgImage implements ImageInterface
         if ($resource instanceof SVG) {
             file_put_contents($resource->toXMLString(), $filename);
         } else {
-            throw new \InvalidArgumentException("Cannot convert a GdImage to SVG.");
+            throw new InvalidArgumentException("Cannot convert a GdImage to SVG.");
         }
     }
 
@@ -51,7 +52,7 @@ class SvgImage implements ImageInterface
         if ($resource instanceof SVG) {
             echo $resource->toXMLString();
         } else {
-            throw new \InvalidArgumentException("The resource is not a SVG object");
+            throw new InvalidArgumentException("The resource is not a SVG object");
         }
     }
 }

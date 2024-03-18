@@ -3,6 +3,7 @@
 namespace ByJG\ImageUtil\Image;
 
 use GdImage;
+use InvalidArgumentException;
 use SVG\SVG;
 
 class JpgImage implements ImageInterface
@@ -38,7 +39,7 @@ class JpgImage implements ImageInterface
     {
         if ($resource instanceof SVG) {
             if (!isset($params['width']) || !isset($params['height'])) {
-                throw new \InvalidArgumentException("The width and height are required to convert SVG to JPG");
+                throw new InvalidArgumentException("The width and height are required to convert SVG to JPG");
             }
             $resource = $resource->toRasterImage($params['width'], $params['height']);
         }

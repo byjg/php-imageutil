@@ -3,6 +3,7 @@
 namespace ByJG\ImageUtil\Image;
 
 use GdImage;
+use InvalidArgumentException;
 use SVG\SVG;
 
 class GIFImage implements ImageInterface
@@ -43,7 +44,7 @@ class GIFImage implements ImageInterface
     {
         if ($resource instanceof SVG) {
             if (!isset($params['width']) || !isset($params['height'])) {
-                throw new \InvalidArgumentException("The width and height are required to convert SVG to GIF");
+                throw new InvalidArgumentException("The width and height are required to convert SVG to GIF");
             }
             $resource = $resource->toRasterImage($params['width'], $params['height']);
         }

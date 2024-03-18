@@ -6,10 +6,10 @@ use InvalidArgumentException;
 
 class ImageFactory
 {
-    private static $configMime = [];
-    private static $configExt = [];
+    private static array $configMime = [];
+    private static array $configExt = [];
 
-    public static function registerHandler($class)
+    public static function registerHandler($class): void
     {
         if (!in_array(ImageInterface::class, class_implements($class))) {
             throw new InvalidArgumentException(
@@ -34,7 +34,7 @@ class ImageFactory
         }
     }
 
-    public static function registerAll()
+    public static function registerAll(): void
     {
         if (!empty(self::$configExt)) {
             return;
@@ -48,10 +48,10 @@ class ImageFactory
     }
 
     /**
-     * @param $mime
+     * @param string $mime
      * @return ImageInterface
      */
-    public static function instanceFromMime($mime)
+    public static function instanceFromMime(string $mime): ImageInterface
     {
         self::registerAll();
         if (!isset(self::$configMime[$mime])) {
@@ -63,10 +63,10 @@ class ImageFactory
     }
 
     /**
-     * @param $ext
+     * @param string $ext
      * @return ImageInterface
      */
-    public static function instanceFromExtension($ext)
+    public static function instanceFromExtension(string $ext): ImageInterface
     {
         self::registerAll();
         if (!isset(self::$configExt[$ext])) {

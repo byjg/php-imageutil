@@ -77,7 +77,7 @@ class SvgHandler implements ImageHandlerInterface
         // TODO: Implement stampImage() method.
     }
 
-    public function writeText(string $text, array $point, float $size, int $angle, string $font, int $maxwidth = 0, array $rgbAr = null, TextAlignment $textAlignment = \ByJG\ImageUtil\Enum\TextAlignment::LEFT): ImageHandlerInterface
+    public function writeText(string $text, array $point, float $size, int $angle, string $font, int $maxWidth = 0, array $rgbAr = null, TextAlignment $textAlignment = TextAlignment::LEFT): ImageHandlerInterface
     {
         // TODO: Implement writeText() method.
     }
