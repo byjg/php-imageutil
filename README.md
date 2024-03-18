@@ -1,4 +1,4 @@
-# ImageUtil
+# ImageUtil Library
 
 [![Build Status](https://github.com/byjg/php-imageutil/actions/workflows/phpunit.yml/badge.svg?branch=master)](https://github.com/byjg/php-imageutil/actions/workflows/phpunit.yml)
 [![Opensource ByJG](https://img.shields.io/badge/opensource-byjg-success.svg)](http://opensource.byjg.com)
@@ -6,10 +6,12 @@
 [![GitHub license](https://img.shields.io/github/license/byjg/php-imageutil.svg)](https://opensource.byjg.com/opensource/licensing.html)
 [![GitHub release](https://img.shields.io/github/release/byjg/php-imageutil.svg)](https://github.com/byjg/php-imageutil/releases/)
 
-A wrapper collection for GD library in PHP. Defines a set of operations on top of the GDImage like 
-flip, crop, resize, stamp and others easily.
+ImageUtil is a PHP library that provides a collection of operations for image manipulation using the GD library. 
+It simplifies tasks such as flipping, cropping, resizing, stamping, and more.
 
 ## Installation
+
+To install ImageUtil, use the following composer command:
 
 ```
 composer require "byjg/imageutil"
@@ -17,36 +19,41 @@ composer require "byjg/imageutil"
 
 ## Supported Formats
 
+ImageUtil supports the following image formats:
+
 - GIF
 - JPEG
 - PNG
 - BMP
 - WEBP
-- SVG (partial support. Intended to convert to other formats, not to manipulate SVG files.)
+- SVG (Partial support. Primarily for converting SVG to other formats, not for SVG manipulation.)
 
-## Creating the Image
+## Creating an Image
+
+You can create an image from a file, URL, existing resource, or create an empty image:
 
 ```php
 <?php
 use ByJG\ImageUtil\ImageUtil;
-// From the file system
+
+// From a file
 $img = ImageUtil::fromFile('path_to_image.png');
 
-// From an URL
+// From a URL
 $img2 = ImageUtil::fromFile('https://somesite/someimage.jpg');
 
 // From an existing resource image
 $resourceImg = imagecreatetruecolor(200, 300);
 $img3 = ImageUtil::fromResource($resourceImg);
 
-// Or empty image
+// Or an empty image
 $img4 = ImageUtil::empty(200, 300, new Color(255, 255, 255));
 ```
 
-## Basic support to SVG Files
+## SVG Files
 
-**NOTE: The support intend to CONVERT images from SVG to any GD format available. 
-It doesn't support all SVG sets and don't support any operation like resize, flip, etc** 
+**ImageUtil provides basic support for SVG files, primarily for converting SVG images to other GD-supported formats. 
+It does not support all SVG features and does not support operations like resize, flip, etc.**
 
 ```php
 <?php
@@ -56,136 +63,49 @@ $img = ImageUtil::fromFile('path_to_image.svg');
 $img->save('path_to_image.png');
 ```
 
-## Flip an image
+## Image Manipulation
 
-Mirrors the given image in the desired way.i
+ImageUtil provides several methods for image manipulation:
 
-```php
-<?php
-$img = ImageUtil::fromFile('wheel.png');
-$img->flip(Flip::Vertical)->resize(120, null)->save('wheel.jpg');
-```
+- **Flip**: Mirror the image vertically or horizontally.
+- **Rotate**: Rotate the image by a specified angle.
+- **Resize**: Resize the image to specified dimensions.
+- **Resize Square**: Resize the image to a square format while maintaining the aspect ratio. Any extra space is filled with the provided RGB color.
+- **Resize AspectRatio**: Resize the image while maintaining the aspect ratio. Any extra space is filled with the provided RGB color.
+- **Stamp Image**: Stamp another image onto the current image.
+- **Write Text**: Write text onto the image.
+- **Crop Image**: Crop the image from a specified point to another point.
+- **Make Transparent**: Make the image transparent. The transparent color must be provided.
 
-## Rotate
+## Saving and Restoring Changes
 
-Rotates the image to any direction using the given angle.
-
-```php
-<?php
-$img = ImageUtil::fromFile('wheel.png');
-$img->rotate(45);
-```
-
-## Resize
-
-Resize the image to an new size. Size can be specified in the arguments.
+You can save the changes to the image, restore the image to its original state, or destroy the image resource:
 
 ```php
 <?php
-$img = ImageUtil::fromFile('wheel.png');
-$img->resize(640, 480);
-```
-
-## Resize Square
-
-Resize the image into a square format and maintain the aspect ratio. The spaces left are filled with the RGB color provided.
-
-```php
-<?php
-$img = ImageUtil::fromFile('wheel.png');
-$img->resizeSquare(200);
-```
-
-## Resize and maintain the AspectRatio
-
-Resize the image but the aspect ratio is respected. The spaces left are filled with the RGB color provided.
-
-```php
-<?php
-$img = ImageUtil::fromFile('wheel.png');
-$img->resizeAspectRatio(200, 150)
-```
-
-## Stamp Image
-
-Stamp an image in the current image.
-
-```php
-<?php
-$img = ImageUtil::fromFile('wheel.png');
-$stamp = ImageUtil::fromFile('https://www.mysite.com/logo.png');
-$img->stampImage($stamp, StampPosition::BottomRight);
-```
-
-## Write Text
-
-Writes a text on the image.
-
-```php
-<?php
-$img = ImageUtil::fromFile('wheel.png');
-$img->writeText('Sample', 0, 70, 45, 'Arial');
-```
-
-## Crop Image
-
-Crops the given image from the ($from_x,$from_y) point to the ($to_x,$to_y) point.
-
-```php
-<?php
-$img = ImageUtil::fromFile('wheel.png');
-$img->crop(250,200,400,250);
-```
-
-## Make Transparent
-
-Make the image transparent. The transparent color must be provided.
-
-```php
-<?php
-$img = ImageUtil::fromFile('wheel.png');
-$img->makeTransparent(new Color(255, 255, 255));
-```
-
-## Restoring the changes
-
-```php
-<?php
+$img->save('filename.gif');
 $img->restore();
-```
-
-## Destroy the resouce
-
-```php
-<?php
 $img->destroy();
 ```
 
-## Saving the Image
+## Other Functions
+
+ImageUtil also provides methods to get the image dimensions and the image resource:
 
 ```php
 <?php
-$img->save('filename.gif')
+$width = $img->getWidth();
+$height = $img->getHeight();
+$resource = $img->getResource();
 ```
 
-## Other functions
-
-```php
-<?php
-// Get the image dimension
-$witdh = $img->getWidth();
-$height = $img->getHeight();
-
-// Get the image resource
-$resource = $img->getImage();
-````
-
 ## Dependencies
+
+ImageUtil depends on the GD extension for PHP:
 
 ```mermaid  
 flowchart TD  
     byjg/imageutil --> ext-gd  
 ```
 
-----
 [Open source ByJG](http://opensource.byjg.com)

@@ -86,67 +86,7 @@ class SvgHandler implements ImageHandlerInterface
 
     public function resize(?int $newWidth = null, ?int $newHeight = null): static
     {
-        $this->resource->getDocument()->setWidth($newWidth);
-        $this->resource->getDocument()->setHeight($newHeight);
-        $this->resizeAllNodesProportionally($newWidth, $newHeight);
-        return $this;
-    }
-
-    protected function resizeAllNodesProportionally(?int $newWidth = null, ?int $newHeight = null): static
-    {
-        // Get the current width and height of the parent node
-        $parentWidth = $this->resource->getDocument()->getWidth();
-        $parentHeight = $this->resource->getDocument()->getHeight();
-
-        $this->resizeNodeProportionally($this->resource->getDocument(), $parentWidth, $parentHeight);
-        return $this;
-    }
-
-    protected function resizeNodeProportionally($node, int $parentWidth, int $parentHeight): void
-    {
-        if (method_exists($node, 'getWidth')) {
-            // Get the current width and height
-            if (method_exists($node, 'getX')) {
-                $currentX = empty($node->getX()) ? 0 : $node->getX();
-                $currentY = empty($node->getY()) ? 0 : $node->getY();
-            } else {
-                $currentX = 0;
-                $currentY = 0;
-            }
-            $currentWidth = empty($node->getWidth()) ? $parentWidth : $node->getWidth();
-            $currentHeight = empty($node->getHeight()) ? $parentHeight : $node->getHeight();
-
-            // Calculate the new width and height to fit inside the parent node
-            if ($parentWidth / $parentHeight < $currentWidth / $currentHeight) {
-                $newX = $currentX;
-                $newY = $currentX * $parentHeight / $parentWidth;
-                $newWidth = $parentWidth;
-                $newHeight = $parentWidth * $currentHeight / $currentWidth;
-            } else {
-                $newY = $currentY;
-                $newX = $currentY * $parentHeight / $parentWidth;
-                $newHeight = $parentHeight;
-                $newWidth = $parentHeight * $currentWidth / $currentHeight;
-            }
-
-            // Set the new width and height
-            if (method_exists($node, 'setX')) {
-                $node->setX($newX);
-                $node->setY($newY);
-            }
-            $node->setWidth($newWidth);
-            $node->setHeight($newHeight);
-        }
-
-        if (!method_exists($node, 'countChildren')) {
-            return;
-        }
-
-        // Call this function for each child node
-        $count = $node->countChildren();
-        for ($i = 0; $i < $count; $i++) {
-            $this->resizeNodeProportionally($node->getChild($i), $newWidth ?? $parentWidth, $newHeight ?? $parentHeight);
-        }
+        throw new ImageUtilException('Not implemented yet');
     }
 
     public function resizeSquare(int $newSize, Color $color = null): static

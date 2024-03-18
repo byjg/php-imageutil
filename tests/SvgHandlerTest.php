@@ -34,22 +34,6 @@ class SvgHandlerTest extends Base
         );
     }
 
-    public function testResize()
-    {
-        $this->svgHandler->empty(200, 400, new Color(255, 0, 0));
-        $this->svgHandler->resize(300, 200);
-        $this->assertSame(300, $this->svgHandler->getWidth());
-        $this->assertSame(200, $this->svgHandler->getHeight());
-
-        $this->assertEquals(
-            '<?xml version="1.0" encoding="utf-8"?>' .
-            '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="300" height="200">' .
-            '<rect x="0" y="0" width="100" height="200" style="fill: #ff0000" />' .
-            '</svg>',
-            $this->svgHandler->getResource()->toXMLString()
-        );
-    }
-
     public function testSave()
     {
         $this->svgHandler->empty(500, 500);
