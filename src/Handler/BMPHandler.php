@@ -2,7 +2,7 @@
 
 namespace ByJG\ImageUtil\Handler;
 
-class BMPHandler implements ImageHandlerInterface
+class BMPHandler implements ImageInterface
 {
 
     /**

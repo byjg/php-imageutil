@@ -2,7 +2,7 @@
 
 namespace ByJG\ImageUtil\Handler;
 
-class WEBPHandler implements ImageHandlerInterface
+class WEBPHandler implements ImageInterface
 {
 
     /**

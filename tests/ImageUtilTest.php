@@ -53,7 +53,7 @@ class ImageUtilTest extends TestCase
         $resourceImg = imagecreatetruecolor(500, 100);
         $expected = $this->getResourceString($resourceImg);
 
-        $result = $this->getResourceString($this->actual->getImage());
+        $result = $this->getResourceString($this->actual->getResource());
 
         $this->assertEquals($expected, $result);
     }
@@ -97,7 +97,7 @@ class ImageUtilTest extends TestCase
      */
     public function testRotate()
     {
-        $expected = new ImageUtil(__DIR__ . '/assets/rotate.png');
+        $expected = ImageUtil::fromFile(__DIR__ . '/assets/rotate.png');
 
         $this->actual->rotate(45, 230);
 
@@ -110,7 +110,7 @@ class ImageUtilTest extends TestCase
      */
     public function testFlipVertical()
     {
-        $expected = new ImageUtil(__DIR__ . '/assets/flip-vertical.png');
+        $expected = ImageUtil::fromFile(__DIR__ . '/assets/flip-vertical.png');
 
         $this->actual->rotate(10, 230);
         $this->actual->flip(Flip::VERTICAL);
@@ -124,7 +124,7 @@ class ImageUtilTest extends TestCase
      */
     public function testFlipBoth()
     {
-        $expected = new ImageUtil(__DIR__ . '/assets/flip-both.png');
+        $expected = ImageUtil::fromFile(__DIR__ . '/assets/flip-both.png');
 
         $this->actual->rotate(80, 230);
         $this->actual->flip(Flip::BOTH);
@@ -138,7 +138,7 @@ class ImageUtilTest extends TestCase
      */
     public function testFlipHorizontal()
     {
-        $expected = new ImageUtil(__DIR__ . '/assets/flip-horizontal.png');
+        $expected = ImageUtil::fromFile(__DIR__ . '/assets/flip-horizontal.png');
 
         $this->actual->rotate(80, 230);
         $this->actual->flip(Flip::HORIZONTAL);
@@ -162,7 +162,7 @@ class ImageUtilTest extends TestCase
      */
     public function testResizeSquare()
     {
-        $expected = new ImageUtil(__DIR__ . '/assets/resize-square.png');
+        $expected = ImageUtil::fromFile(__DIR__ . '/assets/resize-square.png');
 
         $this->actual->resizeSquare(400, new Color(255, 0, 0));
 
@@ -171,7 +171,7 @@ class ImageUtilTest extends TestCase
 
     public function testResizeSquareTransparent()
     {
-        $expected = new ImageUtil(__DIR__ . '/assets/resize-square2.png');
+        $expected = ImageUtil::fromFile(__DIR__ . '/assets/resize-square2.png');
 
         $this->actual->resizeSquare(400, new AlphaColor(255, 0, 0));
 
@@ -184,7 +184,7 @@ class ImageUtilTest extends TestCase
      */
     public function testResizeAspectRatio()
     {
-        $expected = new ImageUtil(__DIR__ . '/assets/resize-aspectratio.png');
+        $expected = ImageUtil::fromFile(__DIR__ . '/assets/resize-aspectratio.png');
 
         $this->actual->resizeAspectRatio(400, 200, new Color(255, 0, 0));
 
@@ -231,11 +231,13 @@ class ImageUtilTest extends TestCase
     public function testSaveDefault()
     {
         $fileName = $this->actual->getFilename();
+        $this->assertEmpty($fileName);
 
-        $this->actual->save();
+        $fileName = sys_get_temp_dir() . '/testing.png';
+        $this->actual->save($fileName);
         $this->assertFileExists($fileName);
 
-        $image = new ImageUtil($fileName);
+        $image = ImageUtil::fromFile($fileName);
         $this->assertImageSimilar($image, $this->actual);
 
         unlink($fileName);
@@ -254,7 +256,7 @@ class ImageUtilTest extends TestCase
             $this->actual->save($fileName);
             $this->assertFileExists($fileName);
 
-            $image = new ImageUtil($fileName);
+            $image = ImageUtil::fromFile($fileName);
             $this->assertImageSimilar($image, $this->actual);
         } finally {
             unlink($fileName);
@@ -305,7 +307,7 @@ class ImageUtilTest extends TestCase
 
     public function testSaveAllFormats()
     {
-        $image = new ImageUtil(__DIR__ . '/assets/flip-both.png');
+        $image = ImageUtil::fromFile(__DIR__ . '/assets/flip-both.png');
 
         $fileList = [
             sys_get_temp_dir() . '/test.png',
@@ -327,7 +329,7 @@ class ImageUtilTest extends TestCase
             $this->assertFileDoesNotExist($filename);
             $image->save($filename);
             $this->assertFileExists($filename);
-            new ImageUtil($filename);
+            ImageUtil::fromFile($filename);
         }
     }
 }

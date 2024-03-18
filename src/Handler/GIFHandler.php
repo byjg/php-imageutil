@@ -2,7 +2,7 @@
 
 namespace ByJG\ImageUtil\Handler;
 
-class GIFHandler implements ImageHandlerInterface
+class GIFHandler implements ImageInterface
 {
 
     /**

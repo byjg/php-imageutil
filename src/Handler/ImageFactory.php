@@ -4,14 +4,14 @@ namespace ByJG\ImageUtil\Handler;
 
 use InvalidArgumentException;
 
-class ImageHandlerFactory
+class ImageFactory
 {
     private static $configMime = [];
     private static $configExt = [];
 
     public static function registerHandler($class)
     {
-        if (!in_array(ImageHandlerInterface::class, class_implements($class))) {
+        if (!in_array(ImageInterface::class, class_implements($class))) {
             throw new InvalidArgumentException(
                 "The class '$class' is not a instance of ImageHandlerInterface"
             );
@@ -49,7 +49,7 @@ class ImageHandlerFactory
 
     /**
      * @param $mime
-     * @return ImageHandlerInterface
+     * @return ImageInterface
      */
     public static function instanceFromMime($mime)
     {
@@ -64,7 +64,7 @@ class ImageHandlerFactory
 
     /**
      * @param $ext
-     * @return ImageHandlerInterface
+     * @return ImageInterface
      */
     public static function instanceFromExtension($ext)
     {

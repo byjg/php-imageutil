@@ -2,15 +2,16 @@
 
 namespace ByJG\ImageUtil\Handler;
 
-class PNGHandler implements ImageInterface
-{
+use SVG\SVG;
 
+class SVGHandler implements ImageInterface
+{
     /**
      * @inheritDoc
      */
     public static function mimeType()
     {
-        return "image/png";
+        return "image/svg+xml";
     }
 
     /**
@@ -18,7 +19,7 @@ class PNGHandler implements ImageInterface
      */
     public static function extension()
     {
-        return "png";
+        return ["svg"];
     }
 
     /**
@@ -26,7 +27,7 @@ class PNGHandler implements ImageInterface
      */
     public function load($filename)
     {
-        return imagecreatefrompng($filename);
+        return SVG::fromFile($filename);
     }
 
     /**
@@ -34,8 +35,7 @@ class PNGHandler implements ImageInterface
      */
     public function save($resource, $filename = null, $params = [])
     {
-        $pngQuality = round((9 * $params['quality']) / 100);
-        imagepng($resource, $filename, $pngQuality);
+        imagejpeg($resource, $filename, $params['quality']);
     }
 
     /**
@@ -43,6 +43,10 @@ class PNGHandler implements ImageInterface
      */
     public function output($resource)
     {
-        imagepng($resource);
+        if ($resource instanceof SVG) {
+            echo $resource->toXMLString();
+        } else {
+            throw new \InvalidArgumentException("The resource is not a SVG object");
+        }
     }
 }

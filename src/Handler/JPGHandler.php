@@ -2,7 +2,7 @@
 
 namespace ByJG\ImageUtil\Handler;
 
-class JPGHandler implements ImageHandlerInterface
+class JPGHandler implements ImageInterface
 {
     /**
      * @inheritDoc
