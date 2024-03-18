@@ -4,25 +4,20 @@ namespace ByJG\ImageUtil;
 
 class AlphaColor extends Color
 {
-    protected $alpha;
+    protected int $alpha;
 
-    public function __construct($red, $green, $blue, $alpha = 127)
+    public function __construct(int $red, int $green, int $blue, int $alpha = 127)
     {
         $this->alpha = $alpha;
         parent::__construct($red, $green, $blue);
     }
 
-    public function allocate($image)
-    {
-        return imagecolorallocatealpha($image, $this->red, $this->green, $this->blue, $this->alpha);
-    }
-
-    public function getAlpha()
+    public function getAlpha(): ?int
     {
         return $this->alpha;
     }
 
-    public function getRgba()
+    public function getRgb(): string
     {
         return sprintf("rgba(%d,%d,%d,%f)", $this->red, $this->green, $this->blue, $this->alpha);
     }

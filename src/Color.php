@@ -4,43 +4,43 @@ namespace ByJG\ImageUtil;
 
 class Color
 {
-    protected $red;
-    protected $green;
-    protected $blue;
+    protected int $red;
+    protected int $green;
+    protected int $blue;
 
-    public function __construct($red, $green, $blue)
+    public function __construct(int $red, int $green, int $blue)
     {
         $this->red = $red;
         $this->green = $green;
         $this->blue = $blue;
     }
 
-    public function getRed()
+    public function getRed(): int
     {
         return $this->red;
     }
 
-    public function getGreen()
+    public function getGreen(): int
     {
         return $this->green;
     }
 
-    public function getBlue()
+    public function getBlue(): int
     {
         return $this->blue;
     }
 
-    public function allocate($image)
+    public function getAlpha(): ?int
     {
-        return imagecolorallocate($image, $this->red, $this->green, $this->blue);
+        return null;
     }
 
-    public function getHex()
+    public function getHex(): string
     {
         return sprintf("#%02x%02x%02x", $this->red, $this->green, $this->blue);
     }
 
-    public function getRgb()
+    public function getRgb(): string
     {
         return sprintf("rgb(%d,%d,%d)", $this->red, $this->green, $this->blue);
     }

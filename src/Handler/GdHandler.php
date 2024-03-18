@@ -57,7 +57,7 @@ class GdHandler implements ImageHandlerInterface
     {
         $image = imagecreatetruecolor($width, $height);
         if (!empty($color)) {
-            $fill = $color->allocate($image);
+            $fill = $this->allocateColor($color);
             imagefill($image, 0, 0, $fill);
         }
 
@@ -261,7 +261,7 @@ class GdHandler implements ImageHandlerInterface
 
         $newImage = imagecreatetruecolor($newX, $newY);
         $this->retainTransparency($newImage);
-        imagefill($newImage, 0, 0, $color->allocate($newImage));
+        imagefill($newImage, 0, 0, $this->allocateColor($color, $newImage));
 
         imagecopyresampled(
             $newImage,
@@ -518,6 +518,22 @@ class GdHandler implements ImageHandlerInterface
         $this->retainTransparency();
 
         return $this;
+    }
+
+    protected function allocateColor(Color $color, GdImage $image = null)
+    {
+        if (is_null($image)) {
+            $image = $this->image;
+        }
+        if (is_null($color->getAlpha()))
+        {
+            return imagecolorallocate($image, $color->getRed(), $color->getGreen(), $color->getBlue());
+        }
+        else
+        {
+            return imagecolorallocatealpha($image, $color->getRed(), $color->getGreen(), $color->getBlue(), $color->getAlpha());
+        }
+
     }
 
     /**
