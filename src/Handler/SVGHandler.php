@@ -3,87 +3,91 @@
 namespace ByJG\ImageUtil\Handler;
 
 use ByJG\ImageUtil\Color;
+use ByJG\ImageUtil\Enum\Flip;
 use ByJG\ImageUtil\Enum\StampPosition;
+use ByJG\ImageUtil\Enum\TextAlignment;
+use GdImage;
+use SVG\SVG;
 
 class SVGHandler implements ImageHandlerInterface
 {
 
-    public function getWidth()
+    public function getWidth(): int
     {
         // TODO: Implement getWidth() method.
     }
 
-    public function getHeight()
+    public function getHeight(): int
     {
         // TODO: Implement getHeight() method.
     }
 
-    public function getFilename()
+    public function getFilename(): ?string
     {
         // TODO: Implement getFilename() method.
     }
 
-    public function getResource()
+    public function getResource(): GdImage|SVG
     {
         // TODO: Implement getResource() method.
     }
 
-    public function empty($width, $height, Color $color = null): static
+    public function empty(int $width, int $height, Color $color = null): static
     {
         // TODO: Implement empty() method.
     }
 
-    public function fromResource($resource)
+    public function fromResource(GdImage|SVG $resource): ImageHandlerInterface
     {
         // TODO: Implement fromResource() method.
     }
 
-    public function fromFile($imageFile)
+    public function fromFile(string $imageFile): ImageHandlerInterface
     {
         // TODO: Implement fromFile() method.
     }
 
-    public function rotate($angle, $background = 0)
+    public function rotate(int $angle, int $background = 0): ImageHandlerInterface
     {
         // TODO: Implement rotate() method.
     }
 
-    public function flip($type)
+    public function flip(Flip $type): ImageHandlerInterface
     {
         // TODO: Implement flip() method.
     }
 
-    public function resize($newWidth = null, $newHeight = null)
+    public function resize(?int $newWidth = null, ?int $newHeight = null): ImageHandlerInterface
     {
         // TODO: Implement resize() method.
     }
 
-    public function resizeSquare($newSize, Color $color = null)
+    public function resizeSquare(int $newSize, Color $color = null): ImageHandlerInterface
     {
         // TODO: Implement resizeSquare() method.
     }
 
-    public function resizeAspectRatio($newX, $newY, Color $color = null)
+    public function resizeAspectRatio(int $newX, int $newY, Color $color = null): ImageHandlerInterface
     {
         // TODO: Implement resizeAspectRatio() method.
     }
 
-    public function stampImage($srcImage, $position = StampPosition::BOTTOMRIGHT, $padding = 5, $oppacity = 100)
+    public function stampImage(ImageHandlerInterface $srcImage, StampPosition $position = StampPosition::BOTTOM_RIGHT, int $padding = 5, int $opacity = 100): ImageHandlerInterface
     {
         // TODO: Implement stampImage() method.
     }
 
-    public function writeText($text, $point, $size, $angle, $font, $maxwidth = 0, $rgbAr = null, $textAlignment = 1)
+    public function writeText(string $text, array $point, float $size, int $angle, string $font, int $maxwidth = 0, array $rgbAr = null, TextAlignment $textAlignment = \ByJG\ImageUtil\Enum\TextAlignment::LEFT): ImageHandlerInterface
     {
         // TODO: Implement writeText() method.
     }
 
-    public function crop($fromX, $fromY, $toX, $toY)
+    public function crop(int $fromX, int $fromY, int $toX, int $toY): ImageHandlerInterface
     {
         // TODO: Implement crop() method.
     }
 
-    public function save($filename = null, $quality = 90)
+    public function save(?string $filename = null, int $quality = 90): void
     {
         // TODO: Implement save() method.
     }

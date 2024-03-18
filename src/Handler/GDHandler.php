@@ -10,9 +10,9 @@ use ByJG\ImageUtil\Enum\TextAlignment;
 use ByJG\ImageUtil\Exception\ImageUtilException;
 use ByJG\ImageUtil\Exception\NotFoundException;
 use ByJG\ImageUtil\Image\ImageFactory;
-use ByJG\ImageUtil\ImageUtil;
 use GdImage;
 use InvalidArgumentException;
+use SVG\SVG;
 
 class GDHandler implements ImageHandlerInterface
 {
@@ -22,17 +22,17 @@ class GDHandler implements ImageHandlerInterface
 
     protected $fileName;
 
-    public function getWidth()
+    public function getWidth(): int
     {
         return imagesx($this->image);
     }
 
-    public function getHeight()
+    public function getHeight(): int
     {
         return imagesy($this->image);
     }
 
-    public function getResource()
+    public function getResource(): GdImage|SVG
     {
         return $this->image;
     }
@@ -48,12 +48,12 @@ class GDHandler implements ImageHandlerInterface
         }
     }
 
-    public function getFilename()
+    public function getFilename(): ?string
     {
         return $this->fileName;
     }
 
-    public function empty($width, $height, Color $color = null): static
+    public function empty(int $width, int $height, Color $color = null): static
     {
         $image = imagecreatetruecolor($width, $height);
         if (!empty($color)) {
@@ -70,7 +70,7 @@ class GDHandler implements ImageHandlerInterface
     /**
      * @inheritDoc
      */
-    public function fromResource($resource): static
+    public function fromResource(GdImage|SVG $resource): static
     {
         if (is_resource($resource) || $resource instanceof GdImage) {
             $this->setImage($resource, sys_get_temp_dir() . '/img_' . uniqid() . '.png');
@@ -84,7 +84,7 @@ class GDHandler implements ImageHandlerInterface
     /**
      * @inheritDoc
      */
-    public function fromFile($imageFile): static
+    public function fromFile(string $imageFile): static
     {
         $http = false;
         if (preg_match('/^(https?:|file:)/', $imageFile)) {
@@ -128,7 +128,7 @@ class GDHandler implements ImageHandlerInterface
     /**
      * @inheritDoc
      */
-    public function rotate($angle, $background = 0)
+    public function rotate(int $angle, int $background = 0): static
     {
         if (!is_numeric($angle)) {
             throw new InvalidArgumentException('You need to pass the angle');
@@ -143,7 +143,7 @@ class GDHandler implements ImageHandlerInterface
     /**
      * @inheritDoc
      */
-    public function flip($type)
+    public function flip(Flip $type): static
     {
         if ($type !== Flip::HORIZONTAL && $type !== Flip::VERTICAL && $type !== Flip::BOTH) {
             throw new InvalidArgumentException('You need to pass the flip type');
@@ -193,7 +193,7 @@ class GDHandler implements ImageHandlerInterface
     /**
      * @inheritDoc
      */
-    public function resize($newWidth = null, $newHeight = null)
+    public function resize(?int $newWidth = null, ?int $newHeight = null): static
     {
         if (!is_numeric($newHeight) && !is_numeric($newWidth)) {
             throw new InvalidArgumentException('There are no valid values');
@@ -225,7 +225,7 @@ class GDHandler implements ImageHandlerInterface
     /**
      * @inheritDoc
      */
-    public function resizeSquare($newSize, Color $color = null)
+    public function resizeSquare(int $newSize, Color $color = null): static
     {
         return $this->resizeAspectRatio($newSize, $newSize, $color);
     }
@@ -233,7 +233,7 @@ class GDHandler implements ImageHandlerInterface
     /**
      * @inheritDoc
      */
-    public function resizeAspectRatio($newX, $newY, Color $color = null)
+    public function resizeAspectRatio(int $newX, int $newY, Color $color = null): static
     {
         if (empty($color)) {
             $color = new AlphaColor(255, 255, 255, 127);
@@ -284,17 +284,11 @@ class GDHandler implements ImageHandlerInterface
     /**
      * @inheritDoc
      */
-    public function stampImage($srcImage, $position = StampPosition::BOTTOMRIGHT, $padding = 5, $oppacity = 100)
+    public function stampImage(ImageHandlerInterface $srcImage, StampPosition $position = StampPosition::BOTTOM_RIGHT, int $padding = 5, int $opacity = 100): static
     {
         $dstImage = $this->image;
 
-        if ($srcImage instanceof ImageUtil) {
-            $imageUtil = $srcImage;
-        } else {
-            $imageUtil = new ImageUtil($srcImage);
-        }
-
-        $watermark = $imageUtil->getImage();
+        $watermark = $srcImage->getImage();
 
         $this->retainTransparency($dstImage);
         $this->retainTransparency($watermark);
@@ -315,19 +309,19 @@ class GDHandler implements ImageHandlerInterface
             $position = rand(1, 9);
         }
         switch ($position) {
-            case StampPosition::TOPRIGHT:
+            case StampPosition::TOP_RIGHT:
                 $dstX = ($dstWidth - $srcWIdth) - $padx;
                 $dstY = $pady;
                 break;
-            case StampPosition::TOPLEFT:
+            case StampPosition::TOP_LEFT:
                 $dstX = $padx;
                 $dstY = $pady;
                 break;
-            case StampPosition::BOTTOMRIGHT:
+            case StampPosition::BOTTOM_RIGHT:
                 $dstX = ($dstWidth - $srcWIdth) - $padx;
                 $dstY = ($dstHeight - $srcHeight) - $pady;
                 break;
-            case StampPosition::BOTTOMLEFT:
+            case StampPosition::BOTTOM_LEFT:
                 $dstX = $padx;
                 $dstY = ($dstHeight - $srcHeight) - $pady;
                 break;
@@ -355,7 +349,7 @@ class GDHandler implements ImageHandlerInterface
                 throw new ImageUtilException('Invalid Stamp Position');
         }
 
-        imagecopymerge($dstImage, $watermark, $dstX, $dstY, 0, 0, $srcWIdth, $srcHeight, $oppacity);
+        imagecopymerge($dstImage, $watermark, $dstX, $dstY, 0, 0, $srcWIdth, $srcHeight, $opacity);
         $this->image = $dstImage;
 
         return $this;
@@ -364,7 +358,7 @@ class GDHandler implements ImageHandlerInterface
     /**
      * @inheritDoc
      */
-    public function writeText($text, $point, $size, $angle, $font, $maxwidth = 0, $rgbAr = null, $textAlignment = 1)
+    public function writeText(string $text, array $point, float $size, int $angle, string $font, int $maxwidth = 0, array $rgbAr = null, TextAlignment $textAlignment = TextAlignment::LEFT): static
     {
         if (!is_readable($font)) {
             throw new ImageUtilException('Error: The specified font not found');
@@ -416,15 +410,18 @@ class GDHandler implements ImageHandlerInterface
 
             $curY += ($size * 1.35);
         }
+
+        return $this;
     }
 
     /**
      * @inheritDoc
      */
-    public function crop($fromX, $fromY, $toX, $toY)
+    public function crop(int $fromX, int $fromY, int $toX, int $toY): static
     {
         $newWidth = $toX - $fromX;
         $newHeight = $toY - $fromY;
+
         //Create the image
         $newImage = imagecreatetruecolor($newWidth, $newHeight);
         $this->retainTransparency($newImage);
@@ -437,7 +434,7 @@ class GDHandler implements ImageHandlerInterface
     /**
      * @inheritDoc
      */
-    public function save($filename = null, $quality = 90)
+    public function save(?string $filename = null, int $quality = 90): void
     {
         if (is_null($filename)) {
             $filename = $this->fileName;
@@ -448,21 +445,19 @@ class GDHandler implements ImageHandlerInterface
         $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
 
         ImageFactory::instanceFromExtension($extension)->save($this->image, $filename, ['quality' => $quality]);
-
-        return $this;
     }
 
     /**
      * @inheritDoc
      */
-    public function show()
+    public function show(): void
     {
         if (ob_get_level()) {
             ob_clean();
         }
-        header("Content-type: " . $this->info['mime']);
-        ImageFactory::instanceFromMime($this->info['mime'])->output($this->image);
-        return $this;
+        $info = getimagesize($this->fileName);
+        header("Content-type: " . $info['mime']);
+        ImageFactory::instanceFromMime($info['mime'])->output($this->image);
     }
 
 
@@ -470,7 +465,7 @@ class GDHandler implements ImageHandlerInterface
     /**
      * @inheritDoc
      */
-    public function makeTransparent(Color $color = null, $image = null)
+    public function makeTransparent(Color $color = null, $image = null): static
     {
         if (empty($color)) {
             $color = new Color(255, 255, 255);
@@ -516,7 +511,7 @@ class GDHandler implements ImageHandlerInterface
     /**
      * @inheritDoc
      */
-    public function restore()
+    public function restore(): static
     {
         $this->image = imagecreatetruecolor(imagesx($this->orgImage), imagesy($this->orgImage));
         imagecopy($this->image, $this->orgImage, 0, 0, 0, 0, imagesx($this->orgImage), imagesy($this->orgImage));

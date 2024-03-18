@@ -3,85 +3,86 @@
 namespace ByJG\ImageUtil\Handler;
 
 use ByJG\ImageUtil\Color;
+use ByJG\ImageUtil\Enum\Flip;
 use ByJG\ImageUtil\Enum\StampPosition;
+use ByJG\ImageUtil\Enum\TextAlignment;
 use ByJG\ImageUtil\Exception\ImageUtilException;
 use ByJG\ImageUtil\Exception\NotFoundException;
 use ByJG\ImageUtil\ImageUtil;
 use GdImage;
+use SVG\SVG;
 
 interface ImageHandlerInterface
 {
-    public function getWidth();
+    public function getWidth(): int;
 
-    public function getHeight();
+    public function getHeight(): int;
 
-    public function getFilename();
+    public function getFilename(): ?string;
 
-    public function getResource();
+    public function getResource(): GdImage|SVG;
 
-    public function empty($width, $height, Color $color = null): static;
+    public function empty(int $width, int $height, Color $color = null): static;
 
     /**
-     * @param $resource
-     * @return array
+     * @param GdImage|SVG $resource
+     * @return ImageHandlerInterface
      * @throws ImageUtilException
      */
-    public function fromResource($resource);
+    public function fromResource(GdImage|SVG $resource): static;
 
 
     /**
-     * @param $imageFile
-     * @return array
+     * @param string $imageFile
+     * @return ImageHandlerInterface
      * @throws NotFoundException
      * @throws ImageUtilException
      */
-    public function fromFile($imageFile);
+    public function fromFile(string $imageFile): static;
 
     /**
      * Rotates the image to any direction using the given angle.
      * Arguments: $angle - The rotation angle, in degrees.
      * Example: $img = new Image("file.png"); $img->rotate(180); $img->show(); // Turn the image upside down.
      *
-     * @param float $angle
+     * @param int $angle
      * @param int $background
      * @return $this
      */
-    public function rotate($angle, $background = 0);
+    public function rotate(int $angle, int $background = 0): static;
 
     /**
      * Mirrors the given image in the desired way.
      * Example: $img = new Image("file.png"); $img->flip(2); $img->show();
      *
-     * @param int $type Direction of mirroring. This can be 1(Horizondal Flip), 2(Vertical Flip) or 3(Both Horizondal
+     * @param Flip $type Direction of mirroring. This can be 1(Horizondal Flip), 2(Vertical Flip) or 3(Both Horizondal
      *     and Vertical Flip)
-     * @return ImageUtil
+     * @return ImageHandlerInterface
      */
-    public function flip($type);
+    public function flip(Flip $type): static;
 
 
     /**
      * Resize the image to an new size. Size can be specified in the arugments.
      *
-     * @param int $newWidth The width of the desired image. If 0, the function will automatically calculate the width
+     * @param int|null $newWidth The width of the desired image. If 0, the function will automatically calculate the width
      *     using the height ratio.
-     * @param int $newHeight The width of the desired image. If 0, the function will automatically calculate the value
+     * @param int|null $newHeight The width of the desired image. If 0, the function will automatically calculate the value
      *     using the width ratio.
-     * @return ImageUtil
+     * @return ImageHandlerInterface
      */
-    public function resize($newWidth = null, $newHeight = null);
+    public function resize(?int $newWidth = null, ?int $newHeight = null): static;
 
 
     /**
      * Resize the image in a square format and maintain the aspect ratio. The space are filled the RGB color provided.
      *
      * @param int $newSize The new size of desired image (width and height are equals)
-     * @param int $fillRed
-     * @param int $fillGreen
-     * @param int $fillBlue
-     * @return ImageUtil
+     * @param Color|null $color
+     * @return ImageHandlerInterface
      * @throws ImageUtilException
      */
-    public function resizeSquare($newSize, Color $color = null);
+    public function resizeSquare(int $newSize, Color $color = null): static;
 
 
     /**
@@ -89,26 +90,24 @@ interface ImageHandlerInterface
      *
      * @param int $newX
      * @param int $newY
-     * @param int $fillRed
-     * @param int $fillGreen
-     * @param int $fillBlue
-     * @return ImageUtil
+     * @param Color|null $color
+     * @return ImageHandlerInterface
      * @throws ImageUtilException
      */
-    public function resizeAspectRatio($newX, $newY, Color $color = null);
+    public function resizeAspectRatio(int $newX, int $newY, Color $color = null): static;
 
     /**
      * Stamp an image in the current image.
      *
-     * @param ImageUtil|string $srcImage The image path or the image gd resource.
-     * @param int $position
+     * @param ImageHandlerInterface $srcImage The image path or the image gd resource.
+     * @param StampPosition $position
      * @param int $padding
-     * @param int $oppacity
-     * @return ImageUtil
+     * @param int $opacity
+     * @return ImageHandlerInterface
      * @throws ImageUtilException
      * @throws NotFoundException
      */
-    public function stampImage($srcImage, $position = StampPosition::BOTTOMRIGHT, $padding = 5, $oppacity = 100);
+    public function stampImage(ImageHandlerInterface $srcImage, StampPosition $position = StampPosition::BOTTOM_RIGHT, int $padding = 5, int $opacity = 100): static;
 
     /**
      * Writes a text on the image.
@@ -116,26 +115,26 @@ interface ImageHandlerInterface
      * @param string $text
      * @param float[] $point
      * @param float $size
-     * @param float $angle
+     * @param int $angle
      * @param string $font
      * @param int $maxwidth
-     * @param float[] $rgbAr
-     * @param int $textAlignment
+     * @param float[]|null $rgbAr
+     * @param TextAlignment $textAlignment
      * @throws ImageUtilException
      */
-    public function writeText($text, $point, $size, $angle, $font, $maxwidth = 0, $rgbAr = null, $textAlignment = 1);
+    public function writeText(string $text, array $point, float $size, int $angle, string $font, int $maxwidth = 0, array $rgbAr = null, TextAlignment $textAlignment = TextAlignment::LEFT): static;
 
     /**
      * Crops the given image from the ($from_x,$from_y) point to the ($to_x,$to_y) point.
      * Example: $img -> crop(250,200,400,250);
      *
-     * @param float $fromX X coordinate from where the crop should start
-     * @param float $fromY Y coordinate from where the crop should start
-     * @param float $toX X coordinate from where the crop should end
-     * @param float $toY Y coordinate from where the crop should end
-     * @return ImageUtil
+     * @param int $fromX X coordinate from where the crop should start
+     * @param int $fromY Y coordinate from where the crop should start
+     * @param int $toX X coordinate from where the crop should end
+     * @param int $toY Y coordinate from where the crop should end
+     * @return ImageHandlerInterface
      */
-    public function crop($fromX, $fromY, $toX, $toY);
+    public function crop(int $fromX, int $fromY, int $toX, int $toY): static;
 
     /**
      * Save the image to the given file. You can use this function to convert image types to. Just specify the image
@@ -143,30 +142,30 @@ interface ImageHandlerInterface
      * Returns: false if save operation fails. Example: $img->save("image.png");
      *            $image->save('file.jpg');
      *
-     * @param null $filename
+     * @param string|null $filename
      * @param int $quality
-     * @return ImageUtil The object if not destroyed
+     * @return void The object if not destroyed
      */
-    public function save($filename = null, $quality = 90);
+    public function save(?string $filename = null, int $quality = 90): void;
 
     /**
      * Display the image.
      * Example: $img->show();
      */
-    public function show();
+    public function show(): void;
 
     /**
      * Make transparent the image. The transparent color must be provided
      *
-     * @param int $transpRed
-     * @param int $transpGreen
-     * @param int $transpBlue
+     * @param Color|null $color
+     * @param null $image
      * @return ImageUtil|GdImage|resource The image util object
      */
-    public function makeTransparent(Color $color = null, $image = null);
+    public function makeTransparent(Color $color = null, $image = null): static;
+
     /**
      * Discard any changes made to the image and restore the original state
      */
-    public function restore();
+    public function restore(): static;
 
 }

@@ -2,6 +2,7 @@
 
 namespace ByJG\ImageUtil;
 
+use ByJG\ImageUtil\Enum\FileType;
 use ByJG\ImageUtil\Exception\ImageUtilException;
 use ByJG\ImageUtil\Exception\NotFoundException;
 use ByJG\ImageUtil\Handler\GDHandler;

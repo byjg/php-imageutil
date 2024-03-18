@@ -5,9 +5,9 @@ namespace ByJG\ImageUtil\Enum;
 /**
  * Used by ImageUtil
  */
-class Flip
+enum Flip: int
 {
-    const HORIZONTAL = 1;
-    const VERTICAL = 2;
-    const BOTH = 3;
+    case HORIZONTAL = 1;
+    case VERTICAL = 2;
+    case BOTH = 3;
 }
