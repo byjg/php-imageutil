@@ -77,6 +77,8 @@ ImageUtil provides several methods for image manipulation:
 - **Crop Image**: Crop the image from a specified point to another point.
 - **Make Transparent**: Make the image transparent. The transparent color must be provided.
 
+See some examples [here](docs/examples.md).
+
 ## Saving and Restoring Changes
 
 You can save the changes to the image, restore the image to its original state, or destroy the image resource:

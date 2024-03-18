@@ -1,8 +1,8 @@
 # Examples
 
-## Flip an image
+## Flip an Image
 
-Mirrors the given image in the desired way.i
+This example mirrors the given image in the desired way.
 
 ```php
 <?php
@@ -12,7 +12,7 @@ $img->flip(Flip::Vertical)->resize(120, null)->save('wheel.jpg');
 
 ## Rotate
 
-Rotates the image to any direction using the given angle.
+This example rotates the image in any direction using the given angle.
 
 ```php
 <?php
@@ -22,7 +22,7 @@ $img->rotate(45);
 
 ## Resize
 
-Resize the image to an new size. Size can be specified in the arguments.
+This example resizes the image to a new size. The size can be specified in the arguments.
 
 ```php
 <?php
@@ -32,7 +32,7 @@ $img->resize(640, 480);
 
 ## Resize Square
 
-Resize the image into a square format and maintain the aspect ratio. The spaces left are filled with the RGB color provided.
+This example resizes the image into a square format while maintaining the aspect ratio. Any remaining space is filled with the provided RGB color.
 
 ```php
 <?php
@@ -40,19 +40,19 @@ $img = ImageUtil::fromFile('wheel.png');
 $img->resizeSquare(200);
 ```
 
-## Resize and maintain the AspectRatio
+## Resize and Maintain the Aspect Ratio
 
-Resize the image but the aspect ratio is respected. The spaces left are filled with the RGB color provided.
+This example resizes the image while respecting the aspect ratio. Any remaining space is filled with the provided RGB color.
 
 ```php
 <?php
 $img = ImageUtil::fromFile('wheel.png');
-$img->resizeAspectRatio(200, 150)
+$img->resizeAspectRatio(200, 150, new Color(0, 255, 0));
 ```
 
 ## Stamp Image
 
-Stamp an image in the current image.
+This example stamps an image onto the current image.
 
 ```php
 <?php
@@ -63,7 +63,7 @@ $img->stampImage($stamp, StampPosition::BottomRight);
 
 ## Write Text
 
-Writes a text on the image.
+This example writes text onto the image.
 
 ```php
 <?php
@@ -73,7 +73,7 @@ $img->writeText('Sample', 0, 70, 45, 'Arial');
 
 ## Crop Image
 
-Crops the given image from the ($from_x,$from_y) point to the ($to_x,$to_y) point.
+This example crops the given image from the ($from_x,$from_y) point to the ($to_x,$to_y) point.
 
 ```php
 <?php
@@ -83,7 +83,7 @@ $img->crop(250,200,400,250);
 
 ## Make Transparent
 
-Make the image transparent. The transparent color must be provided.
+This example makes the image transparent. The transparent color must be provided.
 
 ```php
 <?php
@@ -91,23 +91,29 @@ $img = ImageUtil::fromFile('wheel.png');
 $img->makeTransparent(new Color(255, 255, 255));
 ```
 
-## Restoring the changes
+## Restore Changes
+
+This example restores the changes made to the image.
 
 ```php
 <?php
 $img->restore();
 ```
 
-## Destroy the resouce
+## Destroy the Resource
+
+This example destroys the image resource.
 
 ```php
 <?php
 $img->destroy();
 ```
 
-## Saving the Image
+## Save the Image
+
+This example saves the image.
 
 ```php
 <?php
-$img->save('filename.gif')
+$img->save('filename.gif');
 ```
