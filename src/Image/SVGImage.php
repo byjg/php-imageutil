@@ -2,6 +2,7 @@
 
 namespace ByJG\ImageUtil\Image;
 
+use GdImage;
 use SVG\SVG;
 
 class SVGImage implements ImageInterface
@@ -9,7 +10,7 @@ class SVGImage implements ImageInterface
     /**
      * @inheritDoc
      */
-    public static function mimeType()
+    public static function mimeType(): string|array
     {
         return "image/svg+xml";
     }
@@ -17,7 +18,7 @@ class SVGImage implements ImageInterface
     /**
      * @inheritDoc
      */
-    public static function extension()
+    public static function extension(): string|array
     {
         return ["svg"];
     }
@@ -25,7 +26,7 @@ class SVGImage implements ImageInterface
     /**
      * @inheritDoc
      */
-    public function load($filename)
+    public function load(string $filename): GdImage|SVG
     {
         return SVG::fromFile($filename);
     }
@@ -33,15 +34,19 @@ class SVGImage implements ImageInterface
     /**
      * @inheritDoc
      */
-    public function save($resource, $filename = null, $params = [])
+    public function save(GdImage|SVG $resource, string $filename = null, array $params = []): void
     {
-        imagejpeg($resource, $filename, $params['quality']);
+        if ($resource instanceof SVG) {
+            file_put_contents($resource->toXMLString(), $filename);
+        } else {
+            throw new \InvalidArgumentException("Cannot convert a GdImage to SVG.");
+        }
     }
 
     /**
      * @inheritDoc
      */
-    public function output($resource)
+    public function output(GdImage|SVG $resource): void
     {
         if ($resource instanceof SVG) {
             echo $resource->toXMLString();

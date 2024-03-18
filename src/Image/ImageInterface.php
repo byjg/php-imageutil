@@ -3,37 +3,38 @@
 namespace ByJG\ImageUtil\Image;
 
 use GdImage;
+use SVG\SVG;
 
 interface ImageInterface
 {
     /**
      * @return string|array
      */
-    public static function mimeType();
+    public static function mimeType(): string|array;
 
     /**
      * @return string|array
      */
-    public static function extension();
+    public static function extension(): string|array;
 
     /**
-     * @param $filename
-     * @return resource|GdImage
+     * @param string $filename
+     * @return GdImage|SVG
      */
-    public function load($filename);
+    public function load(string $filename): GdImage|SVG;
 
     /**
-     * @param resource|GdImage $resource
+     * @param GdImage|SVG $resource
      * @param string $filename
      * @param array $params
      * @return void
      */
-    public function save($resource, $filename, $params = []);
+    public function save(GdImage|SVG $resource, string $filename, array $params = []): void;
 
     /**
-     * @param resource|GdImage $resource
-     * @return mixed
+     * @param GdImage|SVG $resource
+     * @return void
      */
-    public function output($resource);
+    public function output(GdImage|SVG $resource): void;
 
 }
