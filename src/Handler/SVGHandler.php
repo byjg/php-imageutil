@@ -2,51 +2,104 @@
 
 namespace ByJG\ImageUtil\Handler;
 
-use SVG\SVG;
+use ByJG\ImageUtil\Color;
+use ByJG\ImageUtil\Enum\StampPosition;
 
-class SVGHandler implements ImageInterface
+class SVGHandler implements ImageHandlerInterface
 {
-    /**
-     * @inheritDoc
-     */
-    public static function mimeType()
+
+    public function getWidth()
     {
-        return "image/svg+xml";
+        // TODO: Implement getWidth() method.
     }
 
-    /**
-     * @inheritDoc
-     */
-    public static function extension()
+    public function getHeight()
     {
-        return ["svg"];
+        // TODO: Implement getHeight() method.
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function load($filename)
+    public function getFilename()
     {
-        return SVG::fromFile($filename);
+        // TODO: Implement getFilename() method.
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function save($resource, $filename = null, $params = [])
+    public function getResource()
     {
-        imagejpeg($resource, $filename, $params['quality']);
+        // TODO: Implement getResource() method.
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function output($resource)
+    public function empty($width, $height, Color $color = null): static
     {
-        if ($resource instanceof SVG) {
-            echo $resource->toXMLString();
-        } else {
-            throw new \InvalidArgumentException("The resource is not a SVG object");
-        }
+        // TODO: Implement empty() method.
+    }
+
+    public function fromResource($resource)
+    {
+        // TODO: Implement fromResource() method.
+    }
+
+    public function fromFile($imageFile)
+    {
+        // TODO: Implement fromFile() method.
+    }
+
+    public function rotate($angle, $background = 0)
+    {
+        // TODO: Implement rotate() method.
+    }
+
+    public function flip($type)
+    {
+        // TODO: Implement flip() method.
+    }
+
+    public function resize($newWidth = null, $newHeight = null)
+    {
+        // TODO: Implement resize() method.
+    }
+
+    public function resizeSquare($newSize, Color $color = null)
+    {
+        // TODO: Implement resizeSquare() method.
+    }
+
+    public function resizeAspectRatio($newX, $newY, Color $color = null)
+    {
+        // TODO: Implement resizeAspectRatio() method.
+    }
+
+    public function stampImage($srcImage, $position = StampPosition::BOTTOMRIGHT, $padding = 5, $oppacity = 100)
+    {
+        // TODO: Implement stampImage() method.
+    }
+
+    public function writeText($text, $point, $size, $angle, $font, $maxwidth = 0, $rgbAr = null, $textAlignment = 1)
+    {
+        // TODO: Implement writeText() method.
+    }
+
+    public function crop($fromX, $fromY, $toX, $toY)
+    {
+        // TODO: Implement crop() method.
+    }
+
+    public function save($filename = null, $quality = 90)
+    {
+        // TODO: Implement save() method.
+    }
+
+    public function show()
+    {
+        // TODO: Implement show() method.
+    }
+
+    public function makeTransparent(Color $color = null, $image = null)
+    {
+        // TODO: Implement makeTransparent() method.
+    }
+
+    public function restore()
+    {
+        // TODO: Implement restore() method.
     }
 }

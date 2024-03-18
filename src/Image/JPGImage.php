@@ -1,16 +1,15 @@
 <?php
 
-namespace ByJG\ImageUtil\Handler;
+namespace ByJG\ImageUtil\Image;
 
-class WEBPHandler implements ImageInterface
+class JPGImage implements ImageInterface
 {
-
     /**
      * @inheritDoc
      */
     public static function mimeType()
     {
-        return 'image/webp';
+        return "image/jpeg";
     }
 
     /**
@@ -18,7 +17,7 @@ class WEBPHandler implements ImageInterface
      */
     public static function extension()
     {
-        return "webp";
+        return ["jpg", "jpeg"];
     }
 
     /**
@@ -26,7 +25,7 @@ class WEBPHandler implements ImageInterface
      */
     public function load($filename)
     {
-        return imagecreatefromwebp($filename);
+        return imagecreatefromjpeg($filename);
     }
 
     /**
@@ -34,7 +33,7 @@ class WEBPHandler implements ImageInterface
      */
     public function save($resource, $filename = null, $params = [])
     {
-        imagewebp($resource, $filename, $params['quality']);
+        imagejpeg($resource, $filename, $params['quality']);
     }
 
     /**
@@ -42,6 +41,6 @@ class WEBPHandler implements ImageInterface
      */
     public function output($resource)
     {
-        imagewebp($resource);
+        imagejpeg($resource);
     }
 }

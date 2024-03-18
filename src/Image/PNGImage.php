@@ -1,8 +1,8 @@
 <?php
 
-namespace ByJG\ImageUtil\Handler;
+namespace ByJG\ImageUtil\Image;
 
-class PNGHandler implements ImageInterface
+class PNGImage implements ImageInterface
 {
 
     /**

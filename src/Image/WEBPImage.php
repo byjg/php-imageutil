@@ -1,8 +1,8 @@
 <?php
 
-namespace ByJG\ImageUtil\Handler;
+namespace ByJG\ImageUtil\Image;
 
-class GIFHandler implements ImageInterface
+class WEBPImage implements ImageInterface
 {
 
     /**
@@ -10,7 +10,7 @@ class GIFHandler implements ImageInterface
      */
     public static function mimeType()
     {
-        return "image/gif";
+        return 'image/webp';
     }
 
     /**
@@ -18,7 +18,7 @@ class GIFHandler implements ImageInterface
      */
     public static function extension()
     {
-        return 'gif';
+        return "webp";
     }
 
     /**
@@ -26,11 +26,7 @@ class GIFHandler implements ImageInterface
      */
     public function load($filename)
     {
-        $img = getimagesize($filename);
-        $oldId = imagecreatefromgif($filename);
-        $image = imagecreatetruecolor($img[0], $img[1]);
-        imagecopy($image, $oldId, 0, 0, 0, 0, $img[0], $img[1]);
-        return $image;
+        return imagecreatefromwebp($filename);
     }
 
     /**
@@ -38,7 +34,7 @@ class GIFHandler implements ImageInterface
      */
     public function save($resource, $filename = null, $params = [])
     {
-        imagegif($resource, $filename);
+        imagewebp($resource, $filename, $params['quality']);
     }
 
     /**
@@ -46,6 +42,6 @@ class GIFHandler implements ImageInterface
      */
     public function output($resource)
     {
-        imagegif($resource);
+        imagewebp($resource);
     }
 }

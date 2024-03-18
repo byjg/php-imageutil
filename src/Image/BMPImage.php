@@ -1,15 +1,16 @@
 <?php
 
-namespace ByJG\ImageUtil\Handler;
+namespace ByJG\ImageUtil\Image;
 
-class JPGHandler implements ImageInterface
+class BMPImage implements ImageInterface
 {
+
     /**
      * @inheritDoc
      */
     public static function mimeType()
     {
-        return "image/jpeg";
+        return [ 'image/bmp', 'image/x-ms-bmp' ];
     }
 
     /**
@@ -17,7 +18,7 @@ class JPGHandler implements ImageInterface
      */
     public static function extension()
     {
-        return ["jpg", "jpeg"];
+        return "bmp";
     }
 
     /**
@@ -25,7 +26,7 @@ class JPGHandler implements ImageInterface
      */
     public function load($filename)
     {
-        return imagecreatefromjpeg($filename);
+        return imagecreatefrombmp($filename);
     }
 
     /**
@@ -33,7 +34,7 @@ class JPGHandler implements ImageInterface
      */
     public function save($resource, $filename = null, $params = [])
     {
-        imagejpeg($resource, $filename, $params['quality']);
+        imagebmp($resource, $filename);
     }
 
     /**
@@ -41,6 +42,6 @@ class JPGHandler implements ImageInterface
      */
     public function output($resource)
     {
-        imagejpeg($resource);
+        imagebmp($resource);
     }
 }

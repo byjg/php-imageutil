@@ -1,6 +1,6 @@
 <?php
 
-namespace ByJG\ImageUtil\Handler;
+namespace ByJG\ImageUtil\Image;
 
 use InvalidArgumentException;
 
@@ -40,11 +40,11 @@ class ImageFactory
             return;
         }
 
-        self::registerHandler(PNGHandler::class);
-        self::registerHandler(GIFHandler::class);
-        self::registerHandler(JPGHandler::class);
-        self::registerHandler(BMPHandler::class);
-        self::registerHandler(WEBPHandler::class);
+        self::registerHandler(PNGImage::class);
+        self::registerHandler(GIFImage::class);
+        self::registerHandler(JPGImage::class);
+        self::registerHandler(BMPImage::class);
+        self::registerHandler(WEBPImage::class);
     }
 
     /**

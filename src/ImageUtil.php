@@ -4,11 +4,10 @@ namespace ByJG\ImageUtil;
 
 use ByJG\ImageUtil\Exception\ImageUtilException;
 use ByJG\ImageUtil\Exception\NotFoundException;
-use ByJG\ImageUtil\Handler\FileType;
 use ByJG\ImageUtil\Handler\GDHandler;
-use ByJG\ImageUtil\Handler\ImageFactory;
 use ByJG\ImageUtil\Handler\ImageHandlerInterface;
 use ByJG\ImageUtil\Handler\SVGHandler;
+use ByJG\ImageUtil\Image\ImageFactory;
 use GdImage;
 use SVG\SVG;
 

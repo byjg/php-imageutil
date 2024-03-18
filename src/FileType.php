@@ -1,6 +1,6 @@
 <?php
 
-namespace ByJG\ImageUtil\Handler;
+namespace ByJG\ImageUtil;
 
 enum FileType: string
 {

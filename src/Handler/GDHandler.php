@@ -9,6 +9,7 @@ use ByJG\ImageUtil\Enum\StampPosition;
 use ByJG\ImageUtil\Enum\TextAlignment;
 use ByJG\ImageUtil\Exception\ImageUtilException;
 use ByJG\ImageUtil\Exception\NotFoundException;
+use ByJG\ImageUtil\Image\ImageFactory;
 use ByJG\ImageUtil\ImageUtil;
 use GdImage;
 use InvalidArgumentException;

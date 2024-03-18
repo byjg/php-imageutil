@@ -1,8 +1,8 @@
 <?php
 
-namespace ByJG\ImageUtil\Handler;
+namespace ByJG\ImageUtil\Image;
 
-class BMPHandler implements ImageInterface
+class GIFImage implements ImageInterface
 {
 
     /**
@@ -10,7 +10,7 @@ class BMPHandler implements ImageInterface
      */
     public static function mimeType()
     {
-        return [ 'image/bmp', 'image/x-ms-bmp' ];
+        return "image/gif";
     }
 
     /**
@@ -18,7 +18,7 @@ class BMPHandler implements ImageInterface
      */
     public static function extension()
     {
-        return "bmp";
+        return 'gif';
     }
 
     /**
@@ -26,7 +26,11 @@ class BMPHandler implements ImageInterface
      */
     public function load($filename)
     {
-        return imagecreatefrombmp($filename);
+        $img = getimagesize($filename);
+        $oldId = imagecreatefromgif($filename);
+        $image = imagecreatetruecolor($img[0], $img[1]);
+        imagecopy($image, $oldId, 0, 0, 0, 0, $img[0], $img[1]);
+        return $image;
     }
 
     /**
@@ -34,7 +38,7 @@ class BMPHandler implements ImageInterface
      */
     public function save($resource, $filename = null, $params = [])
     {
-        imagebmp($resource, $filename);
+        imagegif($resource, $filename);
     }
 
     /**
@@ -42,6 +46,6 @@ class BMPHandler implements ImageInterface
      */
     public function output($resource)
     {
-        imagebmp($resource);
+        imagegif($resource);
     }
 }
