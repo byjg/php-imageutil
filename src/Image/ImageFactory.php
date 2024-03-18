@@ -45,6 +45,7 @@ class ImageFactory
         self::registerHandler(JpgImage::class);
         self::registerHandler(BmpImage::class);
         self::registerHandler(WebpImage::class);
+        self::registerHandler(SvgImage::class);
     }
 
     /**

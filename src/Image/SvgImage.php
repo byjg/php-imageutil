@@ -38,7 +38,7 @@ class SvgImage implements ImageInterface
     public function save(GdImage|SVG $resource, string $filename = null, array $params = []): void
     {
         if ($resource instanceof SVG) {
-            file_put_contents($resource->toXMLString(), $filename);
+            file_put_contents($filename, $resource->toXMLString());
         } else {
             throw new InvalidArgumentException("Cannot convert a GdImage to SVG.");
         }

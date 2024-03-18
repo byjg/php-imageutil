@@ -6,7 +6,8 @@
 [![GitHub license](https://img.shields.io/github/license/byjg/php-imageutil.svg)](https://opensource.byjg.com/opensource/licensing.html)
 [![GitHub release](https://img.shields.io/github/release/byjg/php-imageutil.svg)](https://github.com/byjg/php-imageutil/releases/)
 
-A wrapper collection for GD library in PHP. Defines a set of methods for flip, crop, resize, stamp and others easily.
+A wrapper collection for GD library in PHP. Defines a set of operations on top of the GDImage like 
+flip, crop, resize, stamp and others easily.
 
 ## Installation
 
@@ -14,23 +15,45 @@ A wrapper collection for GD library in PHP. Defines a set of methods for flip, c
 composer require "byjg/imageutil"
 ```
 
+## Supported Formats
+
+- GIF
+- JPEG
+- PNG
+- BMP
+- WEBP
+- SVG (partial support. Intended to convert to other formats, not to manipulate SVG files.)
 
 ## Creating the Image
 
 ```php
 <?php
+use ByJG\ImageUtil\ImageUtil;
 // From the file system
-$img = new ImageUtil('path_to_image.png');
+$img = ImageUtil::fromFile('path_to_image.png');
 
 // From an URL
-$img2 = new ImageUtil('http://somesite/someimage.jpg');
+$img2 = ImageUtil::fromFile('https://somesite/someimage.jpg');
 
 // From an existing resource image
 $resourceImg = imagecreatetruecolor(200, 300);
-$img3 = new ImageUtil($resourceImg);
+$img3 = ImageUtil::fromResource($resourceImg);
 
 // Or empty image
 $img4 = ImageUtil::empty(200, 300, new Color(255, 255, 255));
+```
+
+## Basic support to SVG Files
+
+**NOTE: The support intend to CONVERT images from SVG to any GD format available. 
+It doesn't support all SVG sets and don't support any operation like resize, flip, etc** 
+
+```php
+<?php
+use ByJG\ImageUtil\ImageUtil;
+
+$img = ImageUtil::fromFile('path_to_image.svg');
+$img->save('path_to_image.png');
 ```
 
 ## Flip an image
@@ -39,7 +62,7 @@ Mirrors the given image in the desired way.i
 
 ```php
 <?php
-$img = new ImageUtil('wheel.png');
+$img = ImageUtil::fromFile('wheel.png');
 $img->flip(Flip::Vertical)->resize(120, null)->save('wheel.jpg');
 ```
 
@@ -49,7 +72,7 @@ Rotates the image to any direction using the given angle.
 
 ```php
 <?php
-$img = new ImageUtil('wheel.png');
+$img = ImageUtil::fromFile('wheel.png');
 $img->rotate(45);
 ```
 
@@ -59,7 +82,7 @@ Resize the image to an new size. Size can be specified in the arguments.
 
 ```php
 <?php
-$img = new ImageUtil('wheel.png');
+$img = ImageUtil::fromFile('wheel.png');
 $img->resize(640, 480);
 ```
 
@@ -69,7 +92,7 @@ Resize the image into a square format and maintain the aspect ratio. The spaces 
 
 ```php
 <?php
-$img = new ImageUtil('wheel.png');
+$img = ImageUtil::fromFile('wheel.png');
 $img->resizeSquare(200);
 ```
 
@@ -79,7 +102,7 @@ Resize the image but the aspect ratio is respected. The spaces left are filled w
 
 ```php
 <?php
-$img = new ImageUtil('wheel.png');
+$img = ImageUtil::fromFile('wheel.png');
 $img->resizeAspectRatio(200, 150)
 ```
 
@@ -89,8 +112,8 @@ Stamp an image in the current image.
 
 ```php
 <?php
-$img = new ImageUtil('wheel.png');
-$stamp = new ImageUtil('https://www.mysite.com/logo.png');
+$img = ImageUtil::fromFile('wheel.png');
+$stamp = ImageUtil::fromFile('https://www.mysite.com/logo.png');
 $img->stampImage($stamp, StampPosition::BottomRight);
 ```
 
@@ -100,7 +123,7 @@ Writes a text on the image.
 
 ```php
 <?php
-$img = new ImageUtil('wheel.png');
+$img = ImageUtil::fromFile('wheel.png');
 $img->writeText('Sample', 0, 70, 45, 'Arial');
 ```
 
@@ -110,7 +133,7 @@ Crops the given image from the ($from_x,$from_y) point to the ($to_x,$to_y) poin
 
 ```php
 <?php
-$img = new ImageUtil('wheel.png');
+$img = ImageUtil::fromFile('wheel.png');
 $img->crop(250,200,400,250);
 ```
 
@@ -120,7 +143,7 @@ Make the image transparent. The transparent color must be provided.
 
 ```php
 <?php
-$img = new ImageUtil('wheel.png');
+$img = ImageUtil::fromFile('wheel.png');
 $img->makeTransparent(new Color(255, 255, 255));
 ```
 

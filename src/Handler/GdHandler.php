@@ -444,13 +444,13 @@ class GdHandler implements ImageHandlerInterface
     {
         if (is_null($filename)) {
             $filename = $this->fileName;
-        } else {
-            $this->fileName = $filename;
         }
 
         $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
 
         ImageFactory::instanceFromExtension($extension)->save($this->image, $filename, ['quality' => $quality]);
+
+        $this->setImage($this->image, $filename);
     }
 
     /**
