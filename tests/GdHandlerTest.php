@@ -1,40 +1,40 @@
 <?php
 
+namespace Test;
+
 use ByJG\ImageUtil\AlphaColor;
 use ByJG\ImageUtil\Color;
 use ByJG\ImageUtil\Enum\Flip;
 use ByJG\ImageUtil\Exception\ImageUtilException;
 use ByJG\ImageUtil\Exception\NotFoundException;
+use ByJG\ImageUtil\Handler\ImageHandlerInterface;
 use ByJG\ImageUtil\ImageUtil;
-use PHPUnit\Framework\TestCase;
 
-class ImageUtilTest extends TestCase
+class GdHandlerTest extends Base
 {
     /**
-     * @var ImageUtil
+     * @var ImageHandlerInterface
      */
-    protected $actual;
+    protected ImageHandlerInterface $gdHandler;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      *
-     * @throws ImageUtilException
-     * @throws NotFoundException
      */
     protected function setUp(): void
     {
-        $this->actual = ImageUtil::empty(500, 100);
+        $this->gdHandler = ImageUtil::empty(500, 100);
     }
 
     public function testGetWidth()
     {
-        $this->assertSame(500, $this->actual->getWidth());
+        $this->assertSame(500, $this->gdHandler->getWidth());
     }
 
     public function testGetHeight()
     {
-        $this->assertSame(100, $this->actual->getHeight());
+        $this->assertSame(100, $this->gdHandler->getHeight());
     }
 
     protected function getResourceString($resourceImg)
@@ -53,42 +53,9 @@ class ImageUtilTest extends TestCase
         $resourceImg = imagecreatetruecolor(500, 100);
         $expected = $this->getResourceString($resourceImg);
 
-        $result = $this->getResourceString($this->actual->getImage());
+        $result = $this->getResourceString($this->gdHandler->getResource());
 
         $this->assertEquals($expected, $result);
-    }
-
-    /**
-     * @param ImageUtil $expected
-     * @param ImageUtil $actual
-     * @param float $threshold
-     * @param bool $lessThan
-     * @return void
-     * @throws ImagickException
-     */
-    protected function assertImages($expected, $actual, $threshold, $lessThan)
-    {
-        if (!class_exists('\imagick')) {
-            $this->markTestIncomplete('PECL Imagick not installed');
-        }
-        $expected->save(sys_get_temp_dir() . '/expected.png');
-        $actual->save(sys_get_temp_dir() . '/actual.png');
-
-        $image1 = new Imagick(sys_get_temp_dir() . '/expected.png');
-        $image2 = new Imagick(sys_get_temp_dir() . '/actual.png');
-
-        $result = $image1->compareImages($image2, Imagick::METRIC_MEANSQUAREERROR);
-        $lessThan ? $this->assertLessThan($threshold, $result[1]) : $this->assertGreaterThanOrEqual($threshold, $result[1]);
-    }
-
-    protected function assertImageSimilar($expected, $actual)
-    {
-        $this->assertImages($expected, $actual, 0.1, true);
-    }
-
-    protected function assertImageNotSimilar($expected, $actual)
-    {
-        $this->assertImages($expected, $actual, 0.1, false);
     }
 
     /**
@@ -97,11 +64,11 @@ class ImageUtilTest extends TestCase
      */
     public function testRotate()
     {
-        $expected = new ImageUtil(__DIR__ . '/assets/rotate.png');
+        $expected = ImageUtil::fromFile(__DIR__ . '/assets/rotate.png');
 
-        $this->actual->rotate(45, 230);
+        $this->gdHandler->rotate(45, 230);
 
-        $this->assertImageSimilar($expected, $this->actual);
+        $this->assertImageSimilar($expected, $this->gdHandler);
     }
 
     /**
@@ -110,12 +77,12 @@ class ImageUtilTest extends TestCase
      */
     public function testFlipVertical()
     {
-        $expected = new ImageUtil(__DIR__ . '/assets/flip-vertical.png');
+        $expected = ImageUtil::fromFile(__DIR__ . '/assets/flip-vertical.png');
 
-        $this->actual->rotate(10, 230);
-        $this->actual->flip(Flip::VERTICAL);
+        $this->gdHandler->rotate(10, 230);
+        $this->gdHandler->flip(Flip::VERTICAL);
 
-        $this->assertImageSimilar($expected, $this->actual);
+        $this->assertImageSimilar($expected, $this->gdHandler);
     }
 
     /**
@@ -124,12 +91,12 @@ class ImageUtilTest extends TestCase
      */
     public function testFlipBoth()
     {
-        $expected = new ImageUtil(__DIR__ . '/assets/flip-both.png');
+        $expected = ImageUtil::fromFile(__DIR__ . '/assets/flip-both.png');
 
-        $this->actual->rotate(80, 230);
-        $this->actual->flip(Flip::BOTH);
+        $this->gdHandler->rotate(80, 230);
+        $this->gdHandler->flip(Flip::BOTH);
 
-        $this->assertImageSimilar($expected, $this->actual);
+        $this->assertImageSimilar($expected, $this->gdHandler);
     }
 
     /**
@@ -138,12 +105,12 @@ class ImageUtilTest extends TestCase
      */
     public function testFlipHorizontal()
     {
-        $expected = new ImageUtil(__DIR__ . '/assets/flip-horizontal.png');
+        $expected = ImageUtil::fromFile(__DIR__ . '/assets/flip-horizontal.png');
 
-        $this->actual->rotate(80, 230);
-        $this->actual->flip(Flip::HORIZONTAL);
+        $this->gdHandler->rotate(80, 230);
+        $this->gdHandler->flip(Flip::HORIZONTAL);
 
-        $this->assertImageSimilar($expected, $this->actual);
+        $this->assertImageSimilar($expected, $this->gdHandler);
     }
 
     public function testResize()
@@ -151,9 +118,9 @@ class ImageUtilTest extends TestCase
         // Create the object
         $resourceImg = ImageUtil::empty(800, 30);
 
-        $this->actual->resize(800, 30);
+        $this->gdHandler->resize(800, 30);
 
-        $this->assertImageSimilar($resourceImg, $this->actual);
+        $this->assertImageSimilar($resourceImg, $this->gdHandler);
     }
 
     /**
@@ -162,20 +129,20 @@ class ImageUtilTest extends TestCase
      */
     public function testResizeSquare()
     {
-        $expected = new ImageUtil(__DIR__ . '/assets/resize-square.png');
+        $expected = ImageUtil::fromFile(__DIR__ . '/assets/resize-square.png');
 
-        $this->actual->resizeSquare(400, new Color(255, 0, 0));
+        $this->gdHandler->resizeSquare(400, new Color(255, 0, 0));
 
-        $this->assertImageSimilar($expected, $this->actual);
+        $this->assertImageSimilar($expected, $this->gdHandler);
     }
 
     public function testResizeSquareTransparent()
     {
-        $expected = new ImageUtil(__DIR__ . '/assets/resize-square2.png');
+        $expected = ImageUtil::fromFile(__DIR__ . '/assets/resize-square2.png');
 
-        $this->actual->resizeSquare(400, new AlphaColor(255, 0, 0));
+        $this->gdHandler->resizeSquare(400, new AlphaColor(255, 0, 0));
 
-        $this->assertImageSimilar($expected, $this->actual);
+        $this->assertImageSimilar($expected, $this->gdHandler);
     }
 
     /**
@@ -184,11 +151,11 @@ class ImageUtilTest extends TestCase
      */
     public function testResizeAspectRatio()
     {
-        $expected = new ImageUtil(__DIR__ . '/assets/resize-aspectratio.png');
+        $expected = ImageUtil::fromFile(__DIR__ . '/assets/resize-aspectratio.png');
 
-        $this->actual->resizeAspectRatio(400, 200, new Color(255, 0, 0));
+        $this->gdHandler->resizeAspectRatio(400, 200, new Color(255, 0, 0));
 
-        $this->assertImageSimilar($expected, $this->actual);
+        $this->assertImageSimilar($expected, $this->gdHandler);
     }
 
     /**
@@ -230,13 +197,15 @@ class ImageUtilTest extends TestCase
      */
     public function testSaveDefault()
     {
-        $fileName = $this->actual->getFilename();
+        $fileName = $this->gdHandler->getFilename();
+        $this->assertEmpty($fileName);
 
-        $this->actual->save();
+        $fileName = sys_get_temp_dir() . '/testing.png';
+        $this->gdHandler->save($fileName);
         $this->assertFileExists($fileName);
 
-        $image = new ImageUtil($fileName);
-        $this->assertImageSimilar($image, $this->actual);
+        $image = ImageUtil::fromFile($fileName);
+        $this->assertImageSimilar($image, $this->gdHandler);
 
         unlink($fileName);
     }
@@ -251,11 +220,11 @@ class ImageUtilTest extends TestCase
 
         $this->assertFileDoesNotExist($fileName);
         try {
-            $this->actual->save($fileName);
+            $this->gdHandler->save($fileName);
             $this->assertFileExists($fileName);
 
-            $image = new ImageUtil($fileName);
-            $this->assertImageSimilar($image, $this->actual);
+            $image = ImageUtil::fromFile($fileName);
+            $this->assertImageSimilar($image, $this->gdHandler);
         } finally {
             unlink($fileName);
         }
@@ -277,18 +246,18 @@ class ImageUtilTest extends TestCase
      */
     public function testRestore()
     {
-        $expected = clone $this->actual;
+        $expected = clone $this->gdHandler;
 
         // Do some operations
-        $this->actual->rotate(30);
-        $this->actual->flip(Flip::BOTH);
-        $this->actual->resizeSquare(40);
+        $this->gdHandler->rotate(30);
+        $this->gdHandler->flip(Flip::BOTH);
+        $this->gdHandler->resizeSquare(40);
 
-        $this->assertImageNotSimilar($expected, $this->actual);
+        $this->assertImageNotSimilar($expected, $this->gdHandler);
 
-        $this->actual->restore();
+        $this->gdHandler->restore();
 
-        $this->assertImageSimilar($expected, $this->actual);
+        $this->assertImageSimilar($expected, $this->gdHandler);
 
     }
 
@@ -305,10 +274,10 @@ class ImageUtilTest extends TestCase
 
     public function testSaveAllFormats()
     {
-        $image = new ImageUtil(__DIR__ . '/assets/flip-both.png');
+        $image = ImageUtil::fromFile(__DIR__ . '/assets/flip-both.png');
 
         $fileList = [
-            sys_get_temp_dir() . '/test.png',
+            sys_get_temp_dir() . '/anim2.png',
             sys_get_temp_dir() . '/test.gif',
             sys_get_temp_dir() . '/test.jpg',
             sys_get_temp_dir() . '/test.bmp',
@@ -327,7 +296,7 @@ class ImageUtilTest extends TestCase
             $this->assertFileDoesNotExist($filename);
             $image->save($filename);
             $this->assertFileExists($filename);
-            new ImageUtil($filename);
+            ImageUtil::fromFile($filename);
         }
     }
 }

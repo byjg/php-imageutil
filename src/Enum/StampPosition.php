@@ -2,16 +2,16 @@
 
 namespace ByJG\ImageUtil\Enum;
 
-class StampPosition
+enum StampPosition: int
 {
-    const TOPRIGHT = 1;
-    const TOPLEFT = 2;
-    const BOTTOMRIGHT = 3;
-    const BOTTOMLEFT = 4;
-    const CENTER = 5;
-    const TOP = 6;
-    const BOTTOM = 7;
-    const LEFT = 8;
-    const RIGHT = 9;
-    const RANDOM = 999;
+    case TOP_RIGHT = 1;
+    case TOP_LEFT = 2;
+    case BOTTOM_RIGHT = 3;
+    case BOTTOM_LEFT = 4;
+    case CENTER = 5;
+    case TOP = 6;
+    case BOTTOM = 7;
+    case LEFT = 8;
+    case RIGHT = 9;
+    case RANDOM = 999;
 }
