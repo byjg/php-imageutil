@@ -5,7 +5,7 @@ namespace ByJG\ImageUtil\Image;
 use GdImage;
 use SVG\SVG;
 
-class WEBPImage implements ImageInterface
+class BmpImage implements ImageInterface
 {
 
     /**
@@ -13,7 +13,7 @@ class WEBPImage implements ImageInterface
      */
     public static function mimeType(): string|array
     {
-        return 'image/webp';
+        return [ 'image/bmp', 'image/x-ms-bmp' ];
     }
 
     /**
@@ -21,7 +21,7 @@ class WEBPImage implements ImageInterface
      */
     public static function extension(): string|array
     {
-        return "webp";
+        return "bmp";
     }
 
     /**
@@ -29,7 +29,7 @@ class WEBPImage implements ImageInterface
      */
     public function load(string $filename): GdImage|SVG
     {
-        return imagecreatefromwebp($filename);
+        return imagecreatefrombmp($filename);
     }
 
     /**
@@ -39,11 +39,11 @@ class WEBPImage implements ImageInterface
     {
         if ($resource instanceof SVG) {
             if (!isset($params['width']) || !isset($params['height'])) {
-                throw new \InvalidArgumentException("The width and height are required to convert SVG to WEBP");
+                throw new \InvalidArgumentException("The width and height are required to convert SVG to BMP");
             }
             $resource = $resource->toRasterImage($params['width'], $params['height']);
         }
-        imagewebp($resource, $filename, $params['quality']);
+        imagebmp($resource, $filename);
     }
 
     /**
@@ -51,6 +51,6 @@ class WEBPImage implements ImageInterface
      */
     public function output(GdImage|SVG $resource): void
     {
-        imagewebp($resource);
+        imagebmp($resource);
     }
 }

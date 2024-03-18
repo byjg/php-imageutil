@@ -5,15 +5,14 @@ namespace ByJG\ImageUtil\Image;
 use GdImage;
 use SVG\SVG;
 
-class BMPImage implements ImageInterface
+class JpgImage implements ImageInterface
 {
-
     /**
      * @inheritDoc
      */
     public static function mimeType(): string|array
     {
-        return [ 'image/bmp', 'image/x-ms-bmp' ];
+        return "image/jpeg";
     }
 
     /**
@@ -21,7 +20,7 @@ class BMPImage implements ImageInterface
      */
     public static function extension(): string|array
     {
-        return "bmp";
+        return ["jpg", "jpeg"];
     }
 
     /**
@@ -29,7 +28,7 @@ class BMPImage implements ImageInterface
      */
     public function load(string $filename): GdImage|SVG
     {
-        return imagecreatefrombmp($filename);
+        return imagecreatefromjpeg($filename);
     }
 
     /**
@@ -39,11 +38,11 @@ class BMPImage implements ImageInterface
     {
         if ($resource instanceof SVG) {
             if (!isset($params['width']) || !isset($params['height'])) {
-                throw new \InvalidArgumentException("The width and height are required to convert SVG to BMP");
+                throw new \InvalidArgumentException("The width and height are required to convert SVG to JPG");
             }
             $resource = $resource->toRasterImage($params['width'], $params['height']);
         }
-        imagebmp($resource, $filename);
+        imagejpeg($resource, $filename, $params['quality']);
     }
 
     /**
@@ -51,6 +50,6 @@ class BMPImage implements ImageInterface
      */
     public function output(GdImage|SVG $resource): void
     {
-        imagebmp($resource);
+        imagejpeg($resource);
     }
 }

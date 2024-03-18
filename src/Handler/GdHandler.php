@@ -14,7 +14,7 @@ use GdImage;
 use InvalidArgumentException;
 use SVG\SVG;
 
-class GDHandler implements ImageHandlerInterface
+class GdHandler implements ImageHandlerInterface
 {
     protected $orgImage;
 

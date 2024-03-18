@@ -40,11 +40,11 @@ class ImageFactory
             return;
         }
 
-        self::registerHandler(PNGImage::class);
+        self::registerHandler(PngImage::class);
         self::registerHandler(GIFImage::class);
-        self::registerHandler(JPGImage::class);
-        self::registerHandler(BMPImage::class);
-        self::registerHandler(WEBPImage::class);
+        self::registerHandler(JpgImage::class);
+        self::registerHandler(BmpImage::class);
+        self::registerHandler(WebpImage::class);
     }
 
     /**

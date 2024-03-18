@@ -9,7 +9,7 @@ use ByJG\ImageUtil\Enum\TextAlignment;
 use GdImage;
 use SVG\SVG;
 
-class SVGHandler implements ImageHandlerInterface
+class SvgHandler implements ImageHandlerInterface
 {
 
     public function getWidth(): int

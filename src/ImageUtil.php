@@ -5,9 +5,9 @@ namespace ByJG\ImageUtil;
 use ByJG\ImageUtil\Enum\FileType;
 use ByJG\ImageUtil\Exception\ImageUtilException;
 use ByJG\ImageUtil\Exception\NotFoundException;
-use ByJG\ImageUtil\Handler\GDHandler;
+use ByJG\ImageUtil\Handler\GdHandler;
 use ByJG\ImageUtil\Handler\ImageHandlerInterface;
-use ByJG\ImageUtil\Handler\SVGHandler;
+use ByJG\ImageUtil\Handler\SvgHandler;
 use ByJG\ImageUtil\Image\ImageFactory;
 use GdImage;
 use SVG\SVG;
@@ -22,9 +22,9 @@ class ImageUtil
     public static function empty($width, $height, FileType $type = FileType::Png, Color $color = null): ImageHandlerInterface
     {
         if ($type == FileType::Svg) {
-            $image = new SVGHandler();
+            $image = new SvgHandler();
         } else {
-            $image = new GDHandler();
+            $image = new GdHandler();
         }
         $image->empty($width, $height, $color);
         return $image;
@@ -37,9 +37,9 @@ class ImageUtil
     public static function fromResource($resource): ImageHandlerInterface
     {
         if (is_resource($resource) || $resource instanceof GdImage) {
-            $image = new GDHandler();
+            $image = new GdHandler();
         } else if ($resource instanceof SVG) {
-            $image = new SVGHandler();
+            $image = new SvgHandler();
         } else {
             throw new ImageUtilException('Is not valid resource');
         }
@@ -67,7 +67,7 @@ class ImageUtil
 
         $info = pathinfo($imageFile);
         if ($info['extension'] == 'svg') {
-            $image = new SVGHandler();
+            $image = new SvgHandler();
             $resource = $image->load($imageFile);
         } else {
             $img = getimagesize($imageFile);

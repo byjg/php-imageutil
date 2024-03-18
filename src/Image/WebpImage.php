@@ -5,14 +5,15 @@ namespace ByJG\ImageUtil\Image;
 use GdImage;
 use SVG\SVG;
 
-class JPGImage implements ImageInterface
+class WebpImage implements ImageInterface
 {
+
     /**
      * @inheritDoc
      */
     public static function mimeType(): string|array
     {
-        return "image/jpeg";
+        return 'image/webp';
     }
 
     /**
@@ -20,7 +21,7 @@ class JPGImage implements ImageInterface
      */
     public static function extension(): string|array
     {
-        return ["jpg", "jpeg"];
+        return "webp";
     }
 
     /**
@@ -28,7 +29,7 @@ class JPGImage implements ImageInterface
      */
     public function load(string $filename): GdImage|SVG
     {
-        return imagecreatefromjpeg($filename);
+        return imagecreatefromwebp($filename);
     }
 
     /**
@@ -38,11 +39,11 @@ class JPGImage implements ImageInterface
     {
         if ($resource instanceof SVG) {
             if (!isset($params['width']) || !isset($params['height'])) {
-                throw new \InvalidArgumentException("The width and height are required to convert SVG to JPG");
+                throw new \InvalidArgumentException("The width and height are required to convert SVG to WEBP");
             }
             $resource = $resource->toRasterImage($params['width'], $params['height']);
         }
-        imagejpeg($resource, $filename, $params['quality']);
+        imagewebp($resource, $filename, $params['quality']);
     }
 
     /**
@@ -50,6 +51,6 @@ class JPGImage implements ImageInterface
      */
     public function output(GdImage|SVG $resource): void
     {
-        imagejpeg($resource);
+        imagewebp($resource);
     }
 }

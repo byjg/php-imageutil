@@ -5,7 +5,7 @@ namespace ByJG\ImageUtil\Image;
 use GdImage;
 use SVG\SVG;
 
-class SVGImage implements ImageInterface
+class SvgImage implements ImageInterface
 {
     /**
      * @inheritDoc

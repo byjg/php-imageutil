@@ -5,7 +5,7 @@ namespace ByJG\ImageUtil\Image;
 use GdImage;
 use SVG\SVG;
 
-class PNGImage implements ImageInterface
+class PngImage implements ImageInterface
 {
 
     /**
