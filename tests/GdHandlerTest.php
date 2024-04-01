@@ -5,6 +5,7 @@ namespace Test;
 use ByJG\ImageUtil\AlphaColor;
 use ByJG\ImageUtil\Color;
 use ByJG\ImageUtil\Enum\Flip;
+use ByJG\ImageUtil\Enum\StampPosition;
 use ByJG\ImageUtil\Exception\ImageUtilException;
 use ByJG\ImageUtil\Exception\NotFoundException;
 use ByJG\ImageUtil\Handler\ImageHandlerInterface;
@@ -163,10 +164,14 @@ class GdHandlerTest extends Base
      */
     public function testStampImage()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
+        $stamp = ImageUtil::fromFile(__DIR__ . '/assets/stamp-image.png')
+            ->resize(600, 400);
+
+        $bgImage = ImageUtil::fromFile(__DIR__ . '/assets/stamp-background.png')
+            ->stampImage($stamp, StampPosition::BOTTOM_RIGHT, 0);
+
+        $expected = ImageUtil::fromFile(__DIR__ . '/assets/stamp-expected.png');
+        $this->assertImageSimilar($expected, $bgImage);
     }
 
     /**
