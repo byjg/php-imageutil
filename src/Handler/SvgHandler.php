@@ -136,7 +136,7 @@ class SvgHandler implements ImageHandlerInterface
         echo $this->resource->toXMLString();
     }
 
-    public function makeTransparent(Color $color = null, $image = null): static
+    public function makeTransparent(Color $color = null, int $tolerance = 0): static
     {
         throw new ImageUtilException('Not implemented yet');
     }

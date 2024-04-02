@@ -474,47 +474,56 @@ class GdHandler implements ImageHandlerInterface
 
 
     /**
+     * @param int $tolerance
      * @inheritDoc
      */
-    public function makeTransparent(Color $color = null, $image = null): static
+    public function makeTransparent(Color $color = null, int $tolerance = 0): static
     {
         if (empty($color)) {
-            $color = new Color(255, 255, 255);
+            $color = new AlphaColor(0, 0, 0, 127);
+        } else {
+            $color = new AlphaColor($color->getRed(), $color->getGreen(), $color->getBlue(), 127);
         }
 
-        $customImage = true;
-        if (empty($image) && !is_resource($image) && !($image instanceof GdImage)) {
-            $image = $this->image;
-            $customImage = false;
-        }
+        $isColorInRange = function($currentColor, $targetColor) use ($tolerance) {
+            $currentColors = imagecolorsforindex($this->image, $currentColor);
+            $targetColors = imagecolorsforindex($this->image, $targetColor);
+
+            return (
+                abs($currentColors['red'] - $targetColors['red']) <= $tolerance &&
+                abs($currentColors['green'] - $targetColors['green']) <= $tolerance &&
+                abs($currentColors['blue'] - $targetColors['blue']) <= $tolerance
+            );
+        };
 
         // Get image dimensions
-        $width = imagesx($image);
-        $height = imagesy($image);
+        $width = imagesx($this->image);
+        $height = imagesy($this->image);
 
-        // Define the black color
-        $transparentColor = imagecolorallocate($image, $color->getRed(), $color->getGreen(), $color->getBlue());
+        // Define the tolerance for color matching
+        $tolerance = 0; // For an exact match
 
-        // Loop through each pixel and make black background transparent
-        for ($y = 0; $y < $height; $y++) {
-            for ($x = 0; $x < $width; $x++) {
-                $colorAt = imagecolorat($image, $x, $y);
+        // Define the color to make transparent
+        // You can adjust the tolerance if the color isn't exactly the one you defined.
+        $black = imagecolorallocate($this->image, $color->getRed(), $color->getGreen(), $color->getBlue());
 
-                if ($colorAt === $transparentColor) {
-                    imagesetpixel($image, $x, $y, imagecolorallocatealpha($image, $color->getRed(), $color->getGreen(), $color->getBlue(), 127));
+        // Loop through each pixel in the image
+        for ($x = 0; $x < $width; $x++) {
+            for ($y = 0; $y < $height; $y++) {
+                // Get the current pixel color
+                $currentColor = imagecolorat($this->image, $x, $y);
+
+                // Check if the current color is within the tolerance range of black
+                if ($isColorInRange($currentColor, $black, $tolerance)) {
+                    // Set the pixel to transparent
+                    imagesetpixel($this->image, $x, $y, imagecolorallocatealpha($this->image, 0, 0, 0, 127));
                 }
             }
         }
 
-        // Enable alpha blending and save the modified image
-        imagealphablending($image, true);
-        imagesavealpha($image, true);
-
-        if ($customImage) {
-            return $image;
-        } else {
-            $this->image = $image;
-        }
+        // Save the image
+        imagealphablending($this->image, false);
+        imagesavealpha($this->image, true);
 
         return $this;
     }

@@ -158,10 +158,10 @@ interface ImageHandlerInterface
      * Make transparent the image. The transparent color must be provided
      *
      * @param Color|null $color
-     * @param null $image
+     * @param int $tolerance
      * @return ImageUtil|GdImage|resource The image util object
      */
-    public function makeTransparent(Color $color = null, $image = null): static;
+    public function makeTransparent(Color $color = null, int $tolerance = 0): static;
 
     /**
      * Discard any changes made to the image and restore the original state

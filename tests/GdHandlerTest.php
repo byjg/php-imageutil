@@ -275,10 +275,11 @@ class GdHandlerTest extends Base
      */
     public function testMakeTransparent()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
+        $img = ImageUtil::fromFile(__DIR__ . '/assets/flip-vertical.png');
+        $img->makeTransparent(Color::fromHex('#000000'));
+
+        $expected = ImageUtil::fromFile(__DIR__ . '/assets/transparent-expected.png');
+        $this->assertImageSimilar($expected, $img);
     }
 
     public function testSaveAllFormats()

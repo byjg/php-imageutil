@@ -15,6 +15,18 @@ class Color
         $this->blue = $blue;
     }
 
+    public static function fromHex(string $hex): static
+    {
+        $hex = str_replace("#", "", $hex);
+        if (strlen($hex) == 3) {
+            $hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
+        }
+        $red = hexdec(substr($hex, 0, 2));
+        $green = hexdec(substr($hex, 2, 2));
+        $blue = hexdec(substr($hex, 4, 2));
+        return new static($red, $green, $blue);
+    }
+
     public function getRed(): int
     {
         return $this->red;
