@@ -193,10 +193,11 @@ class GdHandlerTest extends Base
      */
     public function testCrop()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
+        $img = ImageUtil::fromFile(__DIR__ . '/assets/write-expected.png');
+        $img->crop(100, 30, 300, 100);
+
+        $expected = ImageUtil::fromFile(__DIR__ . '/assets/crop-expected.png');
+        $this->assertImageSimilar($expected, $img);
     }
 
     /**
