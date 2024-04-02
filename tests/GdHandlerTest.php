@@ -165,7 +165,7 @@ class GdHandlerTest extends Base
     public function testStampImage()
     {
         $stamp = ImageUtil::fromFile(__DIR__ . '/assets/stamp-image.png')
-            ->resize(600, 400);
+            ->resize(600, 600);
 
         $bgImage = ImageUtil::fromFile(__DIR__ . '/assets/stamp-background.png')
             ->stampImage($stamp, StampPosition::BOTTOM_RIGHT, 0);
