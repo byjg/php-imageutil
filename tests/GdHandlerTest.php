@@ -160,9 +160,6 @@ class GdHandlerTest extends Base
         $this->assertImageSimilar($expected, $this->gdHandler);
     }
 
-    /**
-     * @todo   Implement testStampImage().
-     */
     public function testStampImage()
     {
         $stamp = ImageUtil::fromFile(__DIR__ . '/assets/stamp-image.png')
@@ -175,9 +172,6 @@ class GdHandlerTest extends Base
         $this->assertImageSimilar($expected, $bgImage);
     }
 
-    /**
-     * @todo   Implement testWriteText().
-     */
     public function testWriteText()
     {
         $img = ImageUtil::empty(1000, 300, FileType::Png, new Color(255, 255, 255));
@@ -188,9 +182,6 @@ class GdHandlerTest extends Base
         $this->assertImageSimilar($expected, $img);
     }
 
-    /**
-     * @todo   Implement testCrop().
-     */
     public function testCrop()
     {
         $img = ImageUtil::fromFile(__DIR__ . '/assets/write-expected.png');
@@ -240,17 +231,6 @@ class GdHandlerTest extends Base
     }
 
     /**
-     * @todo   Implement testShow().
-     */
-    public function testShow()
-    {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
-    }
-
-    /**
      * @throws ImageUtilException
      */
     public function testRestore()
@@ -270,9 +250,6 @@ class GdHandlerTest extends Base
 
     }
 
-    /**
-     * @todo   Implement testMakeTransparent().
-     */
     public function testMakeTransparent()
     {
         $img = ImageUtil::fromFile(__DIR__ . '/assets/flip-vertical.png');
