@@ -208,11 +208,11 @@ class GdHandler implements ImageHandlerInterface
 
         //If the width or height is give as 0, find the correct ratio using the other value
         if (!$newHeight && $newWidth) {
-            $newHeight = $height * $newWidth / $width; //Get the new height in the correct ratio
+            $newHeight = intval($height * $newWidth / $width); //Get the new height in the correct ratio
         }
 
         if ($newHeight && !$newWidth) {
-            $newWidth = $width * $newHeight / $height; //Get the new width in the correct ratio
+            $newWidth = intval($width * $newHeight / $height); //Get the new width in the correct ratio
         }
 
 
