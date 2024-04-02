@@ -68,7 +68,7 @@ This example writes text onto the image.
 ```php
 <?php
 $img = ImageUtil::fromFile('wheel.png');
-$img->writeText('Sample', 0, 70, 45, 'Arial');
+$img->writeText('Sample', 0, 70, 45, './arial.ttf', new Color(255, 0, 0));
 ```
 
 ## Crop Image

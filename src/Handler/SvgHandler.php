@@ -104,7 +104,7 @@ class SvgHandler implements ImageHandlerInterface
         throw new ImageUtilException('Not implemented yet');
     }
 
-    public function writeText(string $text, array $point, float $size, int $angle, string $font, int $maxWidth = 0, array $rgbAr = null, TextAlignment $textAlignment = TextAlignment::LEFT): static
+    public function writeText(string $text, array $point, float $size, int $angle, string $font, int $maxWidth = 0, Color $textColor = null, TextAlignment $textAlignment = TextAlignment::LEFT): static
     {
         throw new ImageUtilException('Not implemented yet');
     }

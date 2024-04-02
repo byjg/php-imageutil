@@ -4,6 +4,7 @@ namespace Test;
 
 use ByJG\ImageUtil\AlphaColor;
 use ByJG\ImageUtil\Color;
+use ByJG\ImageUtil\Enum\FileType;
 use ByJG\ImageUtil\Enum\Flip;
 use ByJG\ImageUtil\Enum\StampPosition;
 use ByJG\ImageUtil\Exception\ImageUtilException;
@@ -179,10 +180,12 @@ class GdHandlerTest extends Base
      */
     public function testWriteText()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
+        $img = ImageUtil::empty(1000, 300, FileType::Png, new Color(255, 255, 255));
+
+        $img->writeText("Hello World", [100, 100], 50, 0, __DIR__ . '/assets/Rotulonahand-aGyx.ttf', 0, new Color(0, 0, 0));
+
+        $expected = ImageUtil::fromFile(__DIR__ . '/assets/write-expected.png');
+        $this->assertImageSimilar($expected, $img);
     }
 
     /**

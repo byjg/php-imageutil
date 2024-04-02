@@ -56,13 +56,14 @@ class GdHandler implements ImageHandlerInterface
     public function empty(int $width, int $height, Color $color = null): static
     {
         $image = imagecreatetruecolor($width, $height);
+        $this->setImage($image);
+        $this->fileName = null;
+
         if (!empty($color)) {
             $fill = $this->allocateColor($color);
             imagefill($image, 0, 0, $fill);
         }
 
-        $this->setImage($image);
-        $this->fileName = null;
         return $this;
     }
 
@@ -365,17 +366,17 @@ class GdHandler implements ImageHandlerInterface
     /**
      * @inheritDoc
      */
-    public function writeText(string $text, array $point, float $size, int $angle, string $font, int $maxWidth = 0, array $rgbAr = null, TextAlignment $textAlignment = TextAlignment::LEFT): static
+    public function writeText(string $text, array $point, float $size, int $angle, string $font, int $maxWidth = 0, Color $textColor = null, TextAlignment $textAlignment = TextAlignment::LEFT): static
     {
         if (!is_readable($font)) {
             throw new ImageUtilException('Error: The specified font not found');
         }
 
-        if (!is_array($rgbAr)) {
-            $rgbAr = [0, 0, 0];
+        if (empty($textColor)) {
+            $textColor = new Color(0, 0, 0);
         }
 
-        $color = imagecolorallocate($this->image, $rgbAr[0], $rgbAr[1], $rgbAr[2]);
+        $color = imagecolorallocate($this->image, $textColor->getRed(), $textColor->getGreen(), $textColor->getBlue());
 
         // Determine the line break if required.
         if (($maxWidth > 0) && ($angle == 0)) {

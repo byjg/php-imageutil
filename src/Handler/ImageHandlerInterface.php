@@ -118,11 +118,11 @@ interface ImageHandlerInterface
      * @param int $angle
      * @param string $font
      * @param int $maxWidth
-     * @param float[]|null $rgbAr
+     * @param Color|null $textColor
      * @param TextAlignment $textAlignment
      * @throws ImageUtilException
      */
-    public function writeText(string $text, array $point, float $size, int $angle, string $font, int $maxWidth = 0, array $rgbAr = null, TextAlignment $textAlignment = TextAlignment::LEFT): static;
+    public function writeText(string $text, array $point, float $size, int $angle, string $font, int $maxWidth = 0, Color $textColor = null, TextAlignment $textAlignment = TextAlignment::LEFT): static;
 
     /**
      * Crops the given image from the ($from_x,$from_y) point to the ($to_x,$to_y) point.
