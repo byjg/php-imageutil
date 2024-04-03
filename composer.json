@@ -13,12 +13,12 @@
   },
   "license": "MIT",
   "require": {
-    "ext-gd": "*"
+    "ext-gd": "*",
+    "meyfa/php-svg": "^v0.15"
   },
   "require-dev": {
     "php": ">=8.1",
     "phpunit/phpunit": "^9.6",
-    "meyfa/php-svg": "^v0.15",
     "ext-imagick": "*"
   }
 }
