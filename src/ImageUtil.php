@@ -32,13 +32,13 @@ class ImageUtil
 
 
     /**
-     * @param $resource
+     * @param GdImage|SVG $resource
      * @return ImageHandlerInterface
      * @throws ImageUtilException
      */
-    public static function fromResource($resource): ImageHandlerInterface
+    public static function fromResource(GdImage|SVG $resource): ImageHandlerInterface
     {
-        if (is_resource($resource) || $resource instanceof GdImage) {
+        if ($resource instanceof GdImage) {
             $image = new GdHandler();
         } else if ($resource instanceof SVG) {
             $image = new SvgHandler();
@@ -49,12 +49,12 @@ class ImageUtil
     }
 
     /**
-     * @param $imageFile
+     * @param string $imageFile
      * @return ImageHandlerInterface
      * @throws ImageUtilException
      * @throws NotFoundException
      */
-    public static function fromFile($imageFile): ImageHandlerInterface
+    public static function fromFile(string $imageFile): ImageHandlerInterface
     {
         $http = false;
         if (preg_match('/^(https?:|file:)/', $imageFile)) {
@@ -72,8 +72,7 @@ class ImageUtil
 
         $info = pathinfo($imageFile);
         if ($info['extension'] == 'svg') {
-            $image = new SvgHandler();
-            $resource = $image->fromFile($imageFile);
+            $resource = SVG::fromFile($imageFile);
         } else {
             $img = getimagesize($imageFile);
             if (empty($img)) {
