@@ -42,7 +42,7 @@ class GdHandlerTest extends Base
     protected function getResourceString($resourceImg)
     {
         ob_start();
-        imagegd($resourceImg);
+        imagepng($resourceImg);
         $resourceStr = ob_get_contents();
         ob_end_clean();
 

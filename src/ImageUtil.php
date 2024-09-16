@@ -40,10 +40,8 @@ class ImageUtil
     {
         if ($resource instanceof GdImage) {
             $image = new GdHandler();
-        } else if ($resource instanceof SVG) {
-            $image = new SvgHandler();
         } else {
-            throw new ImageUtilException('Is not valid resource');
+            $image = new SvgHandler();
         }
         return $image->fromResource($resource);
     }

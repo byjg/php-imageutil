@@ -500,9 +500,6 @@ class GdHandler implements ImageHandlerInterface
         $width = imagesx($this->image);
         $height = imagesy($this->image);
 
-        // Define the tolerance for color matching
-        $tolerance = 0; // For an exact match
-
         // Define the color to make transparent
         // You can adjust the tolerance if the color isn't exactly the one you defined.
         $black = imagecolorallocate($this->image, $color->getRed(), $color->getGreen(), $color->getBlue());
@@ -514,7 +511,7 @@ class GdHandler implements ImageHandlerInterface
                 $currentColor = imagecolorat($this->image, $x, $y);
 
                 // Check if the current color is within the tolerance range of black
-                if ($isColorInRange($currentColor, $black, $tolerance)) {
+                if ($isColorInRange($currentColor, $black)) {
                     // Set the pixel to transparent
                     imagesetpixel($this->image, $x, $y, imagecolorallocatealpha($this->image, 0, 0, 0, 127));
                 }

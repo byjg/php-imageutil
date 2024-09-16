@@ -74,16 +74,25 @@ class SvgHandler implements ImageHandlerInterface
         return $this;
     }
 
+    /**
+     * @throws ImageUtilException
+     */
     public function rotate(int $angle, int $background = 0): static
     {
         throw new ImageUtilException('Not implemented yet');
     }
 
+    /**
+     * @throws ImageUtilException
+     */
     public function flip(Flip $type): static
     {
         throw new ImageUtilException('Not implemented yet');
     }
 
+    /**
+     * @throws ImageUtilException
+     */
     public function resize(?int $newWidth = null, ?int $newHeight = null): static
     {
         throw new ImageUtilException('Not implemented yet');
@@ -109,6 +118,9 @@ class SvgHandler implements ImageHandlerInterface
         throw new ImageUtilException('Not implemented yet');
     }
 
+    /**
+     * @throws ImageUtilException
+     */
     public function crop(int $fromX, int $fromY, int $toX, int $toY): static
     {
         throw new ImageUtilException('Not implemented yet');
@@ -136,6 +148,9 @@ class SvgHandler implements ImageHandlerInterface
         echo $this->resource->toXMLString();
     }
 
+    /**
+     * @throws ImageUtilException
+     */
     public function makeTransparent(Color $color = null, int $tolerance = 0): static
     {
         throw new ImageUtilException('Not implemented yet');
