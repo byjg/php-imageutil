@@ -2,6 +2,7 @@
 
 namespace ByJG\ImageUtil\Image;
 
+use ByJG\ImageUtil\Exception\ImageUtilException;
 use GdImage;
 use InvalidArgumentException;
 use SVG\SVG;
@@ -29,7 +30,11 @@ class SvgImage implements ImageInterface
      */
     public function load(string $filename): GdImage|SVG
     {
-        return SVG::fromFile($filename);
+        $image = SVG::fromFile($filename);
+        if (is_null($image)) {
+            throw new ImageUtilException("The file is not a valid SVG file");
+        }
+        return $image;
     }
 
     /**

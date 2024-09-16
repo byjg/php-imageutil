@@ -19,7 +19,7 @@ class SvgHandlerTest extends Base
         $this->svgHandler = new SvgHandler();
     }
 
-    public function testEmpty()
+    public function testEmpty(): void
     {
         $this->svgHandler->empty(200, 400, new Color(255, 0, 0));
         $this->assertSame(200, $this->svgHandler->getWidth());
@@ -34,7 +34,7 @@ class SvgHandlerTest extends Base
         );
     }
 
-    public function testSave()
+    public function testSave(): void
     {
         $this->svgHandler->empty(500, 500);
         $filename = sys_get_temp_dir() . '/test.svg';
@@ -49,7 +49,7 @@ class SvgHandlerTest extends Base
         $this->assertFileDoesNotExist($filename);
     }
 
-    public function testSaveToPng()
+    public function testSaveToPng(): void
     {
         $filename = sys_get_temp_dir() . '/anim2.png';
         $this->svgHandler->fromFile(__DIR__ . "/assets/anim2.svg");
@@ -60,7 +60,7 @@ class SvgHandlerTest extends Base
         $this->assertFileDoesNotExist($filename);
     }
 
-    public function testGdHandlerFromSVG()
+    public function testGdHandlerFromSVG(): void
     {
         $this->svgHandler->fromFile(__DIR__ . "/assets/anim2.svg");
         $handler = (new GdHandler())->fromResource($this->svgHandler->getResource());

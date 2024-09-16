@@ -44,7 +44,7 @@ class PngImage implements ImageInterface
             }
             $resource = $resource->toRasterImage($params['width'], $params['height']);
         }
-        $pngQuality = round((9 * $params['quality']) / 100);
+        $pngQuality = intval(round((9 * $params['quality']) / 100));
         imagepng($resource, $filename, $pngQuality);
     }
 

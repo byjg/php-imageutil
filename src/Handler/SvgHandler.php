@@ -22,12 +22,12 @@ class SvgHandler implements ImageHandlerInterface
 
     public function getWidth(): int
     {
-        return $this->resource->getDocument()->getWidth();
+        return intval($this->resource->getDocument()->getWidth());
     }
 
     public function getHeight(): int
     {
-        return $this->resource->getDocument()->getHeight();
+        return intval($this->resource->getDocument()->getHeight());
     }
 
     public function getFilename(): ?string
@@ -43,7 +43,7 @@ class SvgHandler implements ImageHandlerInterface
     }
 
 
-    public function getResource(): GdImage|SVG
+    public function getResource(): GdImage|SVG|null
     {
         return $this->resource;
     }
@@ -108,7 +108,7 @@ class SvgHandler implements ImageHandlerInterface
         throw new ImageUtilException('Not implemented yet');
     }
 
-    public function stampImage(ImageHandlerInterface $srcImage, StampPosition $position = StampPosition::BOTTOM_RIGHT, int $padding = 5, int $opacity = 100): static
+    public function stampImage(ImageHandlerInterface $srcImage, StampPosition $position = StampPosition::BOTTOM_RIGHT, int $padX = 5, int $padY = 5, int $opacity = 100): static
     {
         throw new ImageUtilException('Not implemented yet');
     }

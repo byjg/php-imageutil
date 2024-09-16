@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 class ImageUtilTest extends TestCase
 {
-    public function testFromFile()
+    public function testFromFile(): void
     {
         $image = ImageUtil::fromFile(__DIR__ . '/assets/anim2.svg');
         $image = ImageUtil::fromFile(__DIR__ . '/assets/flip-both.png');

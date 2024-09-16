@@ -8,7 +8,6 @@ use ByJG\ImageUtil\Enum\StampPosition;
 use ByJG\ImageUtil\Enum\TextAlignment;
 use ByJG\ImageUtil\Exception\ImageUtilException;
 use ByJG\ImageUtil\Exception\NotFoundException;
-use ByJG\ImageUtil\ImageUtil;
 use GdImage;
 use SVG\SVG;
 
@@ -20,13 +19,13 @@ interface ImageHandlerInterface
 
     public function getFilename(): ?string;
 
-    public function getResource(): GdImage|SVG;
+    public function getResource(): GdImage|SVG|null;
 
     public function empty(int $width, int $height, Color $color = null): static;
 
     /**
      * @param GdImage|SVG $resource
-     * @return ImageHandlerInterface
+     * @return $this
      * @throws ImageUtilException
      */
     public function fromResource(GdImage|SVG $resource): static;
@@ -34,7 +33,7 @@ interface ImageHandlerInterface
 
     /**
      * @param string $imageFile
-     * @return ImageHandlerInterface
+     * @return $this
      * @throws NotFoundException
      * @throws ImageUtilException
      */
@@ -57,7 +56,7 @@ interface ImageHandlerInterface
      *
      * @param Flip $type Direction of mirroring. This can be 1(Horizontal Flip), 2(Vertical Flip) or 3(Both Horizontal)
      *     and Vertical Flip)
-     * @return ImageHandlerInterface
+     * @return $this
      */
     public function flip(Flip $type): static;
 
@@ -69,7 +68,7 @@ interface ImageHandlerInterface
      *     using the height ratio.
      * @param int|null $newHeight The width of the desired image. If 0, the function will automatically calculate the value
      *     using the width ratio.
-     * @return ImageHandlerInterface
+     * @return $this
      */
     public function resize(?int $newWidth = null, ?int $newHeight = null): static;
 
@@ -79,7 +78,7 @@ interface ImageHandlerInterface
      *
      * @param int $newSize The new size of desired image (width and height are equals)
      * @param Color|null $color
-     * @return ImageHandlerInterface
+     * @return $this
      * @throws ImageUtilException
      */
     public function resizeSquare(int $newSize, Color $color = null): static;
@@ -91,7 +90,7 @@ interface ImageHandlerInterface
      * @param int $newX
      * @param int $newY
      * @param Color|null $color
-     * @return ImageHandlerInterface
+     * @return $this
      * @throws ImageUtilException
      */
     public function resizeAspectRatio(int $newX, int $newY, Color $color = null): static;
@@ -101,13 +100,14 @@ interface ImageHandlerInterface
      *
      * @param ImageHandlerInterface $srcImage The image path or the image gd resource.
      * @param StampPosition $position
-     * @param int $padding
+     * @param int $padX
+     * @param int $padY
      * @param int $opacity
-     * @return ImageHandlerInterface
+     * @return $this
      * @throws ImageUtilException
      * @throws NotFoundException
      */
-    public function stampImage(ImageHandlerInterface $srcImage, StampPosition $position = StampPosition::BOTTOM_RIGHT, int $padding = 5, int $opacity = 100): static;
+    public function stampImage(ImageHandlerInterface $srcImage, StampPosition $position = StampPosition::BOTTOM_RIGHT, int $padX = 5, int $padY = 5, int $opacity = 100): static;
 
     /**
      * Writes a text on the image.
@@ -120,6 +120,7 @@ interface ImageHandlerInterface
      * @param int $maxWidth
      * @param Color|null $textColor
      * @param TextAlignment $textAlignment
+     * @return $this
      * @throws ImageUtilException
      */
     public function writeText(string $text, array $point, float $size, int $angle, string $font, int $maxWidth = 0, Color $textColor = null, TextAlignment $textAlignment = TextAlignment::LEFT): static;
@@ -132,7 +133,7 @@ interface ImageHandlerInterface
      * @param int $fromY Y coordinate from where the crop should start
      * @param int $toX X coordinate from where the crop should end
      * @param int $toY Y coordinate from where the crop should end
-     * @return ImageHandlerInterface
+     * @return $this
      */
     public function crop(int $fromX, int $fromY, int $toX, int $toY): static;
 
@@ -159,7 +160,7 @@ interface ImageHandlerInterface
      *
      * @param Color|null $color
      * @param int $tolerance
-     * @return ImageUtil|GdImage|resource The image util object
+     * @return $this The image util object
      */
     public function makeTransparent(Color $color = null, int $tolerance = 0): static;
 

@@ -16,9 +16,9 @@ use SVG\SVG;
 
 class GdHandler implements ImageHandlerInterface
 {
-    protected GdImage $originalImage;
+    protected ?GdImage $originalImage = null;
 
-    protected GdImage $image;
+    protected ?GdImage $image = null;
 
     protected ?string $fileName;
 
@@ -32,7 +32,7 @@ class GdHandler implements ImageHandlerInterface
         return imagesy($this->image);
     }
 
-    public function getResource(): GdImage|SVG
+    public function getResource(): GdImage|SVG|null
     {
         return $this->image;
     }
@@ -61,7 +61,10 @@ class GdHandler implements ImageHandlerInterface
 
         if (!empty($color)) {
             $fill = $this->allocateColor($color);
-            imagefill($image, 0, 0, $fill);
+            if ($fill === false) {
+                throw new ImageUtilException('Error: The specified color is not valid');
+            }
+            imagefill($image, 0, 0, intval($fill));
         }
 
         return $this;
@@ -75,7 +78,8 @@ class GdHandler implements ImageHandlerInterface
     {
         if ($resource instanceof SVG) {
             $image = new GdHandler();
-            $resource = $image->fromResource($resource->toRasterImage($resource->getDocument()->getWidth(), $resource->getDocument()->getHeight()))->getResource();
+            /** @psalm-suppress InvalidArgument */
+            $resource = $image->fromResource($resource->toRasterImage(intval($resource->getDocument()->getWidth()), intval($resource->getDocument()->getHeight())))->getResource();
         }
 
         if ($resource instanceof GdImage) {
@@ -134,10 +138,6 @@ class GdHandler implements ImageHandlerInterface
      */
     public function rotate(int $angle, int $background = 0): static
     {
-        if (!is_numeric($angle)) {
-            throw new InvalidArgumentException('You need to pass the angle');
-        }
-
         $this->retainTransparency();
         $this->image = imagerotate($this->image, $angle, $background);
 
@@ -243,10 +243,6 @@ class GdHandler implements ImageHandlerInterface
             $color = new AlphaColor(255, 255, 255, 127);
         }
 
-        if (!is_numeric($newX) || !is_numeric($newY)) {
-            throw new ImageUtilException('There are no valid values');
-        }
-
         $image = $this->image;
 
         $width = $this->getWidth();
@@ -265,7 +261,11 @@ class GdHandler implements ImageHandlerInterface
 
         $newImage = imagecreatetruecolor($newX, $newY);
         $this->retainTransparency($newImage);
-        imagefill($newImage, 0, 0, $this->allocateColor($color, $newImage));
+        $allocateColor = $this->allocateColor($color, $newImage);
+        if ($allocateColor === false) {
+            throw new ImageUtilException('Error: The specified color is not valid');
+        }
+        imagefill($newImage, 0, 0, intval($allocateColor));
 
         imagecopyresampled(
             $newImage,
@@ -286,9 +286,10 @@ class GdHandler implements ImageHandlerInterface
     }
 
     /**
+     * @param int $padY
      * @inheritDoc
      */
-    public function stampImage(ImageHandlerInterface $srcImage, StampPosition $position = StampPosition::BOTTOM_RIGHT, int $padding = 5, int $opacity = 100): static
+    public function stampImage(ImageHandlerInterface $srcImage, StampPosition $position = StampPosition::BOTTOM_RIGHT, int $padX = 5, int $padY = 5, int $opacity = 100): static
     {
         $dstImage = $this->image;
 
@@ -301,13 +302,6 @@ class GdHandler implements ImageHandlerInterface
         $dstHeight = imagesy($dstImage);
         $srcWidth = imagesx($watermark);
         $srcHeight = imagesy($watermark);
-
-        if (is_array($padding)) {
-            $padX = $padding[0];
-            $padY = $padding[1];
-        } else {
-            $padX = $padY = $padding;
-        }
 
         if ($position == StampPosition::RANDOM) {
             $position = rand(1, 9);
@@ -354,6 +348,8 @@ class GdHandler implements ImageHandlerInterface
         }
 
         $cut = imagecreatetruecolor($srcWidth, $srcHeight);
+        $dstX = intval(round($dstX));
+        $dstY = intval(round($dstY));
         imagecopy($cut, $dstImage, 0, 0, $dstX, $dstY, $srcWidth, $srcHeight);
         imagecopy($cut, $watermark, 0, 0, 0, 0, $srcWidth, $srcHeight);
         imagecopymerge($dstImage, $cut, $dstX, $dstY, 0, 0, $srcWidth, $srcHeight, $opacity);
@@ -417,7 +413,7 @@ class GdHandler implements ImageHandlerInterface
                     // Don't change anything
             }
 
-            imagettftext($this->image, $size, $angle, $curX, $curY, $color, $font, $text);
+            imagettftext($this->image, $size, $angle, intval(round($curX)), intval(round($curY)), $color, $font, $text);
 
             $curY += ($size * 1.35);
         }

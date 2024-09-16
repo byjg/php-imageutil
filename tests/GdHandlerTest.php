@@ -29,17 +29,17 @@ class GdHandlerTest extends Base
         $this->gdHandler = ImageUtil::empty(500, 100);
     }
 
-    public function testGetWidth()
+    public function testGetWidth(): void
     {
         $this->assertSame(500, $this->gdHandler->getWidth());
     }
 
-    public function testGetHeight()
+    public function testGetHeight(): void
     {
         $this->assertSame(100, $this->gdHandler->getHeight());
     }
 
-    protected function getResourceString($resourceImg)
+    protected function getResourceString($resourceImg): string
     {
         ob_start();
         imagepng($resourceImg);
@@ -49,7 +49,7 @@ class GdHandlerTest extends Base
         return base64_encode($resourceStr);
     }
 
-    public function testGetImage()
+    public function testGetImage(): void
     {
         // Create the object
         $resourceImg = imagecreatetruecolor(500, 100);
@@ -64,7 +64,7 @@ class GdHandlerTest extends Base
      * @throws ImageUtilException
      * @throws NotFoundException
      */
-    public function testRotate()
+    public function testRotate(): void
     {
         $expected = ImageUtil::fromFile(__DIR__ . '/assets/rotate.png');
 
@@ -77,7 +77,7 @@ class GdHandlerTest extends Base
      * @throws ImageUtilException
      * @throws NotFoundException
      */
-    public function testFlipVertical()
+    public function testFlipVertical(): void
     {
         $expected = ImageUtil::fromFile(__DIR__ . '/assets/flip-vertical.png');
 
@@ -91,7 +91,7 @@ class GdHandlerTest extends Base
      * @throws ImageUtilException
      * @throws NotFoundException
      */
-    public function testFlipBoth()
+    public function testFlipBoth(): void
     {
         $expected = ImageUtil::fromFile(__DIR__ . '/assets/flip-both.png');
 
@@ -105,7 +105,7 @@ class GdHandlerTest extends Base
      * @throws ImageUtilException
      * @throws NotFoundException
      */
-    public function testFlipHorizontal()
+    public function testFlipHorizontal(): void
     {
         $expected = ImageUtil::fromFile(__DIR__ . '/assets/flip-horizontal.png');
 
@@ -115,7 +115,7 @@ class GdHandlerTest extends Base
         $this->assertImageSimilar($expected, $this->gdHandler);
     }
 
-    public function testResize()
+    public function testResize(): void
     {
         // Create the object
         $resourceImg = ImageUtil::empty(800, 30);
@@ -129,7 +129,7 @@ class GdHandlerTest extends Base
      * @throws ImageUtilException
      * @throws NotFoundException
      */
-    public function testResizeSquare()
+    public function testResizeSquare(): void
     {
         $expected = ImageUtil::fromFile(__DIR__ . '/assets/resize-square.png');
 
@@ -138,7 +138,7 @@ class GdHandlerTest extends Base
         $this->assertImageSimilar($expected, $this->gdHandler);
     }
 
-    public function testResizeSquareTransparent()
+    public function testResizeSquareTransparent(): void
     {
         $expected = ImageUtil::fromFile(__DIR__ . '/assets/resize-square2.png');
 
@@ -151,7 +151,7 @@ class GdHandlerTest extends Base
      * @throws ImageUtilException
      * @throws NotFoundException
      */
-    public function testResizeAspectRatio()
+    public function testResizeAspectRatio(): void
     {
         $expected = ImageUtil::fromFile(__DIR__ . '/assets/resize-aspectratio.png');
 
@@ -160,19 +160,19 @@ class GdHandlerTest extends Base
         $this->assertImageSimilar($expected, $this->gdHandler);
     }
 
-    public function testStampImage()
+    public function testStampImage(): void
     {
         $stamp = ImageUtil::fromFile(__DIR__ . '/assets/stamp-image.png')
             ->resize(600, 600);
 
         $bgImage = ImageUtil::fromFile(__DIR__ . '/assets/stamp-background.png')
-            ->stampImage($stamp, StampPosition::BOTTOM_RIGHT, 0);
+            ->stampImage($stamp, StampPosition::BOTTOM_RIGHT, 0, 0);
 
         $expected = ImageUtil::fromFile(__DIR__ . '/assets/stamp-expected.png');
         $this->assertImageSimilar($expected, $bgImage);
     }
 
-    public function testWriteText()
+    public function testWriteText(): void
     {
         $img = ImageUtil::empty(1000, 300, FileType::Png, new Color(255, 255, 255));
 
@@ -182,7 +182,7 @@ class GdHandlerTest extends Base
         $this->assertImageSimilar($expected, $img);
     }
 
-    public function testCrop()
+    public function testCrop(): void
     {
         $img = ImageUtil::fromFile(__DIR__ . '/assets/write-expected.png');
         $img->crop(100, 30, 300, 100);
@@ -195,7 +195,7 @@ class GdHandlerTest extends Base
      * @throws ImageUtilException
      * @throws NotFoundException
      */
-    public function testSaveDefault()
+    public function testSaveDefault(): void
     {
         $fileName = $this->gdHandler->getFilename();
         $this->assertEmpty($fileName);
@@ -214,7 +214,7 @@ class GdHandlerTest extends Base
      * @throws ImageUtilException
      * @throws NotFoundException
      */
-    public function testSaveNewName()
+    public function testSaveNewName(): void
     {
         $fileName = sys_get_temp_dir() . '/testing.png';
 
@@ -233,7 +233,7 @@ class GdHandlerTest extends Base
     /**
      * @throws ImageUtilException
      */
-    public function testRestore()
+    public function testRestore(): void
     {
         $expected = clone $this->gdHandler;
 
@@ -250,7 +250,7 @@ class GdHandlerTest extends Base
 
     }
 
-    public function testMakeTransparent()
+    public function testMakeTransparent(): void
     {
         $img = ImageUtil::fromFile(__DIR__ . '/assets/flip-vertical.png');
         $img->makeTransparent(Color::fromHex('#000000'));
@@ -259,7 +259,7 @@ class GdHandlerTest extends Base
         $this->assertImageSimilar($expected, $img);
     }
 
-    public function testSaveAllFormats()
+    public function testSaveAllFormats(): void
     {
         $image = ImageUtil::fromFile(__DIR__ . '/assets/flip-both.png');
 

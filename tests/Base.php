@@ -32,12 +32,12 @@ class Base extends TestCase
         $lessThan ? $this->assertLessThan($threshold, $result[1]) : $this->assertGreaterThanOrEqual($threshold, $result[1]);
     }
 
-    protected function assertImageSimilar(ImageHandlerInterface $expected, ImageHandlerInterface $actual)
+    protected function assertImageSimilar(ImageHandlerInterface $expected, ImageHandlerInterface $actual): void
     {
         $this->assertImages($expected, $actual, 0.1, true);
     }
 
-    protected function assertImageNotSimilar(ImageHandlerInterface $expected, ImageHandlerInterface $actual)
+    protected function assertImageNotSimilar(ImageHandlerInterface $expected, ImageHandlerInterface $actual): void
     {
         $this->assertImages($expected, $actual, 0.1, false);
     }
