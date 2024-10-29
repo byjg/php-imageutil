@@ -1,17 +1,17 @@
 <?php
 
-namespace ByJG\ImageUtil\Handler;
+namespace ByJG\ImageUtil\Image;
 
 use InvalidArgumentException;
 
-class ImageHandlerFactory
+class ImageFactory
 {
-    private static $configMime = [];
-    private static $configExt = [];
+    private static array $configMime = [];
+    private static array $configExt = [];
 
-    public static function registerHandler($class)
+    public static function registerHandler($class): void
     {
-        if (!in_array(ImageHandlerInterface::class, class_implements($class))) {
+        if (!in_array(ImageInterface::class, class_implements($class))) {
             throw new InvalidArgumentException(
                 "The class '$class' is not a instance of ImageHandlerInterface"
             );
@@ -34,24 +34,25 @@ class ImageHandlerFactory
         }
     }
 
-    public static function registerAll()
+    public static function registerAll(): void
     {
         if (!empty(self::$configExt)) {
             return;
         }
 
-        self::registerHandler(PNGHandler::class);
-        self::registerHandler(GIFHandler::class);
-        self::registerHandler(JPGHandler::class);
-        self::registerHandler(BMPHandler::class);
-        self::registerHandler(WEBPHandler::class);
+        self::registerHandler(PngImage::class);
+        self::registerHandler(GIFImage::class);
+        self::registerHandler(JpgImage::class);
+        self::registerHandler(BmpImage::class);
+        self::registerHandler(WebpImage::class);
+        self::registerHandler(SvgImage::class);
     }
 
     /**
-     * @param $mime
-     * @return ImageHandlerInterface
+     * @param string $mime
+     * @return ImageInterface
      */
-    public static function instanceFromMime($mime)
+    public static function instanceFromMime(string $mime): ImageInterface
     {
         self::registerAll();
         if (!isset(self::$configMime[$mime])) {
@@ -63,10 +64,10 @@ class ImageHandlerFactory
     }
 
     /**
-     * @param $ext
-     * @return ImageHandlerInterface
+     * @param string $ext
+     * @return ImageInterface
      */
-    public static function instanceFromExtension($ext)
+    public static function instanceFromExtension(string $ext): ImageInterface
     {
         self::registerAll();
         if (!isset(self::$configExt[$ext])) {

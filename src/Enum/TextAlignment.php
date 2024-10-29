@@ -2,9 +2,9 @@
 
 namespace ByJG\ImageUtil\Enum;
 
-class TextAlignment
+enum TextAlignment: int
 {
-    const LEFT = 1;
-    const RIGHT = 2;
-    const CENTER = 3;
+    case LEFT = 1;
+    case RIGHT = 2;
+    case CENTER = 3;
 }

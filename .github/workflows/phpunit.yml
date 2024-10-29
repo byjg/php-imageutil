@@ -16,14 +16,12 @@ jobs:
     strategy:
       matrix:
         include:
+          - php-version: "8.3"
+            imagick: "php83-pecl-imagick"
           - php-version: "8.2"
             imagick: "php82-pecl-imagick"
           - php-version: "8.1"
             imagick: "php81-pecl-imagick"
-          - php-version: "8.0"
-            imagick: "php8-pecl-imagick --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing/"
-          - php-version: "7.4"
-            imagick: "php7-pecl-imagick"
 
     steps:
       - name: Install dependencies for test
@@ -32,6 +30,7 @@ jobs:
 
       - uses: actions/checkout@v4
       - run: composer install
+      - run: ./vendor/bin/psalm
       - run: ./vendor/bin/phpunit
 
   Documentation:
