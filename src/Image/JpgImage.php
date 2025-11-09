@@ -30,7 +30,7 @@ class JpgImage implements ImageInterface
      * @inheritDoc
      */
     #[\Override]
-    public function load(string $filename): GdImage|false|false|SVG
+    public function load(string $filename): GdImage|false|SVG
     {
         return imagecreatefromjpeg($filename);
     }

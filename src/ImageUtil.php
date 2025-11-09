@@ -6,7 +6,7 @@ use ByJG\ImageUtil\Enum\FileType;
 use ByJG\ImageUtil\Exception\ImageUtilException;
 use ByJG\ImageUtil\Exception\NotFoundException;
 use ByJG\ImageUtil\Handler\GdHandler;
-usfinal e ByJG\ImageUtil\Handler\ImageHandlerInterface;
+use ByJG\ImageUtil\Handler\ImageHandlerInterface;
 use ByJG\ImageUtil\Handler\SvgHandler;
 use ByJG\ImageUtil\Image\ImageFactory;
 use GdImage;

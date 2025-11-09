@@ -31,7 +31,7 @@ class PngImage implements ImageInterface
      * @inheritDoc
      */
     #[\Override]
-    public function load(string $filename): GdImage|false|false|SVG
+    public function load(string $filename): GdImage|false|SVG
     {
         return imagecreatefrompng($filename);
     }

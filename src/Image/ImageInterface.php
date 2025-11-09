@@ -19,9 +19,9 @@ interface ImageInterface
 
     /**
      * @param string $filename
-     * @return GdImage|SVG
+     * @return GdImage|SVG|false
      */
-    public function load(string $filename): GdImage|SVG;
+    public function load(string $filename): GdImage|SVG|false;
 
     /**
      * @param GdImage|SVG $resource

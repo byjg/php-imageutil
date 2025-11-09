@@ -31,7 +31,7 @@ class GIFImage implements ImageInterface
      * @inheritDoc
      */
     #[\Override]
-    public function load(string $filename): GdImage|false|false|SVG
+    public function load(string $filename): GdImage|false|SVG
     {
         $img = getimagesize($filename);
         $oldId = imagecreatefromgif($filename);
