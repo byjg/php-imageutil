@@ -12,6 +12,7 @@ class GIFImage implements ImageInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public static function mimeType(): string|array
     {
         return "image/gif";
@@ -20,6 +21,7 @@ class GIFImage implements ImageInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public static function extension(): string|array
     {
         return 'gif';
@@ -28,7 +30,8 @@ class GIFImage implements ImageInterface
     /**
      * @inheritDoc
      */
-    public function load(string $filename): GdImage|SVG
+    #[\Override]
+    public function load(string $filename): GdImage|false|SVG
     {
         $img = getimagesize($filename);
         $oldId = imagecreatefromgif($filename);
@@ -40,7 +43,8 @@ class GIFImage implements ImageInterface
     /**
      * @inheritDoc
      */
-    public function save(GdImage|SVG $resource, string $filename = null, array $params = []): void
+    #[\Override]
+    public function save(GdImage|SVG $resource, ?string $filename = null, array $params = []): void
     {
         if ($resource instanceof SVG) {
             if (!isset($params['width']) || !isset($params['height'])) {
@@ -54,6 +58,7 @@ class GIFImage implements ImageInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function output(GdImage|SVG $resource): void
     {
         imagegif($resource);

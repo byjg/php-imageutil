@@ -11,6 +11,7 @@ class JpgImage implements ImageInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public static function mimeType(): string|array
     {
         return "image/jpeg";
@@ -19,6 +20,7 @@ class JpgImage implements ImageInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public static function extension(): string|array
     {
         return ["jpg", "jpeg"];
@@ -27,7 +29,8 @@ class JpgImage implements ImageInterface
     /**
      * @inheritDoc
      */
-    public function load(string $filename): GdImage|SVG
+    #[\Override]
+    public function load(string $filename): GdImage|false|SVG
     {
         return imagecreatefromjpeg($filename);
     }
@@ -35,7 +38,8 @@ class JpgImage implements ImageInterface
     /**
      * @inheritDoc
      */
-    public function save(GdImage|SVG $resource, string $filename = null, array $params = []): void
+    #[\Override]
+    public function save(GdImage|SVG $resource, ?string $filename = null, array $params = []): void
     {
         if ($resource instanceof SVG) {
             if (!isset($params['width']) || !isset($params['height'])) {
@@ -49,6 +53,7 @@ class JpgImage implements ImageInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function output(GdImage|SVG $resource): void
     {
         imagejpeg($resource);

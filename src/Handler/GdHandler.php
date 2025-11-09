@@ -22,22 +22,29 @@ class GdHandler implements ImageHandlerInterface
 
     protected ?string $fileName;
 
+    #[\Override]
     public function getWidth(): int
     {
         return imagesx($this->image);
     }
 
+    #[\Override]
     public function getHeight(): int
     {
         return imagesy($this->image);
     }
 
+    #[\Override]
     public function getResource(): GdImage|SVG|null
     {
         return $this->image;
     }
 
-    protected function setImage($resource, $filename = null): void
+    /**
+     * @param GdImage|SVG|false|string $resource
+     * @param null|string $filename
+     */
+    protected function setImage(string|GdImage|SVG|false $resource, string|null $filename = null): void
     {
         $this->image = $resource;
         $this->originalImage = imagecreatetruecolor($this->getWidth(), $this->getHeight());
@@ -48,12 +55,14 @@ class GdHandler implements ImageHandlerInterface
         }
     }
 
+    #[\Override]
     public function getFilename(): ?string
     {
         return $this->fileName;
     }
 
-    public function empty(int $width, int $height, Color $color = null): static
+    #[\Override]
+    public function empty(int $width, int $height, ?Color $color = null): static
     {
         $image = imagecreatetruecolor($width, $height);
         $this->setImage($image);
@@ -74,6 +83,7 @@ class GdHandler implements ImageHandlerInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function fromResource(GdImage|SVG $resource): static
     {
         if ($resource instanceof SVG) {
@@ -92,6 +102,7 @@ class GdHandler implements ImageHandlerInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function fromFile(string $imageFile): static
     {
         $http = false;
@@ -124,7 +135,7 @@ class GdHandler implements ImageHandlerInterface
         return $this;
     }
 
-    protected function retainTransparency($image = null): void
+    protected function retainTransparency(GdImage|SVG|false|null $image = null): void
     {
         if (empty($image)) {
             $image = $this->image;
@@ -136,6 +147,7 @@ class GdHandler implements ImageHandlerInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function rotate(int $angle, int $background = 0): static
     {
         $this->retainTransparency();
@@ -147,6 +159,7 @@ class GdHandler implements ImageHandlerInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function flip(Flip $type): static
     {
         if ($type !== Flip::HORIZONTAL && $type !== Flip::VERTICAL && $type !== Flip::BOTH) {
@@ -197,6 +210,7 @@ class GdHandler implements ImageHandlerInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function resize(?int $newWidth = null, ?int $newHeight = null): static
     {
         if (!is_numeric($newHeight) && !is_numeric($newWidth)) {
@@ -229,7 +243,8 @@ class GdHandler implements ImageHandlerInterface
     /**
      * @inheritDoc
      */
-    public function resizeSquare(int $newSize, Color $color = null): static
+    #[\Override]
+    public function resizeSquare(int $newSize, ?Color $color = null): static
     {
         return $this->resizeAspectRatio($newSize, $newSize, $color);
     }
@@ -237,7 +252,8 @@ class GdHandler implements ImageHandlerInterface
     /**
      * @inheritDoc
      */
-    public function resizeAspectRatio(int $newX, int $newY, Color $color = null): static
+    #[\Override]
+    public function resizeAspectRatio(int $newX, int $newY, ?Color $color = null): static
     {
         if (empty($color)) {
             $color = new AlphaColor(255, 255, 255, 127);
@@ -289,6 +305,7 @@ class GdHandler implements ImageHandlerInterface
      * @param int $padY
      * @inheritDoc
      */
+    #[\Override]
     public function stampImage(ImageHandlerInterface $srcImage, StampPosition $position = StampPosition::BOTTOM_RIGHT, int $padX = 5, int $padY = 5, int $opacity = 100): static
     {
         $dstImage = $this->image;
@@ -362,7 +379,8 @@ class GdHandler implements ImageHandlerInterface
     /**
      * @inheritDoc
      */
-    public function writeText(string $text, array $point, float $size, int $angle, string $font, int $maxWidth = 0, Color $textColor = null, TextAlignment $textAlignment = TextAlignment::LEFT): static
+    #[\Override]
+    public function writeText(string $text, array $point, float $size, int $angle, string $font, int $maxWidth = 0, ?Color $textColor = null, TextAlignment $textAlignment = TextAlignment::LEFT): static
     {
         if (!is_readable($font)) {
             throw new ImageUtilException('Error: The specified font not found');
@@ -424,6 +442,7 @@ class GdHandler implements ImageHandlerInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function crop(int $fromX, int $fromY, int $toX, int $toY): static
     {
         $newWidth = $toX - $fromX;
@@ -441,6 +460,7 @@ class GdHandler implements ImageHandlerInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function save(?string $filename = null, int $quality = 90): void
     {
         if (is_null($filename)) {
@@ -457,6 +477,7 @@ class GdHandler implements ImageHandlerInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function show(): void
     {
         if (ob_get_level()) {
@@ -473,7 +494,8 @@ class GdHandler implements ImageHandlerInterface
      * @param int $tolerance
      * @inheritDoc
      */
-    public function makeTransparent(Color $color = null, int $tolerance = 0): static
+    #[\Override]
+    public function makeTransparent(?Color $color = null, int $tolerance = 0): static
     {
         if (empty($color)) {
             $color = new AlphaColor(0, 0, 0, 127);
@@ -481,7 +503,7 @@ class GdHandler implements ImageHandlerInterface
             $color = new AlphaColor($color->getRed(), $color->getGreen(), $color->getBlue(), 127);
         }
 
-        $isColorInRange = function($currentColor, $targetColor) use ($tolerance) {
+        $isColorInRange = function($currentColor, $targetColor) use ($tolerance): bool {
             $currentColors = imagecolorsforindex($this->image, $currentColor);
             $targetColors = imagecolorsforindex($this->image, $targetColor);
 
@@ -524,6 +546,7 @@ class GdHandler implements ImageHandlerInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function restore(): static
     {
         $this->image = imagecreatetruecolor(imagesx($this->originalImage), imagesy($this->originalImage));
@@ -533,7 +556,7 @@ class GdHandler implements ImageHandlerInterface
         return $this;
     }
 
-    protected function allocateColor(Color $color, GdImage $image = null): bool|int
+    protected function allocateColor(Color $color, ?GdImage $image = null): bool|int
     {
         if (is_null($image)) {
             $image = $this->image;

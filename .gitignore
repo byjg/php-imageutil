@@ -3,3 +3,6 @@ nbproject/private
 composer.lock
 .idea
 /.phpunit.result.cache
+phpunit.coverage.xml
+phpunit.report.xml
+*.bak
