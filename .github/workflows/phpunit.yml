@@ -16,6 +16,8 @@ jobs:
     strategy:
       matrix:
         include:
+          - php-version: "8.4"
+            imagick: "php84-pecl-imagick"
           - php-version: "8.3"
             imagick: "php83-pecl-imagick"
           - php-version: "8.2"
@@ -40,5 +42,6 @@ jobs:
     with:
       folder: php
       project: ${{ github.event.repository.name }}
-    secrets: inherit
+    secrets:
+      DOC_TOKEN: ${{ secrets.DOC_TOKEN }}
 
