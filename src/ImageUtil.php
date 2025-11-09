@@ -19,7 +19,7 @@ use SVG\SVG;
  */
 class ImageUtil
 {
-    public static function empty($width, $height, FileType $type = FileType::Png, Color $color = null): ImageHandlerInterface
+    public static function empty($width, $height, FileType $type = FileType::Png, ?Color $color = null): ImageHandlerInterface
     {
         if ($type == FileType::Svg) {
             $image = new SvgHandler();

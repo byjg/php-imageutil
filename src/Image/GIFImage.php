@@ -40,7 +40,7 @@ class GIFImage implements ImageInterface
     /**
      * @inheritDoc
      */
-    public function save(GdImage|SVG $resource, string $filename = null, array $params = []): void
+    public function save(GdImage|SVG $resource, ?string $filename = null, array $params = []): void
     {
         if ($resource instanceof SVG) {
             if (!isset($params['width']) || !isset($params['height'])) {

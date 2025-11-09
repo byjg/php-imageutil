@@ -21,7 +21,7 @@ interface ImageHandlerInterface
 
     public function getResource(): GdImage|SVG|null;
 
-    public function empty(int $width, int $height, Color $color = null): static;
+    public function empty(int $width, int $height, ?Color $color = null): static;
 
     /**
      * @param GdImage|SVG $resource
@@ -81,7 +81,7 @@ interface ImageHandlerInterface
      * @return $this
      * @throws ImageUtilException
      */
-    public function resizeSquare(int $newSize, Color $color = null): static;
+    public function resizeSquare(int $newSize, ?Color $color = null): static;
 
 
     /**
@@ -93,7 +93,7 @@ interface ImageHandlerInterface
      * @return $this
      * @throws ImageUtilException
      */
-    public function resizeAspectRatio(int $newX, int $newY, Color $color = null): static;
+    public function resizeAspectRatio(int $newX, int $newY, ?Color $color = null): static;
 
     /**
      * Stamp an image in the current image.
@@ -123,7 +123,7 @@ interface ImageHandlerInterface
      * @return $this
      * @throws ImageUtilException
      */
-    public function writeText(string $text, array $point, float $size, int $angle, string $font, int $maxWidth = 0, Color $textColor = null, TextAlignment $textAlignment = TextAlignment::LEFT): static;
+    public function writeText(string $text, array $point, float $size, int $angle, string $font, int $maxWidth = 0, ?Color $textColor = null, TextAlignment $textAlignment = TextAlignment::LEFT): static;
 
     /**
      * Crops the given image from the ($from_x,$from_y) point to the ($to_x,$to_y) point.
@@ -162,7 +162,7 @@ interface ImageHandlerInterface
      * @param int $tolerance
      * @return $this The image util object
      */
-    public function makeTransparent(Color $color = null, int $tolerance = 0): static;
+    public function makeTransparent(?Color $color = null, int $tolerance = 0): static;
 
     /**
      * Discard any changes made to the image and restore the original state

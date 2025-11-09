@@ -48,7 +48,7 @@ class SvgHandler implements ImageHandlerInterface
         return $this->resource;
     }
 
-    public function empty(int $width, int $height, Color $color = null): static
+    public function empty(int $width, int $height, ?Color $color = null): static
     {
         $resource = new SVG($width, $height);
         if (!is_null($color)) {
@@ -98,12 +98,12 @@ class SvgHandler implements ImageHandlerInterface
         throw new ImageUtilException('Not implemented yet');
     }
 
-    public function resizeSquare(int $newSize, Color $color = null): static
+    public function resizeSquare(int $newSize, ?Color $color = null): static
     {
         throw new ImageUtilException('Not implemented yet');
     }
 
-    public function resizeAspectRatio(int $newX, int $newY, Color $color = null): static
+    public function resizeAspectRatio(int $newX, int $newY, ?Color $color = null): static
     {
         throw new ImageUtilException('Not implemented yet');
     }
@@ -113,7 +113,7 @@ class SvgHandler implements ImageHandlerInterface
         throw new ImageUtilException('Not implemented yet');
     }
 
-    public function writeText(string $text, array $point, float $size, int $angle, string $font, int $maxWidth = 0, Color $textColor = null, TextAlignment $textAlignment = TextAlignment::LEFT): static
+    public function writeText(string $text, array $point, float $size, int $angle, string $font, int $maxWidth = 0, ?Color $textColor = null, TextAlignment $textAlignment = TextAlignment::LEFT): static
     {
         throw new ImageUtilException('Not implemented yet');
     }
@@ -151,7 +151,7 @@ class SvgHandler implements ImageHandlerInterface
     /**
      * @throws ImageUtilException
      */
-    public function makeTransparent(Color $color = null, int $tolerance = 0): static
+    public function makeTransparent(?Color $color = null, int $tolerance = 0): static
     {
         throw new ImageUtilException('Not implemented yet');
     }

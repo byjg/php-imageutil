@@ -201,13 +201,17 @@ class GdHandlerTest extends Base
         $this->assertEmpty($fileName);
 
         $fileName = sys_get_temp_dir() . '/testing.png';
-        $this->gdHandler->save($fileName);
-        $this->assertFileExists($fileName);
+        try {
+            $this->gdHandler->save($fileName);
+            $this->assertFileExists($fileName);
 
-        $image = ImageUtil::fromFile($fileName);
-        $this->assertImageSimilar($image, $this->gdHandler);
-
-        unlink($fileName);
+            $image = ImageUtil::fromFile($fileName);
+            $this->assertImageSimilar($image, $this->gdHandler);
+        } finally {
+            if (file_exists($fileName)) {
+                unlink($fileName);
+            }
+        }
     }
 
     /**
@@ -218,6 +222,11 @@ class GdHandlerTest extends Base
     {
         $fileName = sys_get_temp_dir() . '/testing.png';
 
+        // Clean up any leftover file from previous failed test runs
+        if (file_exists($fileName)) {
+            unlink($fileName);
+        }
+
         $this->assertFileDoesNotExist($fileName);
         try {
             $this->gdHandler->save($fileName);
@@ -226,7 +235,9 @@ class GdHandlerTest extends Base
             $image = ImageUtil::fromFile($fileName);
             $this->assertImageSimilar($image, $this->gdHandler);
         } finally {
-            unlink($fileName);
+            if (file_exists($fileName)) {
+                unlink($fileName);
+            }
         }
     }
 

@@ -53,7 +53,7 @@ class GdHandler implements ImageHandlerInterface
         return $this->fileName;
     }
 
-    public function empty(int $width, int $height, Color $color = null): static
+    public function empty(int $width, int $height, ?Color $color = null): static
     {
         $image = imagecreatetruecolor($width, $height);
         $this->setImage($image);
@@ -229,7 +229,7 @@ class GdHandler implements ImageHandlerInterface
     /**
      * @inheritDoc
      */
-    public function resizeSquare(int $newSize, Color $color = null): static
+    public function resizeSquare(int $newSize, ?Color $color = null): static
     {
         return $this->resizeAspectRatio($newSize, $newSize, $color);
     }
@@ -237,7 +237,7 @@ class GdHandler implements ImageHandlerInterface
     /**
      * @inheritDoc
      */
-    public function resizeAspectRatio(int $newX, int $newY, Color $color = null): static
+    public function resizeAspectRatio(int $newX, int $newY, ?Color $color = null): static
     {
         if (empty($color)) {
             $color = new AlphaColor(255, 255, 255, 127);
@@ -362,7 +362,7 @@ class GdHandler implements ImageHandlerInterface
     /**
      * @inheritDoc
      */
-    public function writeText(string $text, array $point, float $size, int $angle, string $font, int $maxWidth = 0, Color $textColor = null, TextAlignment $textAlignment = TextAlignment::LEFT): static
+    public function writeText(string $text, array $point, float $size, int $angle, string $font, int $maxWidth = 0, ?Color $textColor = null, TextAlignment $textAlignment = TextAlignment::LEFT): static
     {
         if (!is_readable($font)) {
             throw new ImageUtilException('Error: The specified font not found');
@@ -473,7 +473,7 @@ class GdHandler implements ImageHandlerInterface
      * @param int $tolerance
      * @inheritDoc
      */
-    public function makeTransparent(Color $color = null, int $tolerance = 0): static
+    public function makeTransparent(?Color $color = null, int $tolerance = 0): static
     {
         if (empty($color)) {
             $color = new AlphaColor(0, 0, 0, 127);
@@ -533,7 +533,7 @@ class GdHandler implements ImageHandlerInterface
         return $this;
     }
 
-    protected function allocateColor(Color $color, GdImage $image = null): bool|int
+    protected function allocateColor(Color $color, ?GdImage $image = null): bool|int
     {
         if (is_null($image)) {
             $image = $this->image;

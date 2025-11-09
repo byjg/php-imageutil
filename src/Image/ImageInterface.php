@@ -29,7 +29,7 @@ interface ImageInterface
      * @param array $params
      * @return void
      */
-    public function save(GdImage|SVG $resource, string $filename, array $params = []): void;
+    public function save(GdImage|SVG $resource, ?string $filename = null, array $params = []): void;
 
     /**
      * @param GdImage|SVG $resource
