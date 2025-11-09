@@ -15,7 +15,7 @@
   "require": {
     "php": ">=8.2 <8.5",
     "ext-gd": "*",
-    "meyfa/php-svg": "^v0.15"
+    "meyfa/php-svg": "^v0.15|^v0.16"
   },
   "require-dev": {
     "phpunit/phpunit": "^10|^11",
