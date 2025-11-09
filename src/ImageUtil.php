@@ -6,7 +6,7 @@ use ByJG\ImageUtil\Enum\FileType;
 use ByJG\ImageUtil\Exception\ImageUtilException;
 use ByJG\ImageUtil\Exception\NotFoundException;
 use ByJG\ImageUtil\Handler\GdHandler;
-use ByJG\ImageUtil\Handler\ImageHandlerInterface;
+usfinal e ByJG\ImageUtil\Handler\ImageHandlerInterface;
 use ByJG\ImageUtil\Handler\SvgHandler;
 use ByJG\ImageUtil\Image\ImageFactory;
 use GdImage;
@@ -19,7 +19,13 @@ use SVG\SVG;
  */
 class ImageUtil
 {
-    public static function empty($width, $height, FileType $type = FileType::Png, ?Color $color = null): ImageHandlerInterface
+    /**
+     * @psalm-param 500|800|1000 $width
+     * @psalm-param 30|100|300 $height
+     *
+     * @return GdHandler|SvgHandler
+     */
+    public static function empty(int $width, int $height, FileType $type = FileType::Png, ?Color $color = null): SvgHandler|GdHandler
     {
         if ($type == FileType::Svg) {
             $image = new SvgHandler();
@@ -33,10 +39,12 @@ class ImageUtil
 
     /**
      * @param GdImage|SVG $resource
-     * @return ImageHandlerInterface
+     *
+     * @return GdHandler|SvgHandler
+     *
      * @throws ImageUtilException
      */
-    public static function fromResource(GdImage|SVG $resource): ImageHandlerInterface
+    public static function fromResource(GdImage|SVG $resource): SvgHandler|GdHandler
     {
         if ($resource instanceof GdImage) {
             $image = new GdHandler();

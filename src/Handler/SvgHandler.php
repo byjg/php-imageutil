@@ -20,16 +20,19 @@ class SvgHandler implements ImageHandlerInterface
 
     protected ?string $filename = null;
 
+    #[\Override]
     public function getWidth(): int
     {
         return intval($this->resource->getDocument()->getWidth());
     }
 
+    #[\Override]
     public function getHeight(): int
     {
         return intval($this->resource->getDocument()->getHeight());
     }
 
+    #[\Override]
     public function getFilename(): ?string
     {
         return $this->filename;
@@ -43,11 +46,13 @@ class SvgHandler implements ImageHandlerInterface
     }
 
 
+    #[\Override]
     public function getResource(): GdImage|SVG|null
     {
         return $this->resource;
     }
 
+    #[\Override]
     public function empty(int $width, int $height, ?Color $color = null): static
     {
         $resource = new SVG($width, $height);
@@ -58,6 +63,7 @@ class SvgHandler implements ImageHandlerInterface
         return $this;
     }
 
+    #[\Override]
     public function fromResource(GdImage|SVG $resource): static
     {
         if ($resource instanceof SVG) {
@@ -68,6 +74,7 @@ class SvgHandler implements ImageHandlerInterface
         return $this;
     }
 
+    #[\Override]
     public function fromFile(string $imageFile): static
     {
         $this->setResource(SVG::fromFile($imageFile), $imageFile);
@@ -77,6 +84,7 @@ class SvgHandler implements ImageHandlerInterface
     /**
      * @throws ImageUtilException
      */
+    #[\Override]
     public function rotate(int $angle, int $background = 0): static
     {
         throw new ImageUtilException('Not implemented yet');
@@ -85,6 +93,7 @@ class SvgHandler implements ImageHandlerInterface
     /**
      * @throws ImageUtilException
      */
+    #[\Override]
     public function flip(Flip $type): static
     {
         throw new ImageUtilException('Not implemented yet');
@@ -93,26 +102,31 @@ class SvgHandler implements ImageHandlerInterface
     /**
      * @throws ImageUtilException
      */
+    #[\Override]
     public function resize(?int $newWidth = null, ?int $newHeight = null): static
     {
         throw new ImageUtilException('Not implemented yet');
     }
 
+    #[\Override]
     public function resizeSquare(int $newSize, ?Color $color = null): static
     {
         throw new ImageUtilException('Not implemented yet');
     }
 
+    #[\Override]
     public function resizeAspectRatio(int $newX, int $newY, ?Color $color = null): static
     {
         throw new ImageUtilException('Not implemented yet');
     }
 
+    #[\Override]
     public function stampImage(ImageHandlerInterface $srcImage, StampPosition $position = StampPosition::BOTTOM_RIGHT, int $padX = 5, int $padY = 5, int $opacity = 100): static
     {
         throw new ImageUtilException('Not implemented yet');
     }
 
+    #[\Override]
     public function writeText(string $text, array $point, float $size, int $angle, string $font, int $maxWidth = 0, ?Color $textColor = null, TextAlignment $textAlignment = TextAlignment::LEFT): static
     {
         throw new ImageUtilException('Not implemented yet');
@@ -121,11 +135,13 @@ class SvgHandler implements ImageHandlerInterface
     /**
      * @throws ImageUtilException
      */
+    #[\Override]
     public function crop(int $fromX, int $fromY, int $toX, int $toY): static
     {
         throw new ImageUtilException('Not implemented yet');
     }
 
+    #[\Override]
     public function save(?string $filename = null, int $quality = 90): void
     {
         if (is_null($filename)) {
@@ -139,6 +155,7 @@ class SvgHandler implements ImageHandlerInterface
         $this->setResource($this->resource, $filename);
     }
 
+    #[\Override]
     public function show(): void
     {
         if (ob_get_level()) {
@@ -151,11 +168,13 @@ class SvgHandler implements ImageHandlerInterface
     /**
      * @throws ImageUtilException
      */
+    #[\Override]
     public function makeTransparent(?Color $color = null, int $tolerance = 0): static
     {
         throw new ImageUtilException('Not implemented yet');
     }
 
+    #[\Override]
     public function restore(): static
     {
         $this->setResource(SVG::fromString($this->originalResource->toXMLString()));

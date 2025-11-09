@@ -24,6 +24,7 @@ class GdHandlerTest extends Base
      * This method is called before a test is executed.
      *
      */
+    #[\Override]
     protected function setUp(): void
     {
         $this->gdHandler = ImageUtil::empty(500, 100);
@@ -39,7 +40,7 @@ class GdHandlerTest extends Base
         $this->assertSame(100, $this->gdHandler->getHeight());
     }
 
-    protected function getResourceString($resourceImg): string
+    protected function getResourceString(\GdImage|\SVG\SVG|false|null $resourceImg): string
     {
         ob_start();
         imagepng($resourceImg);

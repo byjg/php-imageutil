@@ -12,6 +12,7 @@ class BmpImage implements ImageInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public static function mimeType(): string|array
     {
         return [ 'image/bmp', 'image/x-ms-bmp' ];
@@ -20,6 +21,7 @@ class BmpImage implements ImageInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public static function extension(): string|array
     {
         return "bmp";
@@ -28,7 +30,8 @@ class BmpImage implements ImageInterface
     /**
      * @inheritDoc
      */
-    public function load(string $filename): GdImage|SVG
+    #[\Override]
+    public function load(string $filename): GdImage|false|false|SVG
     {
         return imagecreatefrombmp($filename);
     }
@@ -36,6 +39,7 @@ class BmpImage implements ImageInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function save(GdImage|SVG $resource, ?string $filename = null, array $params = []): void
     {
         if ($resource instanceof SVG) {
@@ -50,6 +54,7 @@ class BmpImage implements ImageInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function output(GdImage|SVG $resource): void
     {
         imagebmp($resource);
