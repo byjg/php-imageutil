@@ -264,15 +264,15 @@ class GdHandler implements ImageHandlerInterface
         $width = $this->getWidth();
         $height = $this->getHeight();
 
-        $ratio = $width / $height;
-        $newRatio = $newX / $newY;
+        $ratio = (float)$width / (float)$height;
+        $newRatio = (float)$newX / (float)$newY;
 
         if ($newRatio > $ratio) {
-            $newWidth = $newY * $ratio;
-            $newHeight = $newY;
+            $newWidth = (float)$newY * $ratio;
+            $newHeight = (float)$newY;
         } else {
-            $newHeight = $newX / $ratio;
-            $newWidth = $newX;
+            $newHeight = (float)$newX / $ratio;
+            $newWidth = (float)$newX;
         }
 
         $newImage = imagecreatetruecolor($newX, $newY);
@@ -286,8 +286,8 @@ class GdHandler implements ImageHandlerInterface
         imagecopyresampled(
             $newImage,
             $image,
-            intval(($newX - $newWidth) / 2),
-            intval(($newY - $newHeight) / 2),
+            intval(((float)$newX - $newWidth) / 2.0),
+            intval(((float)$newY - $newHeight) / 2.0),
             0,
             0,
             intval($newWidth),
@@ -341,24 +341,24 @@ class GdHandler implements ImageHandlerInterface
                 $dstY = ($dstHeight - $srcHeight) - $padY;
                 break;
             case StampPosition::CENTER:
-                $dstX = (($dstWidth / 2) - ($srcWidth / 2));
-                $dstY = (($dstHeight / 2) - ($srcHeight / 2));
+                $dstX = (((float)$dstWidth / 2.0) - ((float)$srcWidth / 2.0));
+                $dstY = (((float)$dstHeight / 2.0) - ((float)$srcHeight / 2.0));
                 break;
             case StampPosition::TOP:
-                $dstX = (($dstWidth / 2) - ($srcWidth / 2));
+                $dstX = (((float)$dstWidth / 2.0) - ((float)$srcWidth / 2.0));
                 $dstY = $padY;
                 break;
             case StampPosition::BOTTOM:
-                $dstX = (($dstWidth / 2) - ($srcWidth / 2));
+                $dstX = (((float)$dstWidth / 2.0) - ((float)$srcWidth / 2.0));
                 $dstY = ($dstHeight - $srcHeight) - $padY;
                 break;
             case StampPosition::LEFT:
                 $dstX = $padX;
-                $dstY = (($dstHeight / 2) - ($srcHeight / 2));
+                $dstY = (((float)$dstHeight / 2.0) - ((float)$srcHeight / 2.0));
                 break;
             case StampPosition::RIGHT:
                 $dstX = ($dstWidth - $srcWidth) - $padX;
-                $dstY = (($dstHeight / 2) - ($srcHeight / 2));
+                $dstY = (((float)$dstHeight / 2.0) - ((float)$srcHeight / 2.0));
                 break;
             default:
                 throw new ImageUtilException('Invalid Stamp Position');
@@ -420,11 +420,11 @@ class GdHandler implements ImageHandlerInterface
 
             switch ($textAlignment) {
                 case TextAlignment::RIGHT:
-                    $curX = $point[0] - abs($bbox[2] - $bbox[0]);
+                    $curX = (float)$point[0] - (float)abs($bbox[2] - $bbox[0]);
                     break;
 
                 case TextAlignment::CENTER:
-                    $curX = $point[0] - (abs($bbox[2] - $bbox[0]) / 2);
+                    $curX = (float)$point[0] - ((float)abs($bbox[2] - $bbox[0]) / 2.0);
                     break;
 
                 case TextAlignment::LEFT:
