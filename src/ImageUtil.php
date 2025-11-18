@@ -20,10 +20,13 @@ use SVG\SVG;
 class ImageUtil
 {
     /**
-     * @psalm-param 500|800|1000 $width
-     * @psalm-param 30|100|300 $height
      *
+     * @param int $width
+     * @param int $height
+     * @param FileType $type
+     * @param Color|null $color
      * @return GdHandler|SvgHandler
+     * @throws ImageUtilException
      */
     public static function empty(int $width, int $height, FileType $type = FileType::Png, ?Color $color = null): SvgHandler|GdHandler
     {

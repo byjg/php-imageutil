@@ -88,8 +88,12 @@ class GdHandler implements ImageHandlerInterface
     {
         if ($resource instanceof SVG) {
             $image = new GdHandler();
-            /** @psalm-suppress InvalidArgument */
-            $resource = $image->fromResource($resource->toRasterImage(intval($resource->getDocument()->getWidth()), intval($resource->getDocument()->getHeight())))->getResource();
+            /** @var GdImage $rasterImage */
+            $rasterImage = $resource->toRasterImage(
+                intval($resource->getDocument()->getWidth()),
+                intval($resource->getDocument()->getHeight())
+            );
+            $resource = $image->fromResource($rasterImage)->getResource();
         }
 
         if ($resource instanceof GdImage) {
