@@ -12,16 +12,23 @@ on:
 jobs:
   Build:
     runs-on: 'ubuntu-latest'
-    container: 'byjg/php:${{ matrix.php-version }}-cli'
     strategy:
       matrix:
-        php-version:
-          - "8.4"
-          - "8.3"
-          - "8.2"
+        include:
+          - php-version: "8.4"
+            php-version-nodot: "84"
+          - php-version: "8.3"
+            php-version-nodot: "83"
+          - php-version: "8.2"
+            php-version-nodot: "82"
+    container:
+      image: 'byjg/php:${{ matrix.php-version }}-cli'
+      options: --user root --privileged
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: apk add --no-cache php${{ matrix.php-version-nodot }}-pecl-imagick
+      - uses: actions/checkout@v5
       - run: composer install
       - run: ./vendor/bin/psalm
       - run: ./vendor/bin/phpunit
