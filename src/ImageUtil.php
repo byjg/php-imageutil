@@ -19,7 +19,16 @@ use SVG\SVG;
  */
 class ImageUtil
 {
-    public static function empty($width, $height, FileType $type = FileType::Png, Color $color = null): ImageHandlerInterface
+    /**
+     *
+     * @param int $width
+     * @param int $height
+     * @param FileType $type
+     * @param Color|null $color
+     * @return GdHandler|SvgHandler
+     * @throws ImageUtilException
+     */
+    public static function empty(int $width, int $height, FileType $type = FileType::Png, ?Color $color = null): SvgHandler|GdHandler
     {
         if ($type == FileType::Svg) {
             $image = new SvgHandler();
@@ -33,10 +42,12 @@ class ImageUtil
 
     /**
      * @param GdImage|SVG $resource
-     * @return ImageHandlerInterface
+     *
+     * @return GdHandler|SvgHandler
+     *
      * @throws ImageUtilException
      */
-    public static function fromResource(GdImage|SVG $resource): ImageHandlerInterface
+    public static function fromResource(GdImage|SVG $resource): SvgHandler|GdHandler
     {
         if ($resource instanceof GdImage) {
             $image = new GdHandler();

@@ -14,6 +14,7 @@ class SvgHandlerTest extends Base
      */
     protected SvgHandler $svgHandler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->svgHandler = new SvgHandler();

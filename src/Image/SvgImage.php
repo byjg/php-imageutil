@@ -12,6 +12,7 @@ class SvgImage implements ImageInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public static function mimeType(): string|array
     {
         return "image/svg+xml";
@@ -20,6 +21,7 @@ class SvgImage implements ImageInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public static function extension(): string|array
     {
         return ["svg"];
@@ -28,6 +30,7 @@ class SvgImage implements ImageInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function load(string $filename): GdImage|SVG
     {
         $image = SVG::fromFile($filename);
@@ -40,7 +43,8 @@ class SvgImage implements ImageInterface
     /**
      * @inheritDoc
      */
-    public function save(GdImage|SVG $resource, string $filename = null, array $params = []): void
+    #[\Override]
+    public function save(GdImage|SVG $resource, ?string $filename = null, array $params = []): void
     {
         if ($resource instanceof SVG) {
             file_put_contents($filename, $resource->toXMLString());
@@ -52,6 +56,7 @@ class SvgImage implements ImageInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function output(GdImage|SVG $resource): void
     {
         if ($resource instanceof SVG) {

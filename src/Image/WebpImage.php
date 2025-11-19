@@ -12,6 +12,7 @@ class WebpImage implements ImageInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public static function mimeType(): string|array
     {
         return 'image/webp';
@@ -20,6 +21,7 @@ class WebpImage implements ImageInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public static function extension(): string|array
     {
         return "webp";
@@ -28,7 +30,8 @@ class WebpImage implements ImageInterface
     /**
      * @inheritDoc
      */
-    public function load(string $filename): GdImage|SVG
+    #[\Override]
+    public function load(string $filename): GdImage|false|SVG
     {
         return imagecreatefromwebp($filename);
     }
@@ -36,7 +39,8 @@ class WebpImage implements ImageInterface
     /**
      * @inheritDoc
      */
-    public function save(GdImage|SVG $resource, string $filename = null, array $params = []): void
+    #[\Override]
+    public function save(GdImage|SVG $resource, ?string $filename = null, array $params = []): void
     {
         if ($resource instanceof SVG) {
             if (!isset($params['width']) || !isset($params['height'])) {
@@ -50,6 +54,7 @@ class WebpImage implements ImageInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function output(GdImage|SVG $resource): void
     {
         imagewebp($resource);

@@ -19,9 +19,9 @@ interface ImageInterface
 
     /**
      * @param string $filename
-     * @return GdImage|SVG
+     * @return GdImage|SVG|false
      */
-    public function load(string $filename): GdImage|SVG;
+    public function load(string $filename): GdImage|SVG|false;
 
     /**
      * @param GdImage|SVG $resource
@@ -29,7 +29,7 @@ interface ImageInterface
      * @param array $params
      * @return void
      */
-    public function save(GdImage|SVG $resource, string $filename, array $params = []): void;
+    public function save(GdImage|SVG $resource, ?string $filename = null, array $params = []): void;
 
     /**
      * @param GdImage|SVG $resource

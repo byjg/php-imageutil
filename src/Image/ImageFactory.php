@@ -9,7 +9,7 @@ class ImageFactory
     private static array $configMime = [];
     private static array $configExt = [];
 
-    public static function registerHandler($class): void
+    public static function registerHandler(string $class): void
     {
         if (!in_array(ImageInterface::class, class_implements($class))) {
             throw new InvalidArgumentException(

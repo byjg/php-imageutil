@@ -12,11 +12,13 @@ class AlphaColor extends Color
         parent::__construct($red, $green, $blue);
     }
 
+    #[\Override]
     public function getAlpha(): ?int
     {
         return $this->alpha;
     }
 
+    #[\Override]
     public function getRgb(): string
     {
         return sprintf("rgba(%d,%d,%d,%f)", $this->red, $this->green, $this->blue, $this->alpha);
