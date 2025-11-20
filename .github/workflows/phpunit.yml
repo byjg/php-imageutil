@@ -21,8 +21,6 @@ jobs:
             php-version-nodot: "84"
           - php-version: "8.3"
             php-version-nodot: "83"
-          - php-version: "8.2"
-            php-version-nodot: "82"
     container:
       image: 'byjg/php:${{ matrix.php-version }}-cli'
       options: --user root --privileged
