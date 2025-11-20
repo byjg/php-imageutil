@@ -202,7 +202,6 @@ class GdHandler implements ImageHandlerInterface
                     imagecopy($imgDest, $rowBuffer, 0, $y, 0, 0, $width, 1);
                 }
 
-                imagedestroy($rowBuffer);
                 break;
         }
 
@@ -582,9 +581,6 @@ class GdHandler implements ImageHandlerInterface
     public function __destruct()
     {
         if (isset($this->image)) {
-            imagedestroy($this->image);
-            imagedestroy($this->originalImage);
-
             unset($this->image);
             unset($this->originalImage);
         }
