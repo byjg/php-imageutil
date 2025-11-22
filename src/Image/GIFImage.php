@@ -2,17 +2,18 @@
 
 namespace ByJG\ImageUtil\Image;
 
+use ByJG\ImageUtil\Exception\ImageUtilException;
 use GdImage;
-use InvalidArgumentException;
-use SVG\SVG;
+use Override;
 
 class GIFImage implements ImageInterface
 {
+    use GdImageToSvgTrait;
 
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public static function mimeType(): string|array
     {
         return "image/gif";
@@ -21,7 +22,7 @@ class GIFImage implements ImageInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public static function extension(): string|array
     {
         return 'gif';
@@ -30,12 +31,21 @@ class GIFImage implements ImageInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
-    public function load(string $filename): GdImage|false|SVG
+    #[Override]
+    public function load(string $filename): GdImage
     {
         $img = getimagesize($filename);
+        if ($img === false) {
+            throw new ImageUtilException("Failed to get image size for GIF from: " . $filename);
+        }
         $oldId = imagecreatefromgif($filename);
+        if ($oldId === false) {
+            throw new ImageUtilException("Failed to load GIF image from: " . $filename);
+        }
         $image = imagecreatetruecolor($img[0], $img[1]);
+        if ($image === false) {
+            throw new ImageUtilException("Failed to create true color image for GIF from: " . $filename);
+        }
         imagecopy($image, $oldId, 0, 0, 0, 0, $img[0], $img[1]);
         return $image;
     }
@@ -43,24 +53,18 @@ class GIFImage implements ImageInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
-    public function save(GdImage|SVG $resource, ?string $filename = null, array $params = []): void
+    #[Override]
+    public function save(mixed $resource, ?string $filename = null, array $params = []): void
     {
-        if ($resource instanceof SVG) {
-            if (!isset($params['width']) || !isset($params['height'])) {
-                throw new InvalidArgumentException("The width and height are required to convert SVG to GIF");
-            }
-            $resource = $resource->toRasterImage($params['width'], $params['height']);
-        }
-        imagegif($resource, $filename);
+        imagegif($this->getGgImageFromSvg($resource, $params), $filename);
     }
 
     /**
      * @inheritDoc
      */
-    #[\Override]
-    public function output(GdImage|SVG $resource): void
+    #[Override]
+    public function output(mixed $resource): void
     {
-        imagegif($resource);
+        imagegif($this->getGgImageFromSvg($resource, []));
     }
 }

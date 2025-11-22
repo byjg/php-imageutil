@@ -1,6 +1,6 @@
 {
   "name": "byjg/imageutil",
-  "description": "A wrapper collection for GD library in PHP.",
+  "description": "ImageUtil is a PHP library that provides a collection of operations for image manipulation using the GD library. It simplifies tasks such as flipping, cropping, resizing, stamping, and more.",
   "autoload": {
     "psr-4": {
       "ByJG\\ImageUtil\\": "src/"
@@ -13,17 +13,19 @@
   },
   "license": "MIT",
   "require": {
-    "php": ">=8.2 <8.5",
+    "php": ">=8.3 <8.6",
     "ext-gd": "*",
     "meyfa/php-svg": "^v0"
   },
   "require-dev": {
-    "phpunit/phpunit": "^10|^11",
-    "vimeo/psalm": "^5.9|^6.12",
+    "phpunit/phpunit": "^10.5|^11.5",
+    "vimeo/psalm": "^5.9|^6.13",
     "ext-imagick": "*"
   },
+  "prefer-stable": true,
+  "minimum-stability": "dev",
   "scripts": {
     "test": "vendor/bin/phpunit",
-    "psalm": "vendor/bin/psalm"
+    "psalm": "vendor/bin/psalm --threads=1"
   }
 }

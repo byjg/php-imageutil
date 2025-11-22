@@ -71,8 +71,15 @@ class ImageUtil
             $url = $imageFile;
             $imageFile = basename($url);
             $info = pathinfo($imageFile);
+            if (!isset($info['extension'])) {
+                throw new ImageUtilException("Cannot determine file extension from URL");
+            }
             $imageFile = sys_get_temp_dir() . '/img_' . uniqid() . '.' . $info['extension'];
-            file_put_contents($imageFile, file_get_contents($url));
+            $contents = file_get_contents($url);
+            if ($contents === false) {
+                throw new ImageUtilException("Failed to fetch image from URL: " . $url);
+            }
+            file_put_contents($imageFile, $contents);
         }
 
         if (!file_exists($imageFile) || !is_readable($imageFile)) {
@@ -80,21 +87,19 @@ class ImageUtil
         }
 
         $info = pathinfo($imageFile);
-        if ($info['extension'] == 'svg') {
-            $resource = SVG::fromFile($imageFile);
-        } else {
-            $img = getimagesize($imageFile);
-            if (empty($img)) {
-                throw new ImageUtilException("Invalid file: " . $imageFile);
-            }
+        $image = ImageFactory::instanceFromExtension($info['extension'] ?? '');
 
-            $resource = ImageFactory::instanceFromMime($img['mime'])->load($imageFile);
+        $resource = $image->load($imageFile);
+        if ($resource === false) {
+            throw new ImageUtilException("Invalid file: " . $imageFile);
         }
+
+        $handler = ImageUtil::fromResource($resource);
 
         if ($http) {
             unlink($imageFile);
         }
 
-        return self::fromResource($resource);
+        return $handler;
     }
 }

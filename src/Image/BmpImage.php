@@ -2,17 +2,18 @@
 
 namespace ByJG\ImageUtil\Image;
 
+use ByJG\ImageUtil\Exception\ImageUtilException;
 use GdImage;
-use InvalidArgumentException;
-use SVG\SVG;
+use Override;
 
 class BmpImage implements ImageInterface
 {
+    use GdImageToSvgTrait;
 
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public static function mimeType(): string|array
     {
         return [ 'image/bmp', 'image/x-ms-bmp' ];
@@ -21,7 +22,7 @@ class BmpImage implements ImageInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public static function extension(): string|array
     {
         return "bmp";
@@ -30,33 +31,31 @@ class BmpImage implements ImageInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
-    public function load(string $filename): GdImage|false|SVG
+    #[Override]
+    public function load(string $filename): GdImage
     {
-        return imagecreatefrombmp($filename);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    #[\Override]
-    public function save(GdImage|SVG $resource, ?string $filename = null, array $params = []): void
-    {
-        if ($resource instanceof SVG) {
-            if (!isset($params['width']) || !isset($params['height'])) {
-                throw new InvalidArgumentException("The width and height are required to convert SVG to BMP");
-            }
-            $resource = $resource->toRasterImage($params['width'], $params['height']);
+        $image = imagecreatefrombmp($filename);
+        if ($image === false) {
+            throw new ImageUtilException("Failed to load BMP image from: " . $filename);
         }
-        imagebmp($resource, $filename);
+        return $image;
     }
 
     /**
      * @inheritDoc
      */
-    #[\Override]
-    public function output(GdImage|SVG $resource): void
+    #[Override]
+    public function save(mixed $resource, ?string $filename = null, array $params = []): void
     {
-        imagebmp($resource);
+        imagebmp($this->getGgImageFromSvg($resource, $params), $filename);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    #[Override]
+    public function output(mixed $resource): void
+    {
+        imagebmp($this->getGgImageFromSvg($resource, []));
     }
 }

@@ -3,18 +3,19 @@
 namespace Test;
 
 use ByJG\ImageUtil\Color;
-use ByJG\ImageUtil\Handler\GdHandler;
+use ByJG\ImageUtil\Handler\ImageHandlerInterface;
 use ByJG\ImageUtil\Handler\SvgHandler;
 use ByJG\ImageUtil\ImageUtil;
+use Override;
 
 class SvgHandlerTest extends Base
 {
     /**
      * @var SvgHandler
      */
-    protected SvgHandler $svgHandler;
+    protected ImageHandlerInterface $svgHandler;
 
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
         $this->svgHandler = new SvgHandler();
@@ -53,7 +54,7 @@ class SvgHandlerTest extends Base
     public function testSaveToPng(): void
     {
         $filename = sys_get_temp_dir() . '/anim2.png';
-        $this->svgHandler->fromFile(__DIR__ . "/assets/anim2.svg");
+        $this->svgHandler = ImageUtil::fromFile(__DIR__ . "/assets/anim2.svg");
         $this->svgHandler->save($filename);
         $this->assertFileExists($filename);
         $this->assertImageSimilar(ImageUtil::fromFile(__DIR__ . "/assets/anim2.png"), $this->svgHandler);
@@ -63,8 +64,8 @@ class SvgHandlerTest extends Base
 
     public function testGdHandlerFromSVG(): void
     {
-        $this->svgHandler->fromFile(__DIR__ . "/assets/anim2.svg");
-        $handler = (new GdHandler())->fromResource($this->svgHandler->getResource());
+        $this->svgHandler = ImageUtil::fromFile(__DIR__ . "/assets/anim2.svg");
+        $handler = ImageUtil::fromResource($this->svgHandler->getGdImage());
         $this->assertImageSimilar(ImageUtil::fromFile(__DIR__ . "/assets/anim2.png"), $handler);
     }
 }

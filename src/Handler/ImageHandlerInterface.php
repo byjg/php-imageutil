@@ -9,7 +9,6 @@ use ByJG\ImageUtil\Enum\TextAlignment;
 use ByJG\ImageUtil\Exception\ImageUtilException;
 use ByJG\ImageUtil\Exception\NotFoundException;
 use GdImage;
-use SVG\SVG;
 
 interface ImageHandlerInterface
 {
@@ -19,25 +18,17 @@ interface ImageHandlerInterface
 
     public function getFilename(): ?string;
 
-    public function getResource(): GdImage|SVG|null;
+    public function getResource(): mixed;
 
     public function empty(int $width, int $height, ?Color $color = null): static;
 
     /**
-     * @param GdImage|SVG $resource
+     * @param mixed $resource
      * @return $this
      * @throws ImageUtilException
      */
-    public function fromResource(GdImage|SVG $resource): static;
+    public function fromResource(mixed $resource): static;
 
-
-    /**
-     * @param string $imageFile
-     * @return $this
-     * @throws NotFoundException
-     * @throws ImageUtilException
-     */
-    public function fromFile(string $imageFile): static;
 
     /**
      * Rotates the image to any direction using the given angle.
@@ -168,5 +159,7 @@ interface ImageHandlerInterface
      * Discard any changes made to the image and restore the original state
      */
     public function restore(): static;
+
+    public function getGdImage(): GdImage;
 
 }
