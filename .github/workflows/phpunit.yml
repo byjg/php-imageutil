@@ -49,14 +49,14 @@ jobs:
       - name: Git checkout
         uses: actions/checkout@v4
 
-      - name: Composer
-        run: composer install
-
       - name: Install dependencies
         run: |
           apk add --no-cache \
             --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing \
             php84-pecl-imagick
+
+      - name: Composer
+        run: composer install
 
       - name: Psalm
         # Note: Ignoring error code 2, which just signals that some
