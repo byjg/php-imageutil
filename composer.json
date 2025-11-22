@@ -18,8 +18,8 @@
     "meyfa/php-svg": "^v0"
   },
   "require-dev": {
-    "phpunit/phpunit": "^9.6|^11.5",
-    "vimeo/psalm": "^5.9|^6.13.0",
+    "phpunit/phpunit": "^10.5|^11.5",
+    "vimeo/psalm": "^5.9|^6.13",
     "ext-imagick": "*"
   },
   "prefer-stable": true,

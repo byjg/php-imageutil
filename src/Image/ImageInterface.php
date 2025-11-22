@@ -2,8 +2,7 @@
 
 namespace ByJG\ImageUtil\Image;
 
-use GdImage;
-use SVG\SVG;
+use ByJG\ImageUtil\Handler\ImageHandlerInterface;
 
 interface ImageInterface
 {
@@ -19,22 +18,24 @@ interface ImageInterface
 
     /**
      * @param string $filename
-     * @return GdImage|SVG|false
+     * @return mixed
      */
-    public function load(string $filename): GdImage|SVG|false;
+    public function load(string $filename): mixed;
 
     /**
-     * @param GdImage|SVG $resource
-     * @param string $filename
+     * @param mixed $resource
+     * @param string|null $filename
      * @param array $params
      * @return void
      */
-    public function save(GdImage|SVG $resource, ?string $filename = null, array $params = []): void;
+    public function save(mixed $resource, ?string $filename = null, array $params = []): void;
 
     /**
-     * @param GdImage|SVG $resource
+     * @param mixed $resource
      * @return void
      */
-    public function output(GdImage|SVG $resource): void;
+    public function output(mixed $resource): void;
+
+    public function getHandler(): ImageHandlerInterface;
 
 }

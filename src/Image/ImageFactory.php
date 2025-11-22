@@ -11,7 +11,8 @@ class ImageFactory
 
     public static function registerHandler(string $class): void
     {
-        if (!in_array(ImageInterface::class, class_implements($class))) {
+        $implements = class_implements($class);
+        if ($implements === false || !in_array(ImageInterface::class, $implements)) {
             throw new InvalidArgumentException(
                 "The class '$class' is not a instance of ImageHandlerInterface"
             );
@@ -60,7 +61,9 @@ class ImageFactory
         }
 
         $class = self::$configMime[$mime];
-        return new $class();
+        $instance = new $class();
+        assert($instance instanceof ImageInterface);
+        return $instance;
     }
 
     /**
@@ -75,6 +78,8 @@ class ImageFactory
         }
 
         $class = self::$configExt[$ext];
-        return new $class();
+        $instance = new $class();
+        assert($instance instanceof ImageInterface);
+        return $instance;
     }
 }

@@ -51,7 +51,7 @@ class ImageUtilTest extends TestCase
 
         try {
             $this->expectException(ImageUtilException::class);
-            $this->expectExceptionMessage("Invalid file");
+            $this->expectExceptionMessage("Failed to load");
             ImageUtil::fromFile($tempFile);
         } finally {
             if (file_exists($tempFile)) {

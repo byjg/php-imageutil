@@ -2,17 +2,18 @@
 
 namespace ByJG\ImageUtil\Image;
 
+use ByJG\ImageUtil\Exception\ImageUtilException;
 use GdImage;
-use InvalidArgumentException;
-use SVG\SVG;
+use Override;
 
 class PngImage implements ImageInterface
 {
+    use GdImageToSvgTrait;
 
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public static function mimeType(): string|array
     {
         return "image/png";
@@ -21,7 +22,7 @@ class PngImage implements ImageInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public static function extension(): string|array
     {
         return "png";
@@ -30,34 +31,32 @@ class PngImage implements ImageInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
-    public function load(string $filename): GdImage|false|SVG
+    #[Override]
+    public function load(string $filename): GdImage
     {
-        return imagecreatefrompng($filename);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    #[\Override]
-    public function save(GdImage|SVG $resource, ?string $filename = null, array $params = []): void
-    {
-        if ($resource instanceof SVG) {
-            if (!isset($params['width']) || !isset($params['height'])) {
-                throw new InvalidArgumentException("The width and height are required to convert SVG to PNG");
-            }
-            $resource = $resource->toRasterImage($params['width'], $params['height']);
+        $image = imagecreatefrompng($filename);
+        if ($image === false) {
+            throw new ImageUtilException("Failed to load PNG image from: " . $filename);
         }
-        $pngQuality = intval(round((9 * $params['quality']) / 100));
-        imagepng($resource, $filename, $pngQuality);
+        return $image;
     }
 
     /**
      * @inheritDoc
      */
-    #[\Override]
-    public function output(GdImage|SVG $resource): void
+    #[Override]
+    public function save(mixed $resource, ?string $filename = null, array $params = []): void
     {
-        imagepng($resource);
+        $pngQuality = intval(round((9 * $params['quality']) / 100));
+        imagepng($this->getGgImageFromSvg($resource, $params), $filename, $pngQuality);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    #[Override]
+    public function output(mixed $resource): void
+    {
+        imagepng($this->getGgImageFromSvg($resource, []));
     }
 }

@@ -9,6 +9,7 @@ use ByJG\ImageUtil\Enum\TextAlignment;
 use ByJG\ImageUtil\Exception\ImageUtilException;
 use ByJG\ImageUtil\Image\ImageFactory;
 use GdImage;
+use Override;
 use SVG\Nodes\Shapes\SVGRect;
 use SVG\SVG;
 
@@ -20,19 +21,19 @@ class SvgHandler implements ImageHandlerInterface
 
     protected ?string $filename = null;
 
-    #[\Override]
+    #[Override]
     public function getWidth(): int
     {
         return intval($this->resource->getDocument()->getWidth());
     }
 
-    #[\Override]
+    #[Override]
     public function getHeight(): int
     {
         return intval($this->resource->getDocument()->getHeight());
     }
 
-    #[\Override]
+    #[Override]
     public function getFilename(): ?string
     {
         return $this->filename;
@@ -41,18 +42,22 @@ class SvgHandler implements ImageHandlerInterface
     protected function setResource(SVG $resource, ?string $filename = null): void
     {
         $this->resource = $resource;
-        $this->originalResource = SVG::fromString($resource->toXMLString());
+        $originalResource = SVG::fromString($resource->toXMLString());
+        if ($originalResource === null) {
+            throw new ImageUtilException('Failed to create original SVG resource');
+        }
+        $this->originalResource = $originalResource;
         $this->filename = $filename;
     }
 
 
-    #[\Override]
+    #[Override]
     public function getResource(): GdImage|SVG|null
     {
         return $this->resource;
     }
 
-    #[\Override]
+    #[Override]
     public function empty(int $width, int $height, ?Color $color = null): static
     {
         $resource = new SVG($width, $height);
@@ -63,8 +68,8 @@ class SvgHandler implements ImageHandlerInterface
         return $this;
     }
 
-    #[\Override]
-    public function fromResource(GdImage|SVG $resource): static
+    #[Override]
+    public function fromResource(mixed $resource): static
     {
         if ($resource instanceof SVG) {
             $this->setResource($resource);
@@ -74,17 +79,10 @@ class SvgHandler implements ImageHandlerInterface
         return $this;
     }
 
-    #[\Override]
-    public function fromFile(string $imageFile): static
-    {
-        $this->setResource(SVG::fromFile($imageFile), $imageFile);
-        return $this;
-    }
-
     /**
      * @throws ImageUtilException
      */
-    #[\Override]
+    #[Override]
     public function rotate(int $angle, int $background = 0): static
     {
         throw new ImageUtilException('Not implemented yet');
@@ -93,7 +91,7 @@ class SvgHandler implements ImageHandlerInterface
     /**
      * @throws ImageUtilException
      */
-    #[\Override]
+    #[Override]
     public function flip(Flip $type): static
     {
         throw new ImageUtilException('Not implemented yet');
@@ -102,31 +100,31 @@ class SvgHandler implements ImageHandlerInterface
     /**
      * @throws ImageUtilException
      */
-    #[\Override]
+    #[Override]
     public function resize(?int $newWidth = null, ?int $newHeight = null): static
     {
         throw new ImageUtilException('Not implemented yet');
     }
 
-    #[\Override]
+    #[Override]
     public function resizeSquare(int $newSize, ?Color $color = null): static
     {
         throw new ImageUtilException('Not implemented yet');
     }
 
-    #[\Override]
+    #[Override]
     public function resizeAspectRatio(int $newX, int $newY, ?Color $color = null): static
     {
         throw new ImageUtilException('Not implemented yet');
     }
 
-    #[\Override]
+    #[Override]
     public function stampImage(ImageHandlerInterface $srcImage, StampPosition $position = StampPosition::BOTTOM_RIGHT, int $padX = 5, int $padY = 5, int $opacity = 100): static
     {
         throw new ImageUtilException('Not implemented yet');
     }
 
-    #[\Override]
+    #[Override]
     public function writeText(string $text, array $point, float $size, int $angle, string $font, int $maxWidth = 0, ?Color $textColor = null, TextAlignment $textAlignment = TextAlignment::LEFT): static
     {
         throw new ImageUtilException('Not implemented yet');
@@ -135,27 +133,37 @@ class SvgHandler implements ImageHandlerInterface
     /**
      * @throws ImageUtilException
      */
-    #[\Override]
+    #[Override]
     public function crop(int $fromX, int $fromY, int $toX, int $toY): static
     {
         throw new ImageUtilException('Not implemented yet');
     }
 
-    #[\Override]
+    #[Override]
     public function save(?string $filename = null, int $quality = 90): void
     {
         if (is_null($filename)) {
             $filename = $this->filename;
         }
 
+        if ($filename === null) {
+            throw new ImageUtilException('Filename is required for save operation');
+        }
+
         $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
 
-        ImageFactory::instanceFromExtension($extension)->save($this->resource, $filename, ['quality' => $quality, 'width' => $this->getWidth(), 'height' => $this->getHeight()]);
+        $params = [
+            'quality' => $quality,
+            'width' => $this->getWidth(),
+            'height' => $this->getHeight()
+        ];
+
+        ImageFactory::instanceFromExtension($extension)->save($this->resource, $filename, $params);
 
         $this->setResource($this->resource, $filename);
     }
 
-    #[\Override]
+    #[Override]
     public function show(): void
     {
         if (ob_get_level()) {
@@ -168,16 +176,39 @@ class SvgHandler implements ImageHandlerInterface
     /**
      * @throws ImageUtilException
      */
-    #[\Override]
+    #[Override]
     public function makeTransparent(?Color $color = null, int $tolerance = 0): static
     {
         throw new ImageUtilException('Not implemented yet');
     }
 
-    #[\Override]
+    #[Override]
     public function restore(): static
     {
-        $this->setResource(SVG::fromString($this->originalResource->toXMLString()));
+        $resource = SVG::fromString($this->originalResource->toXMLString());
+        if ($resource === null) {
+            throw new ImageUtilException('Failed to restore SVG from original resource');
+        }
+        $this->setResource($resource);
         return $this;
+    }
+
+    #[Override]
+    public function getGdImage(): GdImage
+    {
+        $image = new GdHandler();
+        /** @var SVG $resource */
+        $resource = $this->getResource();
+        /** @var GdImage $rasterImage */
+        $rasterImage = $resource->toRasterImage(
+            intval($resource->getDocument()->getWidth()),
+            intval($resource->getDocument()->getHeight())
+        );
+        $gdResource = $image->fromResource($rasterImage)->getResource();
+        if ($gdResource === null) {
+            throw new ImageUtilException('Failed to convert SVG to GdImage');
+        }
+
+        return $gdResource;
     }
 }
