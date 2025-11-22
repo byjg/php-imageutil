@@ -34,11 +34,11 @@ class GIFImage implements ImageInterface
     #[Override]
     public function load(string $filename): GdImage
     {
-        $img = getimagesize($filename);
+        $img = @getimagesize($filename);
         if ($img === false) {
             throw new ImageUtilException("Failed to get image size for GIF from: " . $filename);
         }
-        $oldId = imagecreatefromgif($filename);
+        $oldId = @imagecreatefromgif($filename);
         if ($oldId === false) {
             throw new ImageUtilException("Failed to load GIF image from: " . $filename);
         }
@@ -56,7 +56,7 @@ class GIFImage implements ImageInterface
     #[Override]
     public function save(mixed $resource, ?string $filename = null, array $params = []): void
     {
-        imagegif($this->getGgImageFromSvg($resource, $params), $filename);
+        @imagegif($this->getGgImageFromSvg($resource, $params), $filename);
     }
 
     /**

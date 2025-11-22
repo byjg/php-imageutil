@@ -47,7 +47,7 @@ class WebpImage implements ImageInterface
     #[Override]
     public function save(mixed $resource, ?string $filename = null, array $params = []): void
     {
-        imagewebp($this->getGgImageFromSvg($resource, $params), $filename, $params['quality']);
+        @imagewebp($this->getGgImageFromSvg($resource, $params), $filename, $params['quality']);
     }
 
     /**
@@ -56,6 +56,6 @@ class WebpImage implements ImageInterface
     #[Override]
     public function output(mixed $resource): void
     {
-        imagewebp($this->getGgImageFromSvg($resource, []));
+        @imagewebp($this->getGgImageFromSvg($resource, []));
     }
 }
