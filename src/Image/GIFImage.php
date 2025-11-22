@@ -5,7 +5,6 @@ namespace ByJG\ImageUtil\Image;
 use ByJG\ImageUtil\Exception\ImageUtilException;
 use GdImage;
 use Override;
-use Throwable;
 
 class GIFImage implements ImageInterface
 {
@@ -35,36 +34,18 @@ class GIFImage implements ImageInterface
     #[Override]
     public function load(string $filename): GdImage
     {
-        $e = null;
-        try {
-            $img = getimagesize($filename);
-        } catch (Throwable $e) {
-            $img = false;
-        }
+        $img = getimagesize($filename);
         if ($img === false) {
-            throw new ImageUtilException("Failed to get image size for GIF from: " . $filename, 0, $e);
+            throw new ImageUtilException("Failed to get image size for GIF from: " . $filename);
         }
-
-        $e = null;
-        try {
-            $oldId = imagecreatefromgif($filename);
-        } catch (Throwable $e) {
-            $oldId = false;
-        }
+        $oldId = imagecreatefromgif($filename);
         if ($oldId === false) {
-            throw new ImageUtilException("Failed to load GIF image from: " . $filename, 0, $e);
+            throw new ImageUtilException("Failed to load GIF image from: " . $filename);
         }
-
-        $e = null;
-        try {
-            $image = imagecreatetruecolor($img[0], $img[1]);
-        } catch (Throwable $e) {
-            $image = false;
-        }
+        $image = imagecreatetruecolor($img[0], $img[1]);
         if ($image === false) {
-            throw new ImageUtilException("Failed to create true color image for GIF from: " . $filename, 0, $e);
+            throw new ImageUtilException("Failed to create true color image for GIF from: " . $filename);
         }
-
         imagecopy($image, $oldId, 0, 0, 0, 0, $img[0], $img[1]);
         return $image;
     }

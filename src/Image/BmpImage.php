@@ -5,7 +5,6 @@ namespace ByJG\ImageUtil\Image;
 use ByJG\ImageUtil\Exception\ImageUtilException;
 use GdImage;
 use Override;
-use Throwable;
 
 class BmpImage implements ImageInterface
 {
@@ -35,14 +34,9 @@ class BmpImage implements ImageInterface
     #[Override]
     public function load(string $filename): GdImage
     {
-        $e = null;
-        try {
-            $image = imagecreatefrombmp($filename);
-        } catch (Throwable $e) {
-            $image = false;
-        }
+        $image = imagecreatefrombmp($filename);
         if ($image === false) {
-            throw new ImageUtilException("Failed to load BMP image from: " . $filename, 0, $e);
+            throw new ImageUtilException("Failed to load BMP image from: " . $filename);
         }
         return $image;
     }
