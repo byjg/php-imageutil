@@ -5,6 +5,7 @@ namespace ByJG\ImageUtil\Image;
 use ByJG\ImageUtil\Exception\ImageUtilException;
 use GdImage;
 use Override;
+use Throwable;
 
 class WebpImage implements ImageInterface
 {
@@ -34,9 +35,14 @@ class WebpImage implements ImageInterface
     #[Override]
     public function load(string $filename): GdImage
     {
-        $image = imagecreatefromwebp($filename);
+        $e = null;
+        try {
+            $image = imagecreatefromwebp($filename);
+        } catch (Throwable $e) {
+            $image = false;
+        }
         if ($image === false) {
-            throw new ImageUtilException("Failed to load WEBP image from: " . $filename);
+            throw new ImageUtilException("Failed to load WEBP image from: " . $filename, 0, $e);
         }
         return $image;
     }

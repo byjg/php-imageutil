@@ -5,6 +5,7 @@ namespace ByJG\ImageUtil\Image;
 use ByJG\ImageUtil\Exception\ImageUtilException;
 use GdImage;
 use Override;
+use Throwable;
 
 class JpgImage implements ImageInterface
 {
@@ -34,9 +35,14 @@ class JpgImage implements ImageInterface
     #[Override]
     public function load(string $filename): GdImage
     {
-        $image = imagecreatefromjpeg($filename);
+        $e = null;
+        try {
+            $image = imagecreatefromjpeg($filename);
+        } catch (Throwable $e) {
+            $image = false;
+        }
         if ($image === false) {
-            throw new ImageUtilException("Failed to load JPEG image from: " . $filename);
+            throw new ImageUtilException("Failed to load JPEG image from: " . $filename, 0, $e);
         }
         return $image;
     }
