@@ -34,7 +34,7 @@ class BmpImage implements ImageInterface
     #[Override]
     public function load(string $filename): GdImage
     {
-        $image = imagecreatefrombmp($filename);
+        $image = @imagecreatefrombmp($filename);
         if ($image === false) {
             throw new ImageUtilException("Failed to load BMP image from: " . $filename);
         }
@@ -47,7 +47,7 @@ class BmpImage implements ImageInterface
     #[Override]
     public function save(mixed $resource, ?string $filename = null, array $params = []): void
     {
-        imagebmp($this->getGgImageFromSvg($resource, $params), $filename);
+        @imagebmp($this->getGgImageFromSvg($resource, $params), $filename);
     }
 
     /**
@@ -56,6 +56,6 @@ class BmpImage implements ImageInterface
     #[Override]
     public function output(mixed $resource): void
     {
-        imagebmp($this->getGgImageFromSvg($resource, []));
+        @imagebmp($this->getGgImageFromSvg($resource, []));
     }
 }

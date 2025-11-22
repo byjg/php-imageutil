@@ -47,7 +47,7 @@ class JpgImage implements ImageInterface
     #[Override]
     public function save(mixed $resource, ?string $filename = null, array $params = []): void
     {
-        imagejpeg($this->getGgImageFromSvg($resource, $params), $filename, $params['quality']);
+        @imagejpeg($this->getGgImageFromSvg($resource, $params), $filename, $params['quality']);
     }
 
     /**
@@ -56,6 +56,6 @@ class JpgImage implements ImageInterface
     #[Override]
     public function output(mixed $resource): void
     {
-        imagejpeg($this->getGgImageFromSvg($resource, []));
+        @imagejpeg($this->getGgImageFromSvg($resource, []));
     }
 }

@@ -34,7 +34,7 @@ class PngImage implements ImageInterface
     #[Override]
     public function load(string $filename): GdImage
     {
-        $image = imagecreatefrompng($filename);
+        $image = @imagecreatefrompng($filename);
         if ($image === false) {
             throw new ImageUtilException("Failed to load PNG image from: " . $filename);
         }
@@ -48,7 +48,7 @@ class PngImage implements ImageInterface
     public function save(mixed $resource, ?string $filename = null, array $params = []): void
     {
         $pngQuality = intval(round((9 * $params['quality']) / 100));
-        imagepng($this->getGgImageFromSvg($resource, $params), $filename, $pngQuality);
+        @imagepng($this->getGgImageFromSvg($resource, $params), $filename, $pngQuality);
     }
 
     /**
