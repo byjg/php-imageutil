@@ -1,4 +1,12 @@
+---
+sidebar_key: imageutil
+tags: [php, image]
+---
+
 # Image Manipulation Library
+
+ImageUtil is a PHP library that provides a collection of operations for image manipulation using the GD library.
+It simplifies tasks such as flipping, cropping, resizing, stamping, and more.
 
 [![Sponsor](https://img.shields.io/badge/Sponsor-%23ea4aaa?logo=githubsponsors&logoColor=white&labelColor=0d1117)](https://github.com/sponsors/byjg)
 [![Build Status](https://github.com/byjg/php-imageutil/actions/workflows/phpunit.yml/badge.svg?branch=master)](https://github.com/byjg/php-imageutil/actions/workflows/phpunit.yml)
@@ -6,9 +14,6 @@
 [![GitHub source](https://img.shields.io/badge/Github-source-informational?logo=github)](https://github.com/byjg/php-imageutil/)
 [![GitHub license](https://img.shields.io/github/license/byjg/php-imageutil.svg)](https://opensource.byjg.com/opensource/licensing.html)
 [![GitHub release](https://img.shields.io/github/release/byjg/php-imageutil.svg)](https://github.com/byjg/php-imageutil/releases/)
-
-ImageUtil is a PHP library that provides a collection of operations for image manipulation using the GD library.
-It simplifies tasks such as flipping, cropping, resizing, stamping, and more.
 
 ## Installation
 
