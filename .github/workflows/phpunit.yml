@@ -15,6 +15,8 @@ jobs:
     strategy:
       matrix:
         include:
+          - php-version: "8.6"
+            php-version-nodot: "86"
           - php-version: "8.5"
             php-version-nodot: "85"
           - php-version: "8.4"
@@ -42,7 +44,7 @@ jobs:
       # for github/codeql-action/upload-sarif to upload SARIF results
       security-events: write
     container:
-      image: byjg/php:8.4-cli
+      image: byjg/php:8.5-cli
       options: --user root --privileged
 
     steps:
@@ -53,7 +55,7 @@ jobs:
         run: |
           apk add --no-cache \
             --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing \
-            php84-pecl-imagick
+            php85-pecl-imagick
 
       - name: Composer
         run: composer install

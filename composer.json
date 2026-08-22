@@ -13,13 +13,13 @@
   },
   "license": "MIT",
   "require": {
-    "php": ">=8.3 <8.6",
+    "php": ">=8.3 <8.7",
     "ext-gd": "*",
     "meyfa/php-svg": "^v0"
   },
   "require-dev": {
-    "phpunit/phpunit": "^10.5|^11.5",
-    "vimeo/psalm": "^5.9|^6.13",
+    "phpunit/phpunit": "^12.5",
+    "vimeo/psalm": "^6.16",
     "ext-imagick": "*"
   },
   "prefer-stable": true,
