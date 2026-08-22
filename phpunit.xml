@@ -26,7 +26,7 @@ and open the template in the editor.
         <ini name="display_errors" value="On" />
         <ini name="display_startup_errors" value="On" />
         <ini name="error_reporting" value="E_ALL" />
-        <ini name="memory_limit" value="256M" />
+        <ini name="memory_limit" value="192M" />
     </php>
 
     <source>
