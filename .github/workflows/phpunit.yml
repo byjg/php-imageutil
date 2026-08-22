@@ -15,8 +15,8 @@ jobs:
     strategy:
       matrix:
         include:
-          - php-version: "8.6"
-            php-version-nodot: "86"
+          # PHP 8.6 is excluded: Alpine edge/testing has no php86-pecl-imagick
+          # package yet, so ext-imagick cannot be installed on that image.
           - php-version: "8.5"
             php-version-nodot: "85"
           - php-version: "8.4"
