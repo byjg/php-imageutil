@@ -19,13 +19,16 @@
   },
   "require-dev": {
     "phpunit/phpunit": "^12.5",
-    "vimeo/psalm": "^6.16",
+
     "ext-imagick": "*"
   },
   "prefer-stable": true,
   "minimum-stability": "dev",
   "scripts": {
     "test": "vendor/bin/phpunit",
-    "psalm": "vendor/bin/psalm --threads=1"
+    "psalm": [
+      "@composer --working-dir=tools/psalm update --no-interaction",
+      "tools/psalm/vendor/bin/psalm --threads=1"
+    ]
   }
 }
