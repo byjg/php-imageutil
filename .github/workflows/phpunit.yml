@@ -15,8 +15,8 @@ jobs:
     strategy:
       matrix:
         include:
-          # PHP 8.6 is excluded: Alpine edge/testing has no php86-pecl-imagick
-          # package yet, so ext-imagick cannot be installed on that image.
+          - php-version: "8.6"
+            php-version-nodot: "86"
           - php-version: "8.5"
             php-version-nodot: "85"
           - php-version: "8.4"
@@ -30,9 +30,16 @@ jobs:
     steps:
       - name: Install dependencies
         run: |
-          apk add --no-cache \
-            --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing \
-            php${{ matrix.php-version-nodot }}-pecl-imagick
+          if [ "${{ matrix.php-version }}" = "8.6" ]; then
+            # Alpine has no php86-pecl-imagick package yet. The byjg/php 8.6 image
+            # ships imagick.so compiled but disabled, so it only needs enabling.
+            apk add --no-cache imagemagick
+            echo "extension=imagick.so" > /etc/php86/conf.d/imagick.ini
+          else
+            apk add --no-cache \
+              --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing \
+              php${{ matrix.php-version-nodot }}-pecl-imagick
+          fi
       - uses: actions/checkout@v5
       - run: composer install
       - run: composer test
