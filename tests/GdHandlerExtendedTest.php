@@ -120,14 +120,22 @@ class GdHandlerExtendedTest extends Base
 
     public function testStampImageRandom()
     {
-        $this->expectException(ImageUtilException::class);
-        $this->expectExceptionMessage('Invalid Stamp Position');
+        $stamp = ImageUtil::empty(100, 100, FileType::Png, new Color(0, 0, 0));
 
-        $stamp = ImageUtil::fromFile(__DIR__ . '/assets/stamp-image.png')
-            ->resize(100, 100);
-
-        $bgImage = ImageUtil::fromFile(__DIR__ . '/assets/stamp-background.png')
+        $bgImage = ImageUtil::empty(300, 300, FileType::Png, new Color(255, 255, 255))
             ->stampImage($stamp, StampPosition::RANDOM, 0, 0);
+
+        // A 100x100 stamp without padding lands on exactly one cell of the 3x3 grid,
+        // whichever of the nine positions is drawn
+        $stampedCells = 0;
+        foreach ([50, 150, 250] as $x) {
+            foreach ([50, 150, 250] as $y) {
+                if (imagecolorat($bgImage->getGdImage(), $x, $y) === 0x000000) {
+                    $stampedCells++;
+                }
+            }
+        }
+        $this->assertSame(1, $stampedCells);
     }
 
     // Test TextAlignment enum values

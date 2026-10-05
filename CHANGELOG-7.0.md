@@ -7,6 +7,13 @@
 
 - None.
 
+## Bug Fixes
+
+- `stampImage()` with `StampPosition::RANDOM` now stamps the image on one of the
+  nine positions, picked at random. It used to throw `ImageUtilException`
+  ("Invalid Stamp Position") on every call, because the random number was never
+  converted to a `StampPosition`.
+
 ## Requirements
 
 - PHP 8.3, 8.4, 8.5 and 8.6 are now supported: `"php": ">=8.3 <8.7"`.

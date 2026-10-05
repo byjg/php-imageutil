@@ -312,7 +312,7 @@ class GdHandler implements ImageHandlerInterface
         $srcHeight = imagesy($watermark);
 
         if ($position == StampPosition::RANDOM) {
-            $position = rand(1, 9);
+            $position = StampPosition::from(rand(1, 9));
         }
         switch ($position) {
             case StampPosition::TOP_RIGHT:
