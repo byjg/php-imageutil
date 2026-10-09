@@ -1,6 +1,6 @@
 <?php
 
-namespace Test;
+namespace Tests;
 
 use ByJG\ImageUtil\Color;
 use ByJG\ImageUtil\Handler\ImageHandlerInterface;
