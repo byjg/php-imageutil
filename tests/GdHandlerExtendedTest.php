@@ -1,6 +1,6 @@
 <?php
 
-namespace Test;
+namespace Tests;
 
 use ByJG\ImageUtil\Color;
 use ByJG\ImageUtil\Enum\FileType;
@@ -27,7 +27,7 @@ class GdHandlerExtendedTest extends Base
             ->resize(100, 100);
 
         $bgImage = ImageUtil::fromFile(__DIR__ . '/assets/stamp-background.png')
-            ->stampImage($stamp, StampPosition::TOP_LEFT, 10, 10);
+            ->stampImage($stamp, StampPosition::TopLeft, 10, 10);
 
         // Verify dimensions remain unchanged
         $this->assertEquals(2000, $bgImage->getWidth());
@@ -40,7 +40,7 @@ class GdHandlerExtendedTest extends Base
             ->resize(100, 100);
 
         $bgImage = ImageUtil::fromFile(__DIR__ . '/assets/stamp-background.png')
-            ->stampImage($stamp, StampPosition::TOP_RIGHT, 10, 10);
+            ->stampImage($stamp, StampPosition::TopRight, 10, 10);
 
         $this->assertEquals(2000, $bgImage->getWidth());
         $this->assertEquals(2000, $bgImage->getHeight());
@@ -52,7 +52,7 @@ class GdHandlerExtendedTest extends Base
             ->resize(100, 100);
 
         $bgImage = ImageUtil::fromFile(__DIR__ . '/assets/stamp-background.png')
-            ->stampImage($stamp, StampPosition::BOTTOM_LEFT, 10, 10);
+            ->stampImage($stamp, StampPosition::BottomLeft, 10, 10);
 
         $this->assertEquals(2000, $bgImage->getWidth());
         $this->assertEquals(2000, $bgImage->getHeight());
@@ -64,7 +64,7 @@ class GdHandlerExtendedTest extends Base
             ->resize(100, 100);
 
         $bgImage = ImageUtil::fromFile(__DIR__ . '/assets/stamp-background.png')
-            ->stampImage($stamp, StampPosition::CENTER, 0, 0);
+            ->stampImage($stamp, StampPosition::Center, 0, 0);
 
         $this->assertEquals(2000, $bgImage->getWidth());
         $this->assertEquals(2000, $bgImage->getHeight());
@@ -76,7 +76,7 @@ class GdHandlerExtendedTest extends Base
             ->resize(100, 100);
 
         $bgImage = ImageUtil::fromFile(__DIR__ . '/assets/stamp-background.png')
-            ->stampImage($stamp, StampPosition::TOP, 0, 10);
+            ->stampImage($stamp, StampPosition::Top, 0, 10);
 
         $this->assertEquals(2000, $bgImage->getWidth());
         $this->assertEquals(2000, $bgImage->getHeight());
@@ -88,7 +88,7 @@ class GdHandlerExtendedTest extends Base
             ->resize(100, 100);
 
         $bgImage = ImageUtil::fromFile(__DIR__ . '/assets/stamp-background.png')
-            ->stampImage($stamp, StampPosition::BOTTOM, 0, 10);
+            ->stampImage($stamp, StampPosition::Bottom, 0, 10);
 
         $this->assertEquals(2000, $bgImage->getWidth());
         $this->assertEquals(2000, $bgImage->getHeight());
@@ -100,7 +100,7 @@ class GdHandlerExtendedTest extends Base
             ->resize(100, 100);
 
         $bgImage = ImageUtil::fromFile(__DIR__ . '/assets/stamp-background.png')
-            ->stampImage($stamp, StampPosition::LEFT, 10, 0);
+            ->stampImage($stamp, StampPosition::Left, 10, 0);
 
         $this->assertEquals(2000, $bgImage->getWidth());
         $this->assertEquals(2000, $bgImage->getHeight());
@@ -112,7 +112,7 @@ class GdHandlerExtendedTest extends Base
             ->resize(100, 100);
 
         $bgImage = ImageUtil::fromFile(__DIR__ . '/assets/stamp-background.png')
-            ->stampImage($stamp, StampPosition::RIGHT, 10, 0);
+            ->stampImage($stamp, StampPosition::Right, 10, 0);
 
         $this->assertEquals(2000, $bgImage->getWidth());
         $this->assertEquals(2000, $bgImage->getHeight());
@@ -120,21 +120,29 @@ class GdHandlerExtendedTest extends Base
 
     public function testStampImageRandom()
     {
-        $this->expectException(ImageUtilException::class);
-        $this->expectExceptionMessage('Invalid Stamp Position');
+        $stamp = ImageUtil::empty(100, 100, FileType::Png, new Color(0, 0, 0));
 
-        $stamp = ImageUtil::fromFile(__DIR__ . '/assets/stamp-image.png')
-            ->resize(100, 100);
+        $bgImage = ImageUtil::empty(300, 300, FileType::Png, new Color(255, 255, 255))
+            ->stampImage($stamp, StampPosition::Random, 0, 0);
 
-        $bgImage = ImageUtil::fromFile(__DIR__ . '/assets/stamp-background.png')
-            ->stampImage($stamp, StampPosition::RANDOM, 0, 0);
+        // A 100x100 stamp without padding lands on exactly one cell of the 3x3 grid,
+        // whichever of the nine positions is drawn
+        $stampedCells = 0;
+        foreach ([50, 150, 250] as $x) {
+            foreach ([50, 150, 250] as $y) {
+                if (imagecolorat($bgImage->getGdImage(), $x, $y) === 0x000000) {
+                    $stampedCells++;
+                }
+            }
+        }
+        $this->assertSame(1, $stampedCells);
     }
 
     // Test TextAlignment enum values
     public function testWriteTextLeft()
     {
         $img = ImageUtil::empty(1000, 300, FileType::Png, new Color(255, 255, 255));
-        $img->writeText("Left Aligned", [100, 100], 50, 0, __DIR__ . '/assets/Rotulonahand-aGyx.ttf', 0, new Color(0, 0, 0), TextAlignment::LEFT);
+        $img->writeText("Left Aligned", [100, 100], 50, 0, __DIR__ . '/assets/Rotulonahand-aGyx.ttf', 0, new Color(0, 0, 0), TextAlignment::Left);
 
         $this->assertEquals(1000, $img->getWidth());
         $this->assertEquals(300, $img->getHeight());
@@ -143,7 +151,7 @@ class GdHandlerExtendedTest extends Base
     public function testWriteTextRight()
     {
         $img = ImageUtil::empty(1000, 300, FileType::Png, new Color(255, 255, 255));
-        $img->writeText("Right Aligned", [900, 100], 50, 0, __DIR__ . '/assets/Rotulonahand-aGyx.ttf', 0, new Color(0, 0, 0), TextAlignment::RIGHT);
+        $img->writeText("Right Aligned", [900, 100], 50, 0, __DIR__ . '/assets/Rotulonahand-aGyx.ttf', 0, new Color(0, 0, 0), TextAlignment::Right);
 
         $this->assertEquals(1000, $img->getWidth());
         $this->assertEquals(300, $img->getHeight());
@@ -152,7 +160,7 @@ class GdHandlerExtendedTest extends Base
     public function testWriteTextCenter()
     {
         $img = ImageUtil::empty(1000, 300, FileType::Png, new Color(255, 255, 255));
-        $img->writeText("Center Aligned", [500, 100], 50, 0, __DIR__ . '/assets/Rotulonahand-aGyx.ttf', 0, new Color(0, 0, 0), TextAlignment::CENTER);
+        $img->writeText("Center Aligned", [500, 100], 50, 0, __DIR__ . '/assets/Rotulonahand-aGyx.ttf', 0, new Color(0, 0, 0), TextAlignment::Center);
 
         $this->assertEquals(1000, $img->getWidth());
         $this->assertEquals(300, $img->getHeight());

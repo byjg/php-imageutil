@@ -10,9 +10,10 @@ It simplifies tasks such as flipping, cropping, resizing, stamping, and more.
 
 [![Sponsor](https://img.shields.io/badge/Sponsor-%23ea4aaa?logo=githubsponsors&logoColor=white&labelColor=0d1117)](https://github.com/sponsors/byjg)
 [![Build Status](https://github.com/byjg/php-imageutil/actions/workflows/phpunit.yml/badge.svg?branch=master)](https://github.com/byjg/php-imageutil/actions/workflows/phpunit.yml)
-[![Opensource ByJG](https://img.shields.io/badge/opensource-byjg-success.svg)](http://opensource.byjg.com)
+[![Opensource ByJG](https://img.shields.io/badge/opensource-byjg-success.svg)](https://opensource.byjg.com)
+[![Install MCP Server](https://img.shields.io/badge/Install-MCP_Server-8A2BE2?logo=modelcontextprotocol&logoColor=white)](https://opensource.byjg.com/docs/ai/mcpserver-byjg-docs/)
 [![GitHub source](https://img.shields.io/badge/Github-source-informational?logo=github)](https://github.com/byjg/php-imageutil/)
-[![GitHub license](https://img.shields.io/github/license/byjg/php-imageutil.svg)](https://opensource.byjg.com/opensource/licensing.html)
+[![GitHub license](https://img.shields.io/github/license/byjg/php-imageutil.svg)](https://opensource.byjg.com/license/)
 [![GitHub release](https://img.shields.io/github/release/byjg/php-imageutil.svg)](https://github.com/byjg/php-imageutil/releases/)
 
 ## Installation
@@ -47,8 +48,8 @@ use ByJG\ImageUtil\Enum\FileType;
 // From a file
 $img = ImageUtil::fromFile('path_to_image.png');
 
-// From a URL
-$img2 = ImageUtil::fromFile('https://somesite/someimage.jpg');
+// From a URL. The format comes from the extension in the path, so a query string is fine
+$img2 = ImageUtil::fromFile('https://somesite/someimage.jpg?size=large');
 
 // From an existing resource image
 $resourceImg = imagecreatetruecolor(200, 300);
@@ -91,7 +92,7 @@ See detailed examples [here](docs/examples.md).
 
 ## Saving and Restoring Changes
 
-You can save the changes to the image or restore the image to its original state:
+You can discard the changes and go back to the image as it was loaded, or save them:
 
 ```php
 <?php
@@ -100,12 +101,19 @@ use ByJG\ImageUtil\ImageUtil;
 $img = ImageUtil::fromFile('wheel.png');
 $img->resize(640, 480);
 
-// Save to file
-$img->save('filename.gif');
-
-// Restore to original state
+// Discard the resize: the image is back to what was loaded
 $img->restore();
+
+$img->resize(320, 240);
+
+// Save to file. The format comes from the extension
+$img->save('filename.gif');
 ```
+
+:::note
+`save()` makes the saved image the new starting point: a `restore()` after it goes back to what
+was saved, not to what was first loaded.
+:::
 
 ## Other Functions
 
@@ -119,17 +127,23 @@ $img = ImageUtil::fromFile('wheel.png');
 
 $width = $img->getWidth();
 $height = $img->getHeight();
-$resource = $img->getResource();
+$resource = $img->getResource();   // the GdImage
+$filename = $img->getFilename();   // the file it was loaded from or last saved to
 ```
+
+Colors, text alignment, stamp options, sending the image to the browser and adding a custom
+format are covered in the [examples](docs/examples.md).
 
 ## Dependencies
 
-ImageUtil depends on the GD extension for PHP:
+ImageUtil depends on the GD extension for PHP (`ext-gd`, required in
+`composer.json`).
 
-```mermaid
-flowchart TD
-    byjg/imageutil --> ext-gd
+## Running Tests
+
+```bash
+vendor/bin/phpunit
 ```
 
 ----
-[Open source ByJG](http://opensource.byjg.com)
+[Open source ByJG](https://opensource.byjg.com)

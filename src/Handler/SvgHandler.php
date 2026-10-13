@@ -69,10 +69,10 @@ class SvgHandler implements ImageHandlerInterface
     }
 
     #[Override]
-    public function fromResource(mixed $resource): static
+    public function fromResource(mixed $resource, ?string $filename = null): static
     {
         if ($resource instanceof SVG) {
-            $this->setResource($resource);
+            $this->setResource($resource, $filename);
         } else {
             throw new ImageUtilException('Is not valid resource');
         }
@@ -119,13 +119,13 @@ class SvgHandler implements ImageHandlerInterface
     }
 
     #[Override]
-    public function stampImage(ImageHandlerInterface $srcImage, StampPosition $position = StampPosition::BOTTOM_RIGHT, int $padX = 5, int $padY = 5, int $opacity = 100): static
+    public function stampImage(ImageHandlerInterface $srcImage, StampPosition $position = StampPosition::BottomRight, int $padX = 5, int $padY = 5, int $opacity = 100): static
     {
         throw new ImageUtilException('Not implemented yet');
     }
 
     #[Override]
-    public function writeText(string $text, array $point, float $size, int $angle, string $font, int $maxWidth = 0, ?Color $textColor = null, TextAlignment $textAlignment = TextAlignment::LEFT): static
+    public function writeText(string $text, array $point, float $size, int $angle, string $font, int $maxWidth = 0, ?Color $textColor = null, TextAlignment $textAlignment = TextAlignment::Left): static
     {
         throw new ImageUtilException('Not implemented yet');
     }
@@ -189,7 +189,7 @@ class SvgHandler implements ImageHandlerInterface
         if ($resource === null) {
             throw new ImageUtilException('Failed to restore SVG from original resource');
         }
-        $this->setResource($resource);
+        $this->setResource($resource, $this->filename);
         return $this;
     }
 

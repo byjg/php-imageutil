@@ -1,6 +1,6 @@
 <?php
 
-namespace Test;
+namespace Tests;
 
 use ByJG\ImageUtil\AlphaColor;
 use ByJG\ImageUtil\Color;
@@ -132,7 +132,11 @@ class ColorTest extends TestCase
     public function testAlphaColorGetRgb()
     {
         $color = new AlphaColor(255, 128, 64, 100);
-        $this->assertEquals('rgba(255,128,64,100.000000)', $color->getRgb());
+        // GD's alpha goes from 0 (opaque) to 127 (transparent); CSS goes from 1 (opaque) to 0
+        $this->assertEquals('rgba(255,128,64,0.21)', $color->getRgb());
+        $this->assertEquals('rgba(255,0,0,1)', (new AlphaColor(255, 0, 0, 0))->getRgb());
+        $this->assertEquals('rgba(255,0,0,0)', (new AlphaColor(255, 0, 0, 127))->getRgb());
+        $this->assertEquals('rgba(255,0,0,0.5)', (new AlphaColor(255, 0, 0, 63))->getRgb());
     }
 
     public function testAlphaColorGetHex()

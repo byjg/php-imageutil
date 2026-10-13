@@ -7,7 +7,7 @@ namespace ByJG\ImageUtil\Enum;
  */
 enum Flip: int
 {
-    case HORIZONTAL = 1;
-    case VERTICAL = 2;
-    case BOTH = 3;
+    case Horizontal = 1;
+    case Vertical = 2;
+    case Both = 3;
 }
