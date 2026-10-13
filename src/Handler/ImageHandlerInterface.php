@@ -24,10 +24,11 @@ interface ImageHandlerInterface
 
     /**
      * @param mixed $resource
+     * @param string|null $filename The file the resource was loaded from, when there is one
      * @return $this
      * @throws ImageUtilException
      */
-    public function fromResource(mixed $resource): static;
+    public function fromResource(mixed $resource, ?string $filename = null): static;
 
 
     /**
@@ -43,10 +44,9 @@ interface ImageHandlerInterface
 
     /**
      * Mirrors the given image in the desired way.
-     * Example: $img = new Image("file.png"); $img->flip(2); $img->show();
+     * Example: $img = ImageUtil::fromFile("file.png"); $img->flip(Flip::Vertical); $img->show();
      *
-     * @param Flip $type Direction of mirroring. This can be 1(Horizontal Flip), 2(Vertical Flip) or 3(Both Horizontal)
-     *     and Vertical Flip)
+     * @param Flip $type Direction of mirroring: Flip::Horizontal, Flip::Vertical or Flip::Both
      * @return $this
      */
     public function flip(Flip $type): static;
@@ -98,7 +98,7 @@ interface ImageHandlerInterface
      * @throws ImageUtilException
      * @throws NotFoundException
      */
-    public function stampImage(ImageHandlerInterface $srcImage, StampPosition $position = StampPosition::BOTTOM_RIGHT, int $padX = 5, int $padY = 5, int $opacity = 100): static;
+    public function stampImage(ImageHandlerInterface $srcImage, StampPosition $position = StampPosition::BottomRight, int $padX = 5, int $padY = 5, int $opacity = 100): static;
 
     /**
      * Writes a text on the image.
@@ -114,7 +114,7 @@ interface ImageHandlerInterface
      * @return $this
      * @throws ImageUtilException
      */
-    public function writeText(string $text, array $point, float $size, int $angle, string $font, int $maxWidth = 0, ?Color $textColor = null, TextAlignment $textAlignment = TextAlignment::LEFT): static;
+    public function writeText(string $text, array $point, float $size, int $angle, string $font, int $maxWidth = 0, ?Color $textColor = null, TextAlignment $textAlignment = TextAlignment::Left): static;
 
     /**
      * Crops the given image from the ($from_x,$from_y) point to the ($to_x,$to_y) point.

@@ -156,4 +156,95 @@ class ImageUtilTest extends TestCase
             }
         }
     }
+
+    public function testFromFileWithUpperCaseExtension(): void
+    {
+        $tempFile = sys_get_temp_dir() . '/imageutil_' . uniqid() . '.PNG';
+        copy(__DIR__ . '/assets/flip-both.png', $tempFile);
+
+        try {
+            $image = ImageUtil::fromFile($tempFile);
+            $this->assertInstanceOf(GdHandler::class, $image);
+        } finally {
+            unlink($tempFile);
+        }
+    }
+
+    public function testFromUrlWithQueryString(): void
+    {
+        FakeHttpStream::$file = __DIR__ . '/assets/flip-both.png';
+        stream_wrapper_unregister('http');
+        stream_wrapper_register('http', FakeHttpStream::class);
+
+        try {
+            $image = ImageUtil::fromFile('http://example.test/images/Logo.PNG?v=2&size=large#top');
+        } finally {
+            stream_wrapper_restore('http');
+        }
+
+        $expected = ImageUtil::fromFile(__DIR__ . '/assets/flip-both.png');
+        $this->assertInstanceOf(GdHandler::class, $image);
+        $this->assertSame($expected->getWidth(), $image->getWidth());
+        $this->assertSame($expected->getHeight(), $image->getHeight());
+    }
+
+    public function testFromUrlWithoutExtension(): void
+    {
+        $this->expectException(ImageUtilException::class);
+        $this->expectExceptionMessage('Cannot determine file extension from URL');
+        ImageUtil::fromFile('http://example.test/images/logo?format=file.png');
+    }
+
+    public function testFromFileRemembersTheFile(): void
+    {
+        $png = __DIR__ . '/assets/flip-both.png';
+        $svg = __DIR__ . '/assets/anim2.svg';
+
+        $this->assertSame($png, ImageUtil::fromFile($png)->getFilename());
+        $this->assertSame($svg, ImageUtil::fromFile($svg)->getFilename());
+        $this->assertSame($svg, ImageUtil::fromFile($svg)->restore()->getFilename());
+    }
+
+    public function testSaveWithoutNameWritesBackToTheLoadedFile(): void
+    {
+        $tempFile = sys_get_temp_dir() . '/imageutil_' . uniqid() . '.png';
+        copy(__DIR__ . '/assets/flip-both.png', $tempFile);
+
+        try {
+            $image = ImageUtil::fromFile($tempFile);
+            $image->resize(50, 40);
+            $image->save();
+
+            $saved = ImageUtil::fromFile($tempFile);
+            $this->assertSame(50, $saved->getWidth());
+            $this->assertSame(40, $saved->getHeight());
+        } finally {
+            unlink($tempFile);
+        }
+    }
+
+    /**
+     * show() reads the format from the file behind the image. A freshly loaded image used to
+     * carry a made-up temporary name, so show() only worked after a save().
+     */
+    public function testShowAfterFromFileUsesTheFormatOfTheFile(): void
+    {
+        $tempFile = sys_get_temp_dir() . '/imageutil_' . uniqid() . '.jpg';
+        ImageUtil::fromFile(__DIR__ . '/assets/flip-both.png')->save($tempFile);
+
+        try {
+            ob_start();
+            ImageUtil::fromFile(__DIR__ . '/assets/flip-both.png')->show();
+            $png = (string)ob_get_clean();
+
+            ob_start();
+            ImageUtil::fromFile($tempFile)->show();
+            $jpg = (string)ob_get_clean();
+        } finally {
+            unlink($tempFile);
+        }
+
+        $this->assertSame("\x89PNG", substr($png, 0, 4));
+        $this->assertSame("\xFF\xD8\xFF", substr($jpg, 0, 3));
+    }
 }

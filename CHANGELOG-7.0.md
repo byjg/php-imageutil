@@ -5,11 +5,45 @@
 
 ## Breaking Changes
 
-- None.
+### Enum cases renamed to PascalCase
+
+Enum cases follow the ByJG standard and are written in PascalCase. The backed values did not
+change, so `->value`, `from()`, `tryFrom()` and stored data are not affected; only code that
+names a case (or reads `->name`) has to be updated.
+
+| Enum | Before (6.x) | After (7.0) |
+|---|---|---|
+| `Flip` | `HORIZONTAL`, `VERTICAL`, `BOTH` | `Horizontal`, `Vertical`, `Both` |
+| `StampPosition` | `TOP_RIGHT`, `TOP_LEFT`, `BOTTOM_RIGHT`, `BOTTOM_LEFT`, `CENTER`, `TOP`, `BOTTOM`, `LEFT`, `RIGHT`, `RANDOM` | `TopRight`, `TopLeft`, `BottomRight`, `BottomLeft`, `Center`, `Top`, `Bottom`, `Left`, `Right`, `Random` |
+| `TextAlignment` | `LEFT`, `RIGHT`, `CENTER` | `Left`, `Right`, `Center` |
+
+### `AlphaColor::getRgb()` returns a CSS opacity
+
+`AlphaColor::getRgb()` returns a valid CSS color. It printed GD's alpha (0 solid, 127
+transparent) where CSS expects an opacity from 0 to 1: `new AlphaColor(255, 0, 0, 63)` gave
+`rgba(255,0,0,63.000000)` and now gives `rgba(255,0,0,0.5)`.
+
+### `ImageHandlerInterface::fromResource()` takes the file name
+
+`fromResource(mixed $resource, ?string $filename = null)`. A class of yours that implements
+`ImageHandlerInterface` has to add the second parameter. Callers are not affected.
 
 ## Bug Fixes
 
-- `stampImage()` with `StampPosition::RANDOM` now stamps the image on one of the
+- An image loaded with `ImageUtil::fromFile()` remembers the file it came from. It was given a
+  made-up temporary name instead, with three consequences that are now gone:
+  - `show()` threw "Failed to get image size from file" unless `save()` had been called first;
+  - `save()` with no file name wrote to that temporary name instead of the loaded file. **It now
+    writes over the loaded file**, which is what the method was documented to do;
+  - `getFilename()` returned the temporary name.
+
+  An image loaded from a URL still has no file behind it and has to be saved before `show()`.
+
+- `ImageUtil::fromFile()` accepts a file whose extension is in upper case (`PHOTO.PNG`). It threw
+  "The 'PNG' extension does not exist", while `save()` already accepted it.
+- `ImageUtil::fromFile()` accepts a URL with a query string or a fragment
+  (`https://host/logo.png?v=2`). The format is read from the path of the URL only.
+- `stampImage()` with `StampPosition::Random` now stamps the image on one of the
   nine positions, picked at random. It used to throw `ImageUtilException`
   ("Invalid Stamp Position") on every call, because the random number was never
   converted to a `StampPosition`.

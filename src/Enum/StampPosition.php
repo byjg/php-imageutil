@@ -4,14 +4,14 @@ namespace ByJG\ImageUtil\Enum;
 
 enum StampPosition: int
 {
-    case TOP_RIGHT = 1;
-    case TOP_LEFT = 2;
-    case BOTTOM_RIGHT = 3;
-    case BOTTOM_LEFT = 4;
-    case CENTER = 5;
-    case TOP = 6;
-    case BOTTOM = 7;
-    case LEFT = 8;
-    case RIGHT = 9;
-    case RANDOM = 999;
+    case TopRight = 1;
+    case TopLeft = 2;
+    case BottomRight = 3;
+    case BottomLeft = 4;
+    case Center = 5;
+    case Top = 6;
+    case Bottom = 7;
+    case Left = 8;
+    case Right = 9;
+    case Random = 999;
 }
