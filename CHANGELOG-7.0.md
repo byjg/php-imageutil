@@ -28,6 +28,9 @@ transparent) where CSS expects an opacity from 0 to 1: `new AlphaColor(255, 0, 0
 `fromResource(mixed $resource, ?string $filename = null)`. A class of yours that implements
 `ImageHandlerInterface` has to add the second parameter. Callers are not affected.
 
+`ImageUtil::fromResource()` takes the same optional `$filename`, used by `save()` with no file
+name, `show()` and `getFilename()`.
+
 ## Bug Fixes
 
 - An image loaded with `ImageUtil::fromFile()` remembers the file it came from. It was given a

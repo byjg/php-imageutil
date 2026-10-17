@@ -223,7 +223,8 @@ $img->show();
 ```
 
 An image that has no file behind it — loaded from a URL, created with `ImageUtil::empty()` or
-built with `ImageUtil::fromResource()` — has to be saved first.
+built with `ImageUtil::fromResource()` without a file name — has to be saved first.
+`ImageUtil::fromResource($gdImage, 'photo.png')` tells it which file the resource came from.
 
 ## Colors
 
