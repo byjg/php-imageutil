@@ -4,7 +4,7 @@ namespace ByJG\ImageUtil\Enum;
 
 enum TextAlignment: int
 {
-    case LEFT = 1;
-    case RIGHT = 2;
-    case CENTER = 3;
+    case Left = 1;
+    case Right = 2;
+    case Center = 3;
 }

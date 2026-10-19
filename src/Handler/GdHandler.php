@@ -86,12 +86,12 @@ class GdHandler implements ImageHandlerInterface
      * @inheritDoc
      */
     #[Override]
-    public function fromResource(mixed $resource): static
+    public function fromResource(mixed $resource, ?string $filename = null): static
     {
         if (!($resource instanceof GdImage)) {
             throw new ImageUtilException('Invalid resource type. Expected GdImage.');
         }
-        $this->setImage($resource, sys_get_temp_dir() . '/img_' . uniqid() . '.png');
+        $this->setImage($resource, $filename ?? sys_get_temp_dir() . '/img_' . uniqid() . '.png');
         $this->retainTransparency();
 
         return $this;
@@ -132,7 +132,7 @@ class GdHandler implements ImageHandlerInterface
     #[Override]
     public function flip(Flip $type): static
     {
-        if ($type !== Flip::HORIZONTAL && $type !== Flip::VERTICAL && $type !== Flip::BOTH) {
+        if ($type !== Flip::Horizontal && $type !== Flip::Vertical && $type !== Flip::Both) {
             throw new InvalidArgumentException('You need to pass the flip type');
         }
 
@@ -147,13 +147,13 @@ class GdHandler implements ImageHandlerInterface
 
         switch ($type) {
             //Mirroring direction
-            case Flip::HORIZONTAL:
+            case Flip::Horizontal:
                 for ($x = 0; $x < $width; $x++) {
                     imagecopy($imgDest, $imgSrc, $width - $x - 1, 0, $x, 0, 1, $height);
                 }
                 break;
 
-            case Flip::VERTICAL:
+            case Flip::Vertical:
                 for ($y = 0; $y < $height; $y++) {
                     imagecopy($imgDest, $imgSrc, 0, $height - $y - 1, 0, $y, $width, 1);
                 }
@@ -286,22 +286,15 @@ class GdHandler implements ImageHandlerInterface
     }
 
     /**
-     * @param int $padY
      * @inheritDoc
      */
     #[Override]
-    public function stampImage(ImageHandlerInterface $srcImage, StampPosition $position = StampPosition::BOTTOM_RIGHT, int $padX = 5, int $padY = 5, int $opacity = 100): static
+    public function stampImage(ImageHandlerInterface $srcImage, StampPosition $position = StampPosition::BottomRight, int $padX = 5, int $padY = 5, int $opacity = 100): static
     {
         $dstImage = $this->getGdImage();
 
-        $watermark = $srcImage->getResource();
-        if ($watermark === null) {
-            throw new ImageUtilException('Watermark image resource is not initialized');
-        }
-
-        if (!($watermark instanceof GdImage)) {
-            $watermark = $watermark->getGdImage();
-        }
+        // An SvgHandler stamp is rasterized at its own size
+        $watermark = $srcImage->getGdImage();
 
         $this->retainTransparency($dstImage);
         $this->retainTransparency($watermark);
@@ -311,43 +304,43 @@ class GdHandler implements ImageHandlerInterface
         $srcWidth = imagesx($watermark);
         $srcHeight = imagesy($watermark);
 
-        if ($position == StampPosition::RANDOM) {
-            $position = rand(1, 9);
+        if ($position == StampPosition::Random) {
+            $position = StampPosition::from(rand(1, 9));
         }
         switch ($position) {
-            case StampPosition::TOP_RIGHT:
+            case StampPosition::TopRight:
                 $dstX = ($dstWidth - $srcWidth) - $padX;
                 $dstY = $padY;
                 break;
-            case StampPosition::TOP_LEFT:
+            case StampPosition::TopLeft:
                 $dstX = $padX;
                 $dstY = $padY;
                 break;
-            case StampPosition::BOTTOM_RIGHT:
+            case StampPosition::BottomRight:
                 $dstX = ($dstWidth - $srcWidth) - $padX;
                 $dstY = ($dstHeight - $srcHeight) - $padY;
                 break;
-            case StampPosition::BOTTOM_LEFT:
+            case StampPosition::BottomLeft:
                 $dstX = $padX;
                 $dstY = ($dstHeight - $srcHeight) - $padY;
                 break;
-            case StampPosition::CENTER:
+            case StampPosition::Center:
                 $dstX = (((float)$dstWidth / 2.0) - ((float)$srcWidth / 2.0));
                 $dstY = (((float)$dstHeight / 2.0) - ((float)$srcHeight / 2.0));
                 break;
-            case StampPosition::TOP:
+            case StampPosition::Top:
                 $dstX = (((float)$dstWidth / 2.0) - ((float)$srcWidth / 2.0));
                 $dstY = $padY;
                 break;
-            case StampPosition::BOTTOM:
+            case StampPosition::Bottom:
                 $dstX = (((float)$dstWidth / 2.0) - ((float)$srcWidth / 2.0));
                 $dstY = ($dstHeight - $srcHeight) - $padY;
                 break;
-            case StampPosition::LEFT:
+            case StampPosition::Left:
                 $dstX = $padX;
                 $dstY = (((float)$dstHeight / 2.0) - ((float)$srcHeight / 2.0));
                 break;
-            case StampPosition::RIGHT:
+            case StampPosition::Right:
                 $dstX = ($dstWidth - $srcWidth) - $padX;
                 $dstY = (((float)$dstHeight / 2.0) - ((float)$srcHeight / 2.0));
                 break;
@@ -374,7 +367,7 @@ class GdHandler implements ImageHandlerInterface
      * @inheritDoc
      */
     #[Override]
-    public function writeText(string $text, array $point, float $size, int $angle, string $font, int $maxWidth = 0, ?Color $textColor = null, TextAlignment $textAlignment = TextAlignment::LEFT): static
+    public function writeText(string $text, array $point, float $size, int $angle, string $font, int $maxWidth = 0, ?Color $textColor = null, TextAlignment $textAlignment = TextAlignment::Left): static
     {
         if ($this->image === null) {
             throw new ImageUtilException('Image resource is not initialized');
@@ -426,15 +419,15 @@ class GdHandler implements ImageHandlerInterface
             }
 
             switch ($textAlignment) {
-                case TextAlignment::RIGHT:
+                case TextAlignment::Right:
                     $curX = (float)$point[0] - (float)abs($bbox[2] - $bbox[0]);
                     break;
 
-                case TextAlignment::CENTER:
+                case TextAlignment::Center:
                     $curX = (float)$point[0] - ((float)abs($bbox[2] - $bbox[0]) / 2.0);
                     break;
 
-                case TextAlignment::LEFT:
+                case TextAlignment::Left:
                     // Don't change anything
             }
 
@@ -520,7 +513,6 @@ class GdHandler implements ImageHandlerInterface
 
 
     /**
-     * @param int $tolerance
      * @inheritDoc
      */
     #[Override]
@@ -631,7 +623,7 @@ class GdHandler implements ImageHandlerInterface
     }
 
     /**
-     * Destroy the image to save the memory. Do this after all operations are complete.
+     * Releases the image resources when the handler is destroyed.
      */
     public function __destruct()
     {

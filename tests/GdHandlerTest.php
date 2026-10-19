@@ -1,6 +1,6 @@
 <?php
 
-namespace Test;
+namespace Tests;
 
 use ByJG\ImageUtil\AlphaColor;
 use ByJG\ImageUtil\Color;
@@ -83,7 +83,7 @@ class GdHandlerTest extends Base
         $expected = ImageUtil::fromFile(__DIR__ . '/assets/flip-vertical.png');
 
         $this->gdHandler->rotate(10, 230);
-        $this->gdHandler->flip(Flip::VERTICAL);
+        $this->gdHandler->flip(Flip::Vertical);
 
         $this->assertImageSimilar($expected, $this->gdHandler);
     }
@@ -97,7 +97,7 @@ class GdHandlerTest extends Base
         $expected = ImageUtil::fromFile(__DIR__ . '/assets/flip-both.png');
 
         $this->gdHandler->rotate(80, 230);
-        $this->gdHandler->flip(Flip::BOTH);
+        $this->gdHandler->flip(Flip::Both);
 
         $this->assertImageSimilar($expected, $this->gdHandler);
     }
@@ -111,7 +111,7 @@ class GdHandlerTest extends Base
         $expected = ImageUtil::fromFile(__DIR__ . '/assets/flip-horizontal.png');
 
         $this->gdHandler->rotate(80, 230);
-        $this->gdHandler->flip(Flip::HORIZONTAL);
+        $this->gdHandler->flip(Flip::Horizontal);
 
         $this->assertImageSimilar($expected, $this->gdHandler);
     }
@@ -167,10 +167,27 @@ class GdHandlerTest extends Base
             ->resize(600, 600);
 
         $bgImage = ImageUtil::fromFile(__DIR__ . '/assets/stamp-background.png')
-            ->stampImage($stamp, StampPosition::BOTTOM_RIGHT, 0, 0);
+            ->stampImage($stamp, StampPosition::BottomRight, 0, 0);
 
         $expected = ImageUtil::fromFile(__DIR__ . '/assets/stamp-expected.png');
         $this->assertImageSimilar($expected, $bgImage);
+    }
+
+    public function testStampSvgImageIsRasterized(): void
+    {
+        $stamp = ImageUtil::empty(50, 40, FileType::Svg, new Color(255, 0, 0));
+
+        $bgImage = ImageUtil::empty(200, 100, FileType::Png, new Color(255, 255, 255))
+            ->stampImage($stamp, StampPosition::BottomRight, 0, 0);
+
+        $gd = $bgImage->getGdImage();
+        $red = ['red' => 255, 'green' => 0, 'blue' => 0, 'alpha' => 0];
+        $white = ['red' => 255, 'green' => 255, 'blue' => 255, 'alpha' => 0];
+        // The stamp covers the bottom-right 50x40 corner, the rest is untouched
+        $this->assertSame($red, imagecolorsforindex($gd, imagecolorat($gd, 199, 99)));
+        $this->assertSame($red, imagecolorsforindex($gd, imagecolorat($gd, 155, 65)));
+        $this->assertSame($white, imagecolorsforindex($gd, imagecolorat($gd, 145, 99)));
+        $this->assertSame($white, imagecolorsforindex($gd, imagecolorat($gd, 199, 55)));
     }
 
     public function testWriteText(): void
@@ -251,7 +268,7 @@ class GdHandlerTest extends Base
 
         // Do some operations
         $this->gdHandler->rotate(30);
-        $this->gdHandler->flip(Flip::BOTH);
+        $this->gdHandler->flip(Flip::Both);
         $this->gdHandler->resizeSquare(40);
 
         $this->assertImageNotSimilar($expected, $this->gdHandler);

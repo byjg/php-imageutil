@@ -18,9 +18,13 @@ class AlphaColor extends Color
         return $this->alpha;
     }
 
+    /**
+     * The color as a CSS rgba() value. GD's alpha goes from 0 (opaque) to 127 (transparent), CSS
+     * the other way round, from 1 (opaque) to 0 (transparent).
+     */
     #[\Override]
     public function getRgb(): string
     {
-        return sprintf("rgba(%d,%d,%d,%f)", $this->red, $this->green, $this->blue, $this->alpha);
+        return sprintf("rgba(%d,%d,%d,%s)", $this->red, $this->green, $this->blue, round(1.0 - (float)$this->alpha / 127.0, 2));
     }
 }

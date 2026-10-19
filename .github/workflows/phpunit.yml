@@ -15,6 +15,8 @@ jobs:
     strategy:
       matrix:
         include:
+          - php-version: "8.6"
+            php-version-nodot: "86"
           - php-version: "8.5"
             php-version-nodot: "85"
           - php-version: "8.4"
@@ -28,10 +30,17 @@ jobs:
     steps:
       - name: Install dependencies
         run: |
-          apk add --no-cache \
-            --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing \
-            php${{ matrix.php-version-nodot }}-pecl-imagick
-      - uses: actions/checkout@v5
+          if [ "${{ matrix.php-version }}" = "8.6" ]; then
+            # Alpine has no php86-pecl-imagick package yet. The byjg/php 8.6 image
+            # ships imagick.so compiled but disabled, so it only needs enabling.
+            apk add --no-cache imagemagick
+            echo "extension=imagick.so" > /etc/php86/conf.d/imagick.ini
+          else
+            apk add --no-cache \
+              --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing \
+              php${{ matrix.php-version-nodot }}-pecl-imagick
+          fi
+      - uses: actions/checkout@v7
       - run: composer install
       - run: composer test
 
@@ -42,18 +51,18 @@ jobs:
       # for github/codeql-action/upload-sarif to upload SARIF results
       security-events: write
     container:
-      image: byjg/php:8.4-cli
+      image: byjg/php:8.5-cli
       options: --user root --privileged
 
     steps:
       - name: Git checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Install dependencies
         run: |
           apk add --no-cache \
             --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing \
-            php84-pecl-imagick
+            php85-pecl-imagick
 
       - name: Composer
         run: composer install
@@ -61,7 +70,7 @@ jobs:
       - name: Psalm
         # Note: Ignoring error code 2, which just signals that some
         # flaws were found, not that Psalm itself failed to run.
-        run: ./vendor/bin/psalm
+        run: ./vendor/bin/psalm.phar
           --show-info=true
           --report=psalm-results.sarif || [ $? = 2 ]
 
