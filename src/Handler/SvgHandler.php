@@ -80,7 +80,7 @@ class SvgHandler implements ImageHandlerInterface
     }
 
     /**
-     * @throws ImageUtilException
+     * @throws ImageUtilException Not implemented for SVG
      */
     #[Override]
     public function rotate(int $angle, int $background = 0): static
@@ -89,7 +89,7 @@ class SvgHandler implements ImageHandlerInterface
     }
 
     /**
-     * @throws ImageUtilException
+     * @throws ImageUtilException Not implemented for SVG
      */
     #[Override]
     public function flip(Flip $type): static
@@ -98,7 +98,7 @@ class SvgHandler implements ImageHandlerInterface
     }
 
     /**
-     * @throws ImageUtilException
+     * @throws ImageUtilException Not implemented for SVG
      */
     #[Override]
     public function resize(?int $newWidth = null, ?int $newHeight = null): static
@@ -106,24 +106,36 @@ class SvgHandler implements ImageHandlerInterface
         throw new ImageUtilException('Not implemented yet');
     }
 
+    /**
+     * @throws ImageUtilException Not implemented for SVG
+     */
     #[Override]
     public function resizeSquare(int $newSize, ?Color $color = null): static
     {
         throw new ImageUtilException('Not implemented yet');
     }
 
+    /**
+     * @throws ImageUtilException Not implemented for SVG
+     */
     #[Override]
     public function resizeAspectRatio(int $newX, int $newY, ?Color $color = null): static
     {
         throw new ImageUtilException('Not implemented yet');
     }
 
+    /**
+     * @throws ImageUtilException Not implemented for SVG
+     */
     #[Override]
     public function stampImage(ImageHandlerInterface $srcImage, StampPosition $position = StampPosition::BottomRight, int $padX = 5, int $padY = 5, int $opacity = 100): static
     {
         throw new ImageUtilException('Not implemented yet');
     }
 
+    /**
+     * @throws ImageUtilException Not implemented for SVG
+     */
     #[Override]
     public function writeText(string $text, array $point, float $size, int $angle, string $font, int $maxWidth = 0, ?Color $textColor = null, TextAlignment $textAlignment = TextAlignment::Left): static
     {
@@ -131,7 +143,7 @@ class SvgHandler implements ImageHandlerInterface
     }
 
     /**
-     * @throws ImageUtilException
+     * @throws ImageUtilException Not implemented for SVG
      */
     #[Override]
     public function crop(int $fromX, int $fromY, int $toX, int $toY): static
@@ -174,7 +186,7 @@ class SvgHandler implements ImageHandlerInterface
     }
 
     /**
-     * @throws ImageUtilException
+     * @throws ImageUtilException Not implemented for SVG
      */
     #[Override]
     public function makeTransparent(?Color $color = null, int $tolerance = 0): static

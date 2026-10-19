@@ -13,18 +13,21 @@ use GdImage;
 use SVG\SVG;
 
 /**
- * A Wrapper for GD library in PHP. GD must be installed in your system for this to work.
- * Example: $img = new Image('wheel.png');
- *            $img->flip(1)->resize(120, 0)->save('wheel.jpg');
+ * Entry point to create an image handler: GdHandler for the raster formats (GD must be installed)
+ * and SvgHandler for SVG.
+ * Example: $img = ImageUtil::fromFile('wheel.png');
+ *          $img->flip(Flip::Horizontal)->resize(120, 0)->save('wheel.jpg');
  */
 class ImageUtil
 {
     /**
+     * Creates a blank image. FileType::Svg returns an SvgHandler, any other type a GdHandler.
+     * The image has no file name until it is saved.
      *
      * @param int $width
      * @param int $height
      * @param FileType $type
-     * @param Color|null $color
+     * @param Color|null $color Background color; when null the image is left as created (black for GD, empty for SVG)
      * @return GdHandler|SvgHandler
      * @throws ImageUtilException
      */
@@ -41,6 +44,9 @@ class ImageUtil
 
 
     /**
+     * Wraps an existing resource: a GdImage returns a GdHandler, an SVG an SvgHandler.
+     * Without $filename, a GdHandler gets a temporary .png file name and an SvgHandler none.
+     *
      * @param GdImage|SVG $resource
      * @param string|null $filename The file the resource was loaded from, when there is one
      *
@@ -59,10 +65,15 @@ class ImageUtil
     }
 
     /**
+     * Loads an image from a local file or from a http(s):// or file:// URL. The format is chosen by the
+     * file extension. A URL is downloaded to a temporary file that is removed after loading, so the
+     * handler does not keep it as its file name (see fromResource()).
+     *
      * @param string $imageFile
      * @return ImageHandlerInterface
-     * @throws ImageUtilException
-     * @throws NotFoundException
+     * @throws ImageUtilException When the URL has no extension, cannot be fetched or the file cannot be loaded
+     * @throws NotFoundException When the file does not exist or is not readable
+     * @throws \InvalidArgumentException When the extension is not supported
      */
     public static function fromFile(string $imageFile): ImageHandlerInterface
     {
@@ -90,9 +101,6 @@ class ImageUtil
         $image = ImageFactory::instanceFromExtension(strtolower(pathinfo($imageFile, PATHINFO_EXTENSION)));
 
         $resource = $image->load($imageFile);
-        if ($resource === false) {
-            throw new ImageUtilException("Invalid file: " . $imageFile);
-        }
 
         // A downloaded image has no file of its own: the temporary copy is removed below
         $handler = ImageUtil::fromResource($resource, $http ? null : $imageFile);

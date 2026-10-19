@@ -86,6 +86,9 @@ $img->stampImage($stamp, StampPosition::BottomRight);
 $img->save('wheel_stamped.png');
 ```
 
+The stamp can also be an SVG image: it is rasterized at its own width and height before being
+stamped. Stamping onto an SVG image is not supported.
+
 The position is one of `TopLeft`, `Top`, `TopRight`, `Left`, `Center`, `Right`, `BottomLeft`,
 `Bottom`, `BottomRight` (the default) or `Random`, which picks one of the nine on each call.
 

@@ -50,6 +50,8 @@ name, `show()` and `getFilename()`.
   nine positions, picked at random. It used to throw `ImageUtilException`
   ("Invalid Stamp Position") on every call, because the random number was never
   converted to a `StampPosition`.
+- `stampImage()` accepts an SVG image as the stamp: it is rasterized at its own width and height.
+  It crashed with "Call to undefined method SVG\SVG::getGdImage()".
 
 ## Requirements
 

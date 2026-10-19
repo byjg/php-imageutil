@@ -9,6 +9,12 @@ class ImageFactory
     private static array $configMime = [];
     private static array $configExt = [];
 
+    /**
+     * Registers an image format, making it available by its extensions and mime types.
+     *
+     * @param string $class A class implementing ImageInterface
+     * @throws InvalidArgumentException When the class does not implement ImageInterface or declares no extension or mime type
+     */
     public static function registerHandler(string $class): void
     {
         $implements = class_implements($class);
@@ -35,6 +41,9 @@ class ImageFactory
         }
     }
 
+    /**
+     * Registers the built-in formats (PNG, GIF, JPEG, BMP, WEBP and SVG), unless any format is already registered.
+     */
     public static function registerAll(): void
     {
         if (!empty(self::$configExt)) {
@@ -52,6 +61,7 @@ class ImageFactory
     /**
      * @param string $mime
      * @return ImageInterface
+     * @throws InvalidArgumentException When no format handles the mime type
      */
     public static function instanceFromMime(string $mime): ImageInterface
     {
@@ -67,8 +77,9 @@ class ImageFactory
     }
 
     /**
-     * @param string $ext
+     * @param string $ext Lowercase, without the dot
      * @return ImageInterface
+     * @throws InvalidArgumentException When no format handles the extension
      */
     public static function instanceFromExtension(string $ext): ImageInterface
     {

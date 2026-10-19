@@ -173,6 +173,23 @@ class GdHandlerTest extends Base
         $this->assertImageSimilar($expected, $bgImage);
     }
 
+    public function testStampSvgImageIsRasterized(): void
+    {
+        $stamp = ImageUtil::empty(50, 40, FileType::Svg, new Color(255, 0, 0));
+
+        $bgImage = ImageUtil::empty(200, 100, FileType::Png, new Color(255, 255, 255))
+            ->stampImage($stamp, StampPosition::BottomRight, 0, 0);
+
+        $gd = $bgImage->getGdImage();
+        $red = ['red' => 255, 'green' => 0, 'blue' => 0, 'alpha' => 0];
+        $white = ['red' => 255, 'green' => 255, 'blue' => 255, 'alpha' => 0];
+        // The stamp covers the bottom-right 50x40 corner, the rest is untouched
+        $this->assertSame($red, imagecolorsforindex($gd, imagecolorat($gd, 199, 99)));
+        $this->assertSame($red, imagecolorsforindex($gd, imagecolorat($gd, 155, 65)));
+        $this->assertSame($white, imagecolorsforindex($gd, imagecolorat($gd, 145, 99)));
+        $this->assertSame($white, imagecolorsforindex($gd, imagecolorat($gd, 199, 55)));
+    }
+
     public function testWriteText(): void
     {
         $img = ImageUtil::empty(1000, 300, FileType::Png, new Color(255, 255, 255));

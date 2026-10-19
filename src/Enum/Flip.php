@@ -3,7 +3,7 @@
 namespace ByJG\ImageUtil\Enum;
 
 /**
- * Used by ImageUtil
+ * Direction used by ImageHandlerInterface::flip()
  */
 enum Flip: int
 {

@@ -286,7 +286,6 @@ class GdHandler implements ImageHandlerInterface
     }
 
     /**
-     * @param int $padY
      * @inheritDoc
      */
     #[Override]
@@ -294,14 +293,8 @@ class GdHandler implements ImageHandlerInterface
     {
         $dstImage = $this->getGdImage();
 
-        $watermark = $srcImage->getResource();
-        if ($watermark === null) {
-            throw new ImageUtilException('Watermark image resource is not initialized');
-        }
-
-        if (!($watermark instanceof GdImage)) {
-            $watermark = $watermark->getGdImage();
-        }
+        // An SvgHandler stamp is rasterized at its own size
+        $watermark = $srcImage->getGdImage();
 
         $this->retainTransparency($dstImage);
         $this->retainTransparency($watermark);
@@ -520,7 +513,6 @@ class GdHandler implements ImageHandlerInterface
 
 
     /**
-     * @param int $tolerance
      * @inheritDoc
      */
     #[Override]
@@ -631,7 +623,7 @@ class GdHandler implements ImageHandlerInterface
     }
 
     /**
-     * Destroy the image to save the memory. Do this after all operations are complete.
+     * Releases the image resources when the handler is destroyed.
      */
     public function __destruct()
     {
