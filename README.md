@@ -1,5 +1,6 @@
 ---
 sidebar_key: imageutil
+sidebar_category: text-content
 tags: [php, image]
 ---
 
