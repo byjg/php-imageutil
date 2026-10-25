@@ -5,8 +5,7 @@ tags: [php, image]
 
 # Image Manipulation Library
 
-ImageUtil is a PHP library that provides a collection of operations for image manipulation using the GD library.
-It simplifies tasks such as flipping, cropping, resizing, stamping, and more.
+Image operations in one fluent line over GD: resize, crop, rotate, stamp, write text, and convert between formats, SVG included.
 
 [![Sponsor](https://img.shields.io/badge/Sponsor-%23ea4aaa?logo=githubsponsors&logoColor=white&labelColor=0d1117)](https://github.com/sponsors/byjg)
 [![Build Status](https://github.com/byjg/php-imageutil/actions/workflows/phpunit.yml/badge.svg?branch=master)](https://github.com/byjg/php-imageutil/actions/workflows/phpunit.yml)
@@ -15,6 +14,24 @@ It simplifies tasks such as flipping, cropping, resizing, stamping, and more.
 [![GitHub source](https://img.shields.io/badge/Github-source-informational?logo=github)](https://github.com/byjg/php-imageutil/)
 [![GitHub license](https://img.shields.io/github/license/byjg/php-imageutil.svg)](https://opensource.byjg.com/license/)
 [![GitHub release](https://img.shields.io/github/release/byjg/php-imageutil.svg)](https://github.com/byjg/php-imageutil/releases/)
+
+## Why
+
+GD can do all of it, but every operation is several calls with coordinates, resources and
+colors to manage, and each format has its own load and save function.
+
+ImageUtil chains the operations on one object and picks the format from the file name:
+
+```php
+ImageUtil::fromFile('photo.png')
+    ->flip(Flip::Vertical)
+    ->resize(120, null)          // keep the aspect ratio
+    ->save('photo.jpg');         // PNG in, JPEG out
+
+ImageUtil::fromFile('logo.svg')->save('logo.png');   // SVG to a raster format
+```
+
+Load from a file, a URL or an existing GD resource; save as GIF, JPEG, PNG, BMP or WEBP.
 
 ## Installation
 
